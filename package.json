@@ -1,0 +1,41 @@
+{
+  "name": "gogoljs",
+  "version": "0.0.0",
+  "description": "The fastest game you ever made.",
+  "main": "main.js",
+  "dependencies": {},
+  "devDependencies": {
+    "babel": "^5.8.23",
+    "babelify": "^6.3.0",
+    "browserify": "^11.2.0",
+    "gulp": "^3.9.0",
+    "gulp-babel": "^5.3.0",
+    "gulp-exec": "^2.1.2",
+    "gulp-shell": "^0.5.0",
+    "gulp-tape": "0.0.4",
+    "tap-colorize": "^1.2.0",
+    "tape": "^4.2.1",
+    "tape-run": "^1.1.0",
+    "vinyl-source-stream": "^1.1.0",
+    "vinyl-transform": "^1.0.0"
+  },
+  "scripts": {
+    "test": "tape test.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "http://github.com/fmd/gogoljs"
+  },
+  "keywords": [
+    "webgl",
+    "games",
+    "prototyping",
+    "glsl"
+  ],
+  "author": "Fareed Dudhia",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/fmd/gogoljs/issues"
+  },
+  "homepage": "https://github.com/fmd/gogoljs"
+}
