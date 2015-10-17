@@ -17,7 +17,8 @@
     "tape": "^4.2.1",
     "tape-run": "^1.1.0",
     "vinyl-source-stream": "^1.1.0",
-    "vinyl-transform": "^1.0.0"
+    "vinyl-transform": "^1.0.0",
+    "watchify": "^3.4.0"
   },
   "scripts": {
     "test": "gulp test"

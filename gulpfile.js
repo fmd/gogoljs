@@ -1,16 +1,20 @@
 var gulp = require('gulp');
+var tape = require('gulp-tape');
 var babel = require('gulp-babel');
+var sourcemaps = require('gulp-sourcemaps');
+
+var watchify = require('watchify');
 var babelify = require('babelify');
 var browserify = require('browserify');
+
 var source = require('vinyl-source-stream');
-var tape = require('gulp-tape');
 var tapColorize = require('tap-colorize');
 
-gulp.task('browserify', function () {
-  browserify({
-    entries: 'main.js',
+gulp.task('watch', function () {
+  watchify(browserify({
+    entries: 'src/index.js',
     debug: true
-  })
+  }))
   .transform(babelify)
   .bundle()
   .pipe(source('bundle.js'))
