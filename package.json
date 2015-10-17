@@ -1,5 +1,5 @@
 {
-  "name": "gogoljs",
+  "name": "gogol",
   "version": "0.0.0",
   "description": "The fastest game you ever made.",
   "main": "main.js",
@@ -20,7 +20,7 @@
     "vinyl-transform": "^1.0.0"
   },
   "scripts": {
-    "test": "tape test.js"
+    "test": "gulp test"
   },
   "repository": {
     "type": "git",
