@@ -10,15 +10,24 @@ var browserify = require('browserify');
 var source = require('vinyl-source-stream');
 var tapColorize = require('tap-colorize');
 
-gulp.task('watch', function () {
-  watchify(browserify({
-    entries: 'src/index.js',
-    debug: true
-  }))
-  .transform(babelify)
+function watch_compile(b) {
+  b.transform(babelify)
   .bundle()
   .pipe(source('bundle.js'))
   .pipe(gulp.dest('dist'));
+}
+
+gulp.task('watch', function () {
+  var b = watchify(browserify({
+    entries: 'src/index.js',
+    debug: true
+  }));
+
+  b.on('update', function(){
+    watch_compile(b);
+  });
+
+  watch_compile(b);
 });
 
 gulp.task('build', function () {
