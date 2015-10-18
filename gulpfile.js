@@ -1,6 +1,7 @@
 var gulp = require('gulp');
 var tape = require('gulp-tape');
 var babel = require('gulp-babel');
+var rename = require('gulp-rename')
 var sourcemaps = require('gulp-sourcemaps');
 
 var watchify = require('watchify');
@@ -8,26 +9,35 @@ var babelify = require('babelify');
 var browserify = require('browserify');
 
 var source = require('vinyl-source-stream');
-var tapColorize = require('tap-colorize');
+var buffer = require('vinyl-buffer')
 
-function watch_compile(b) {
-  b.transform(babelify)
-  .bundle()
-  .pipe(source('bundle.js'))
-  .pipe(gulp.dest('dist'));
+var colorize = require('tap-colorize');
+var merge = require('utils-merge')
+var glob = require('glob')
+
+function make_bundle(w) {
+  return function() {
+    return w.bundle()
+      .pipe(source('index.js'))
+      .pipe(buffer())
+      .pipe(gulp.dest('dist'))
+      .pipe(rename('bundle.js'))
+      .pipe(sourcemaps.init({ loadMaps: true }))
+      .pipe(sourcemaps.write('.'))
+      .pipe(gulp.dest('dist'))
+  }
 }
 
 gulp.task('watch', function () {
-  var b = watchify(browserify({
-    entries: 'src/index.js',
-    debug: true
-  }));
+  var files = glob.sync('./src/**/*.js');
+  var args = merge(watchify.args, { entries: files,
+                                    debug: true,
+                                    fullPaths: true });
 
-  b.on('update', function(){
-    watch_compile(b);
-  });
-
-  watch_compile(b);
+  var w = watchify(browserify(args), { poll: true }).transform(babelify)
+  var bundle = make_bundle(w);
+  w.on('update', bundle);
+  return bundle();
 });
 
 gulp.task('build', function () {
@@ -39,6 +49,6 @@ gulp.task('build', function () {
 gulp.task('test', function() {
   return gulp.src('test/*.js')
     .pipe(tape({
-      reporter: tapColorize()
+      reporter: colorize()
     }));
 });
