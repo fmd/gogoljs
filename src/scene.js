@@ -1,10 +1,6 @@
 class Scene {
   constructor() {
-
-  }
-
-  get name() {
-    return 'Basic Scene'
+    console.log('Added Scene.')
   }
 }
 
