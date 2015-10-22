@@ -1,3 +1,4 @@
-import Engine from '../src'
-
-var e = new Engine()
+import { gogol, Transform } from '../src'
+gogol.init('gogol-example')
+let t = new Transform()
+console.log(t.matrix)

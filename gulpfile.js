@@ -19,6 +19,10 @@ function make_bundle(w, d) {
   return function() {
     console.log(d)
     return w.bundle()
+      .on('error', function(err){
+        console.log(err.message);
+        this.emit('end');
+      })
       .pipe(source(d))
       .pipe(buffer())
       .pipe(gulp.dest(''))

@@ -1,4 +1,19 @@
-var exports = module.exports = {};
+import { Engine, gl } from './engine'
+import { Shader } from './shader'
+import { Component } from './component'
+import { Transform } from './transform'
+import { Scene } from './scene'
 
-exports.Engine = require('./engine');
-exports.Scene = require('./scene');
+var gogol = new Engine()
+
+export {
+  // Classes
+  Shader,
+  Component,
+  Transform,
+  Scene,
+
+  // Objects
+  gogol,
+  gl
+}

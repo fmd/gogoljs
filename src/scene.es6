@@ -1,7 +1,7 @@
-class Scene {
+import { Component } from './component'
+
+export class Scene extends Component {
   constructor() {
-    console.log('Added Scene.')
+    super()
   }
 }
-
-module.exports = Scene
