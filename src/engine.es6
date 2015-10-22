@@ -1,6 +1,6 @@
 class Engine {
   constructor() {
-    console.log('Initialized Gogol.')
+    console.log('Initialized Gogol 2222asdasdasdasd.')
   }
 }
 

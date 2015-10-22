@@ -31,7 +31,8 @@ function make_bundle(w, d) {
 function make_watch(s, d) {
   var args = merge(watchify.args, { entries: [s],
                                     debug: true,
-                                    fullPaths: true });
+                                    fullPaths: true,
+                                    extensions: [".es6", ".js"] });
 
   var w = watchify(browserify(args), { poll: true }).transform(babelify)
   var bundle = make_bundle(w, d);
@@ -41,7 +42,7 @@ function make_watch(s, d) {
 
 // Watches the example files.
 gulp.task('watch', function (done) {
-  var files = glob.sync('examples/**/*.js');
+  var files = glob.sync('examples/**/*.es6');
   console.log(files);
 
   files.forEach(function (entry, i, entries) {
@@ -54,7 +55,7 @@ gulp.task('watch', function (done) {
 
 // Builds the src/ files into lib/ for release.
 gulp.task('build', function () {
-    return gulp.src('src/**/*.js')
+    return gulp.src('src/**/*.es6')
         .pipe(babel())
         .pipe(gulp.dest('lib/'));
 });
