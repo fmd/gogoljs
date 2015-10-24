@@ -5,7 +5,8 @@ export class Engine {
   init(canvasId, opts = this.defaultOpts) {
     this._opts = opts
     this._canvas = document.getElementById(canvasId)
-    this.initContext(opts)
+    this._initContext(opts)
+    this.scene = null
   }
 
   get opts() {
@@ -24,7 +25,16 @@ export class Engine {
     gl.viewport(0, 0, this.canvas.width, this.canvas.height)
   }
 
-  initContext(opts) {
+  processOneFrame() {
+    var c = this.opts.clearColor
+    gl.clearColor(c.r, c.g, c.b, c.a)
+
+    if (this.scene != null && this.scene.isBaked) {
+      this.scene.render()
+    }
+  }
+
+  _initContext(opts) {
     var c = opts.clearColor
 
     gl = this.canvas.getContext('webgl')

@@ -8,11 +8,18 @@ _src.gogol.init('gogol-example');
 var s = new _src.Scene();
 var q = new _src.Quad(100, 100);
 
+_src.gogol.scene = s;
 s.addChild(q);
 s.bake();
 
-console.log(q);
-console.log(s);
+render();
+
+function render() {
+  _src.gogol.processOneFrame();
+  window.setTimeout(render, 1000 / 60);
+}
+
+s.destroy();
 
 },{"../src":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/index.es6"}],"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/node_modules/gl-matrix/src/gl-matrix.js":[function(require,module,exports){
 /**
@@ -5012,7 +5019,8 @@ var Engine = (function () {
 
       this._opts = opts;
       this._canvas = document.getElementById(canvasId);
-      this.initContext(opts);
+      this._initContext(opts);
+      this.scene = null;
     }
   }, {
     key: 'resize',
@@ -5020,8 +5028,18 @@ var Engine = (function () {
       gl.viewport(0, 0, this.canvas.width, this.canvas.height);
     }
   }, {
-    key: 'initContext',
-    value: function initContext(opts) {
+    key: 'processOneFrame',
+    value: function processOneFrame() {
+      var c = this.opts.clearColor;
+      gl.clearColor(c.r, c.g, c.b, c.a);
+
+      if (this.scene != null && this.scene.isBaked) {
+        this.scene.render();
+      }
+    }
+  }, {
+    key: '_initContext',
+    value: function _initContext(opts) {
       var c = opts.clearColor;
 
       exports.gl = gl = this.canvas.getContext('webgl');
@@ -5065,6 +5083,8 @@ var _engine = require('./engine');
 
 var _shader = require('./shader');
 
+var _program = require('./program');
+
 var _component = require('./component');
 
 var _material = require('./material');
@@ -5086,6 +5106,7 @@ exports.
 
 // Classes
 Shader = _shader.Shader;
+exports.Program = _program.Program;
 exports.Component = _component.Component;
 exports.Material = _material.Material;
 exports.Transform = _transform.Transform;
@@ -5098,7 +5119,7 @@ exports.
 gogol = gogol;
 exports.gl = _engine.gl;
 
-},{"./color":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/color.es6","./component":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/component.es6","./engine":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/engine.es6","./material":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/material.es6","./quad":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/quad.es6","./renderable":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/renderable.es6","./scene":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/scene.es6","./shader":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/shader.es6","./transform":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/transform.es6"}],"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/material.es6":[function(require,module,exports){
+},{"./color":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/color.es6","./component":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/component.es6","./engine":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/engine.es6","./material":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/material.es6","./program":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/program.es6","./quad":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/quad.es6","./renderable":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/renderable.es6","./scene":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/scene.es6","./shader":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/shader.es6","./transform":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/transform.es6"}],"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/material.es6":[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -5127,7 +5148,52 @@ var Material = (function (_Component) {
 
 exports.Material = Material;
 
-},{"./component":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/component.es6"}],"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/quad.es6":[function(require,module,exports){
+},{"./component":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/component.es6"}],"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/program.es6":[function(require,module,exports){
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var _shader = require('./shader');
+
+var Program = (function () {
+  function Program(vertexShader, fragmentShader) {
+    _classCallCheck(this, Program);
+
+    var program = gl.createProgram();
+
+    gl.attachShader(program, vertexShader);
+    gl.attachShader(program, fragmentShader);
+    gl.linkProgram(program);
+
+    var success = gl.getProgramParameter(program, gl.LINK_STATUS);
+
+    if (!success) {
+      throw "Could not compile program:" + gl.getShaderInfoLog(program);
+    }
+
+    this.program = program;
+    return this;
+  }
+
+  _createClass(Program, null, [{
+    key: "default",
+    get: function get() {
+      return new Program(_shader.VertexShader["default"], _shader.FragmentShader["default"]);
+    }
+  }]);
+
+  return Program;
+})();
+
+exports.Program = Program;
+
+},{"./shader":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/shader.es6"}],"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/quad.es6":[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -5209,7 +5275,7 @@ Object.defineProperty(exports, '__esModule', {
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
 
-var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; desc = parent = getter = undefined; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
+var _get = function get(_x2, _x3, _x4) { var _again = true; _function: while (_again) { var object = _x2, property = _x3, receiver = _x4; desc = parent = getter = undefined; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x2 = parent; _x3 = property; _x4 = receiver; _again = true; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 
@@ -5223,11 +5289,15 @@ var Scene = (function (_Component) {
   _inherits(Scene, _Component);
 
   function Scene() {
+    var opts = arguments.length <= 0 || arguments[0] === undefined ? Scene.defaultOpts : arguments[0];
+
     _classCallCheck(this, Scene);
 
     _get(Object.getPrototypeOf(Scene.prototype), 'constructor', this).call(this);
     this._vertexBuffer = null;
     this._indexBuffer = null;
+
+    this.program = opts.program;
     this.isBaked = false;
   }
 
@@ -5253,11 +5323,11 @@ var Scene = (function (_Component) {
           var child = _step.value;
 
           if (child.vertices) {
-            vertices.concat(child.vertices);
+            vertices = vertices.concat(child.vertices);
           }
 
           if (child.indices) {
-            indices.concat(child.indices);
+            indices = indices.concat(child.indices);
           }
         }
       } catch (err) {
@@ -5276,18 +5346,53 @@ var Scene = (function (_Component) {
       }
 
       _engine.gl.bindBuffer(_engine.gl.ARRAY_BUFFER, this._vertexBuffer);
-      _engine.gl.bufferData(_engine.gl.ARRAY_BUFFER, vertices, _engine.gl.STATIC_DRAW);
+      _engine.gl.bufferData(_engine.gl.ARRAY_BUFFER, new Float32Array(vertices), _engine.gl.STATIC_DRAW);
 
       _engine.gl.bindBuffer(_engine.gl.ELEMENT_ARRAY_BUFFER, this._indexBuffer);
-      _engine.gl.bufferData(_engine.gl.ELEMENT_ARRAY_BUFFER, indices, _engine.gl.STATIC_DRAW);
+      _engine.gl.bufferData(_engine.gl.ELEMENT_ARRAY_BUFFER, new Uint32Array(indices), _engine.gl.STATIC_DRAW);
 
       this.isBaked = true;
+    }
+  }, {
+    key: 'render',
+    value: function render() {
+      _engine.gl.bindBuffer(_engine.gl.ARRAY_BUFFER, this._vertexBuffer);
+      _engine.gl.bindBuffer(_engine.gl.ELEMENT_ARRAY_BUFFER, this._indexBuffer);
+      _engine.gl.useProgram(this.program);
+
+      var _iteratorNormalCompletion2 = true;
+      var _didIteratorError2 = false;
+      var _iteratorError2 = undefined;
+
+      try {
+        for (var _iterator2 = this.children[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
+          var child = _step2.value;
+        }
+      } catch (err) {
+        _didIteratorError2 = true;
+        _iteratorError2 = err;
+      } finally {
+        try {
+          if (!_iteratorNormalCompletion2 && _iterator2['return']) {
+            _iterator2['return']();
+          }
+        } finally {
+          if (_didIteratorError2) {
+            throw _iteratorError2;
+          }
+        }
+      }
     }
   }, {
     key: 'destroy',
     value: function destroy() {
       _engine.gl.deleteBuffer(this._vertexBuffer);
       _engine.gl.deleteBuffer(this._indexBuffer);
+    }
+  }], [{
+    key: 'defaultOpts',
+    get: function get() {
+      return { program: Program['default'] };
     }
   }]);
 
@@ -5299,11 +5404,101 @@ exports.Scene = Scene;
 },{"./component":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/component.es6","./engine":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/engine.es6"}],"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/shader.es6":[function(require,module,exports){
 "use strict";
 
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; desc = parent = getter = undefined; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; continue _function; } } else if ("value" in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
+
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-var Shader = function Shader() {
-  _classCallCheck(this, Shader);
-};
+var Shader = (function () {
+  function Shader(shader) {
+    _classCallCheck(this, Shader);
+
+    this.shader = gl.createShader(type);
+    return this;
+  }
+
+  _createClass(Shader, [{
+    key: "compileFromUrl",
+    value: function compileFromUrl(url) {
+      return this;
+    }
+  }, {
+    key: "compileFromElement",
+    value: function compileFromElement(id) {
+      return this;
+    }
+  }, {
+    key: "compileFromString",
+    value: function compileFromString(str) {
+      gl.shaderSource(this.shader, str);
+      gl.compileShader(this.shader);
+
+      var success = gl.getShaderParameter(this.shader, gl.COMPILE_STATUS);
+      if (!success) {
+        throw "Could not compile shader:" + gl.getShaderInfoLog(this.shader);
+      }
+
+      return this;
+    }
+  }]);
+
+  return Shader;
+})();
+
+exports.Shader = Shader;
+
+var VertexShader = (function (_Shader) {
+  _inherits(VertexShader, _Shader);
+
+  function VertexShader() {
+    _classCallCheck(this, VertexShader);
+
+    _get(Object.getPrototypeOf(VertexShader.prototype), "constructor", this).call(this, gl.VERTEX_SHADER);
+  }
+
+  _createClass(VertexShader, null, [{
+    key: "default",
+    get: function get() {
+      var src = "#version 330 core\n\n               layout(location = 0) in vec3 vpos;\n               uniform mat4 mvp;\n\n               void main() {\n                 gl_Position =  mvp * vec4(vpos,1);\n               }";
+
+      return new VertexShader().compileFromString(src);
+    }
+  }]);
+
+  return VertexShader;
+})(Shader);
+
+exports.VertexShader = VertexShader;
+
+var FragmentShader = (function (_Shader2) {
+  _inherits(FragmentShader, _Shader2);
+
+  function FragmentShader() {
+    _classCallCheck(this, FragmentShader);
+
+    _get(Object.getPrototypeOf(FragmentShader.prototype), "constructor", this).call(this, gl.FRAGMENT_SHADER);
+  }
+
+  _createClass(FragmentShader, null, [{
+    key: "default",
+    get: function get() {
+      var src = "#version 330 core\n\n               layout(location = 0) out vec3 color;\n\n               void main() {\n                 color = vec3(1,1,1);\n               }";
+
+      return new FragmentShader().compileFromString(src);
+    }
+  }]);
+
+  return FragmentShader;
+})(Shader);
+
+exports.FragmentShader = FragmentShader;
 
 },{}],"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/transform.es6":[function(require,module,exports){
 'use strict';

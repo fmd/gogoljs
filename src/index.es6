@@ -1,6 +1,7 @@
 import { color } from './color'
 import { Engine, gl } from './engine'
 import { Shader } from './shader'
+import { Program } from './program'
 import { Component } from './component'
 import { Material } from './material'
 import { Transform } from './transform'
@@ -16,6 +17,7 @@ export {
 
   // Classes
   Shader,
+  Program,
   Component,
   Material,
   Transform,
