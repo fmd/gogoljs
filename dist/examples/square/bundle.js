@@ -4900,7 +4900,48 @@ vec4.str = function (a) {
 
 module.exports = vec4;
 
-},{"./common.js":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/node_modules/gl-matrix/src/gl-matrix/common.js"}],"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/component.es6":[function(require,module,exports){
+},{"./common.js":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/node_modules/gl-matrix/src/gl-matrix/common.js"}],"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/color.es6":[function(require,module,exports){
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var color = (function () {
+  function color() {
+    _classCallCheck(this, color);
+  }
+
+  _createClass(color, [{
+    key: "init",
+    value: function init(r, g, b, a) {
+      this.r = r;
+      this.g = g;
+      this.b = b;
+      this.a = a;
+    }
+  }], [{
+    key: "black",
+    get: function get() {
+      return new color(0.0, 0.0, 0.0, 1.0);
+    }
+  }, {
+    key: "white",
+    get: function get() {
+      return new color(1.0, 1.0, 1.0, 1.0);
+    }
+  }]);
+
+  return color;
+})();
+
+exports.color = color;
+
+},{}],"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/component.es6":[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -4926,6 +4967,8 @@ var _createClass = (function () { function defineProperties(target, props) { for
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 
+var _color = require('./color');
+
 var gl;
 exports.gl = gl;
 
@@ -4937,8 +4980,11 @@ var Engine = (function () {
   _createClass(Engine, [{
     key: 'init',
     value: function init(canvasId) {
-      this.canvas = document.getElementById(canvasId);
-      this.initContext();
+      var opts = arguments.length <= 1 || arguments[1] === undefined ? this.defaultOpts : arguments[1];
+
+      this._opts = opts;
+      this._canvas = document.getElementById(canvasId);
+      this.initContext(opts);
     }
   }, {
     key: 'resize',
@@ -4947,12 +4993,29 @@ var Engine = (function () {
     }
   }, {
     key: 'initContext',
-    value: function initContext() {
+    value: function initContext(opts) {
+      var c = opts.clearColor;
+
       exports.gl = gl = this.canvas.getContext('webgl');
-      gl.clearColor(0.0, 0.0, 0.0, 1.0);
+      gl.clearColor(c.r, c.g, c.b, c.a);
       gl.enable(gl.DEPTH_TEST);
       gl.depthFunc(gl.LEQUAL);
       gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+    }
+  }, {
+    key: 'opts',
+    get: function get() {
+      return this._opts;
+    }
+  }, {
+    key: 'canvas',
+    get: function get() {
+      return this._canvas;
+    }
+  }, {
+    key: 'defaultOpts',
+    get: function get() {
+      return { clearColor: _color.color.black };
     }
   }]);
 
@@ -4961,7 +5024,7 @@ var Engine = (function () {
 
 exports.Engine = Engine;
 
-},{}],"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/index.es6":[function(require,module,exports){
+},{"./color":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/color.es6"}],"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/index.es6":[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {

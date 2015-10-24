@@ -1,5 +1,4 @@
 var gulp = require('gulp');
-var tape = require('gulp-tape');
 var babel = require('gulp-babel');
 var rename = require('gulp-rename')
 var sourcemaps = require('gulp-sourcemaps');
@@ -11,47 +10,85 @@ var browserify = require('browserify');
 var source = require('vinyl-source-stream');
 var buffer = require('vinyl-buffer')
 
-var colorize = require('tap-colorize');
 var merge = require('utils-merge')
 var glob = require('glob')
 
-function make_bundle(w, d) {
+// Makes the bundle, logs errors, and saves to the destination.
+function makeBundle(src, watcher, dst) {
+
+  // This must return a function for watcher.on('update').
   return function() {
-    console.log(d)
-    return w.bundle()
+
+    // Logs the compilation.
+    console.log('Compiling ' + src + ' -> ' + dst)
+
+    // Bundles the example!, which then:
+    return watcher.bundle()
+
+      // Logs errors
       .on('error', function(err){
         console.log(err.message);
         this.emit('end');
       })
-      .pipe(source(d))
+
+      // Uses our new bundle as the source for the sourcemaps.
+      .pipe(source(dst))
       .pipe(buffer())
-      .pipe(gulp.dest(''))
+
+      // Creates the sourcemaps.
       .pipe(sourcemaps.init({ loadMaps: true }))
       .pipe(sourcemaps.write('.'))
+
+      // And writes that to the destination too.
       .pipe(gulp.dest(''))
   }
 }
 
-function make_watch(s, d) {
-  var args = merge(watchify.args, { entries: [s],
+// Watchifies the examples and their local import trees for bundling.
+function makeWatcher(src, dst) {
+  var args = merge(watchify.args, { entries: [src],
                                     debug: true,
                                     fullPaths: true,
                                     extensions: [".es6", ".js"] });
 
-  var w = watchify(browserify(args), { poll: true }).transform(babelify)
-  var bundle = make_bundle(w, d);
-  w.on('update', bundle);
+  // The `watcher` watches, compiles from es6, and browserifies the entries given in `args`.
+  var watcher = watchify(browserify(args)).transform(babelify)
+
+  // `bundle` becomes a function that will be called on update.
+  var bundle = makeBundle(src, watcher, dst);
+
+  // Listens for updates.
+  watcher.on('update', bundle);
   return bundle();
 }
 
 // Watches the example files.
 gulp.task('watch', function (done) {
-  var files = glob.sync('examples/**/*.es6');
-  console.log(files);
 
-  files.forEach(function (entry, i, entries) {
+  // Find all source files in the `examples/` directory.
+  var files = glob.sync('examples/**/*.es6');
+
+  // filesWithWatchers will be an array of simple objects that each contain a
+  // filename and a boolean that determines whether the file is currenty being watched.
+  var filesWithWatchers = [];
+
+  for (var i = 0; i < files.length; i++) {
+    filesWithWatchers.push({ file: files[i], watching: false });
+  }
+  // Loop over all the files in the directory.
+  filesWithWatchers.forEach(function (entry, i, entries) {
+
+    // Don't let this loop finish.
     entries.remaining = entries.remaining || entries.length;
-    make_watch(entry, ('dist/' + entry).split('.')[0] + '/bundle.js')
+
+    // Get the destination for this bundle.
+    var bundleDest = ('dist/' + entry.file).split('.')[0] + '/bundle.js';
+
+    // Make a watcher unless the entry already has one.
+    if (!entry.watching) {
+      makeWatcher(entry.file, bundleDest);
+      entry.watching = true;
+    }
   });
 
   return;
