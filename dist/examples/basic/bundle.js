@@ -4,8 +4,15 @@
 var _src = require('../src');
 
 _src.gogol.init('gogol-example');
-var t = new _src.Transform();
-console.log(t.matrix);
+
+var s = new _src.Scene();
+var q = new _src.Quad(100, 100);
+
+s.addChild(q);
+s.bake();
+
+console.log(q);
+console.log(s);
 
 },{"../src":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/index.es6"}],"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/node_modules/gl-matrix/src/gl-matrix.js":[function(require,module,exports){
 /**
@@ -4952,11 +4959,28 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-var Component = function Component() {
-  _classCallCheck(this, Component);
-};
+var Component = (function () {
+  function Component() {
+    _classCallCheck(this, Component);
+
+    this.parent = null;
+    this.children = [];
+  }
+
+  _createClass(Component, [{
+    key: "addChild",
+    value: function addChild(component) {
+      component.parent = this;
+      this.children.push(component);
+    }
+  }]);
+
+  return Component;
+})();
 
 exports.Component = Component;
 
@@ -5035,23 +5059,38 @@ Object.defineProperty(exports, '__esModule', {
   value: true
 });
 
+var _color = require('./color');
+
 var _engine = require('./engine');
 
 var _shader = require('./shader');
 
 var _component = require('./component');
 
+var _material = require('./material');
+
 var _transform = require('./transform');
+
+var _renderable = require('./renderable');
+
+var _quad = require('./quad');
 
 var _scene = require('./scene');
 
 var gogol = new _engine.Engine();
 
 exports.
+// Helper Classes
+color = _color.color;
+exports.
+
 // Classes
 Shader = _shader.Shader;
 exports.Component = _component.Component;
+exports.Material = _material.Material;
 exports.Transform = _transform.Transform;
+exports.Renderable = _renderable.Renderable;
+exports.Quad = _quad.Quad;
 exports.Scene = _scene.Scene;
 exports.
 
@@ -5059,7 +5098,7 @@ exports.
 gogol = gogol;
 exports.gl = _engine.gl;
 
-},{"./component":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/component.es6","./engine":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/engine.es6","./scene":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/scene.es6","./shader":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/shader.es6","./transform":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/transform.es6"}],"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/scene.es6":[function(require,module,exports){
+},{"./color":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/color.es6","./component":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/component.es6","./engine":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/engine.es6","./material":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/material.es6","./quad":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/quad.es6","./renderable":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/renderable.es6","./scene":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/scene.es6","./shader":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/shader.es6","./transform":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/transform.es6"}],"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/material.es6":[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -5074,6 +5113,112 @@ function _inherits(subClass, superClass) { if (typeof superClass !== 'function' 
 
 var _component = require('./component');
 
+var Material = (function (_Component) {
+  _inherits(Material, _Component);
+
+  function Material() {
+    _classCallCheck(this, Material);
+
+    _get(Object.getPrototypeOf(Material.prototype), 'constructor', this).call(this);
+  }
+
+  return Material;
+})(_component.Component);
+
+exports.Material = Material;
+
+},{"./component":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/component.es6"}],"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/quad.es6":[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, '__esModule', {
+  value: true
+});
+
+var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; desc = parent = getter = undefined; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var _renderable = require('./renderable');
+
+var calculateVertices = function calculateVertices(width, height) {
+  return [-width, -height, 0.0, -width, height, 0.0, width, height, 0.0, width, -height, 0.0];
+};
+
+var calculateIndices = function calculateIndices() {
+  return [0, 1, 2, 3, 0, 2, 3];
+};
+
+var Quad = (function (_Renderable) {
+  _inherits(Quad, _Renderable);
+
+  function Quad(width, height) {
+    _classCallCheck(this, Quad);
+
+    _get(Object.getPrototypeOf(Quad.prototype), 'constructor', this).call(this);
+    this.width = width;
+    this.height = height;
+    this.vertices = calculateVertices(width, height);
+    this.indices = calculateIndices();
+  }
+
+  return Quad;
+})(_renderable.Renderable);
+
+exports.Quad = Quad;
+
+},{"./renderable":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/renderable.es6"}],"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/renderable.es6":[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, '__esModule', {
+  value: true
+});
+
+var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; desc = parent = getter = undefined; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var _transform = require('./transform');
+
+var Renderable = (function (_Transform) {
+  _inherits(Renderable, _Transform);
+
+  function Renderable() {
+    _classCallCheck(this, Renderable);
+
+    _get(Object.getPrototypeOf(Renderable.prototype), 'constructor', this).call(this);
+    this.material = null;
+    this.vertices = null;
+    this.indices = null;
+  }
+
+  return Renderable;
+})(_transform.Transform);
+
+exports.Renderable = Renderable;
+
+},{"./transform":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/transform.es6"}],"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/scene.es6":[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, '__esModule', {
+  value: true
+});
+
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; desc = parent = getter = undefined; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var _engine = require('./engine');
+
+var _component = require('./component');
+
 var Scene = (function (_Component) {
   _inherits(Scene, _Component);
 
@@ -5081,14 +5226,77 @@ var Scene = (function (_Component) {
     _classCallCheck(this, Scene);
 
     _get(Object.getPrototypeOf(Scene.prototype), 'constructor', this).call(this);
+    this._vertexBuffer = null;
+    this._indexBuffer = null;
+    this.isBaked = false;
   }
+
+  _createClass(Scene, [{
+    key: 'bake',
+    value: function bake() {
+      if (this.isBaked) {
+        return;
+      }
+
+      var vertices = [];
+      var indices = [];
+
+      this._vertexBuffer = _engine.gl.createBuffer();
+      this._indexBuffer = _engine.gl.createBuffer();
+
+      var _iteratorNormalCompletion = true;
+      var _didIteratorError = false;
+      var _iteratorError = undefined;
+
+      try {
+        for (var _iterator = this.children[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+          var child = _step.value;
+
+          if (child.vertices) {
+            vertices.concat(child.vertices);
+          }
+
+          if (child.indices) {
+            indices.concat(child.indices);
+          }
+        }
+      } catch (err) {
+        _didIteratorError = true;
+        _iteratorError = err;
+      } finally {
+        try {
+          if (!_iteratorNormalCompletion && _iterator['return']) {
+            _iterator['return']();
+          }
+        } finally {
+          if (_didIteratorError) {
+            throw _iteratorError;
+          }
+        }
+      }
+
+      _engine.gl.bindBuffer(_engine.gl.ARRAY_BUFFER, this._vertexBuffer);
+      _engine.gl.bufferData(_engine.gl.ARRAY_BUFFER, vertices, _engine.gl.STATIC_DRAW);
+
+      _engine.gl.bindBuffer(_engine.gl.ELEMENT_ARRAY_BUFFER, this._indexBuffer);
+      _engine.gl.bufferData(_engine.gl.ELEMENT_ARRAY_BUFFER, indices, _engine.gl.STATIC_DRAW);
+
+      this.isBaked = true;
+    }
+  }, {
+    key: 'destroy',
+    value: function destroy() {
+      _engine.gl.deleteBuffer(this._vertexBuffer);
+      _engine.gl.deleteBuffer(this._indexBuffer);
+    }
+  }]);
 
   return Scene;
 })(_component.Component);
 
 exports.Scene = Scene;
 
-},{"./component":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/component.es6"}],"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/shader.es6":[function(require,module,exports){
+},{"./component":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/component.es6","./engine":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/engine.es6"}],"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/shader.es6":[function(require,module,exports){
 "use strict";
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
