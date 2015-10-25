@@ -22,25 +22,11 @@ export class Renderable extends Transform {
 
     this.indicesIndex = indices.length
     indices.push.apply(indices, this.indices)
-
-    for (let child of this.children) {
-      if (child.vertices && child.indices) {
-        child.bake(vertices, indices)
-      }
-    }
   }
 
   render(pvMatrix) {
     let mvp = mat4.create()
     mat4.mul(mvp, pvMatrix, this.worldMatrix)
     this.material.render(mvp, this.verticesIndex, this.indicesIndex, this.indices.length)
-
-    for (let child of this.children) {
-      if (!child.material) {
-        continue
-      }
-
-      child.render(pvMatrix)
-    }
   }
 }
