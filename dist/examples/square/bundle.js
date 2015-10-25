@@ -5070,7 +5070,34 @@ var ComponentList = (function (_Array) {
   _createClass(ComponentList, [{
     key: "flatten",
     value: function flatten() {
-      console.log(this);
+      var components = [];
+      var _iteratorNormalCompletion = true;
+      var _didIteratorError = false;
+      var _iteratorError = undefined;
+
+      try {
+        for (var _iterator = this[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+          var c = _step.value;
+
+          components.push(c);
+          components = components.concat(c.children.flatten());
+        }
+      } catch (err) {
+        _didIteratorError = true;
+        _iteratorError = err;
+      } finally {
+        try {
+          if (!_iteratorNormalCompletion && _iterator["return"]) {
+            _iterator["return"]();
+          }
+        } finally {
+          if (_didIteratorError) {
+            throw _iteratorError;
+          }
+        }
+      }
+
+      return components;
     }
   }]);
 
@@ -5455,7 +5482,7 @@ var Scene = (function (_Component) {
       var _iteratorError = undefined;
 
       try {
-        for (var _iterator = this.children[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+        for (var _iterator = this.children.flatten()[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
           var child = _step.value;
 
           if (child.vertices && child.indices) {
@@ -5505,12 +5532,13 @@ var Scene = (function (_Component) {
       var _iteratorError2 = undefined;
 
       try {
-        for (var _iterator2 = this.children[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
+        for (var _iterator2 = this.children.flatten()[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
           var child = _step2.value;
 
           if (!child.material) {
             continue;
           }
+
           child.render(pvMatrix);
         }
       } catch (err) {

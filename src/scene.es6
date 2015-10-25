@@ -30,7 +30,7 @@ export class Scene extends Component {
     this._vertexBuffer = gl.createBuffer()
     this._indexBuffer = gl.createBuffer()
 
-    for (let child of this.children) {
+    for (let child of this.children.flatten()) {
       if (child.vertices && child.indices) {
         child.bake(vertices, indices)
       }
@@ -58,10 +58,11 @@ export class Scene extends Component {
     mat4.mul(pvMatrix, pvMatrix, this.projectionMatrix)
     mat4.mul(pvMatrix, pvMatrix, this.viewMatrix)
 
-    for (let child of this.children) {
+    for (let child of this.children.flatten()) {
       if (!child.material) {
         continue
       }
+
       child.render(pvMatrix)
     }
   }
