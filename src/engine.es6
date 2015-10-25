@@ -1,5 +1,8 @@
 import { color } from './color'
 
+export const VERTEX_SIZE = 3
+export const FLOAT_SIZE = 4
+
 export var gl
 export var gogol
 

@@ -1,5 +1,5 @@
 import { mat4, vec3 } from 'gl-matrix'
-import { gogol, gl } from './engine'
+import { gogol, gl, FLOAT_SIZE } from './engine'
 import { Component } from './component'
 import { Program } from './program'
 
@@ -12,12 +12,11 @@ export class Scene extends Component {
     this.projectionMatrix = mat4.create()
     this.viewMatrix = mat4.create()
 
-    this.program = opts.program;
     this.isBaked = false;
   }
 
   static get defaultOpts() {
-    return { program: Program.default }
+    return { }
   }
 
   bake() {
@@ -33,10 +32,12 @@ export class Scene extends Component {
 
     for (let child of this.children) {
       if (child.vertices) {
+        child.verticesIndex = vertices.length * FLOAT_SIZE
         vertices = vertices.concat(child.vertices)
       }
 
       if (child.indices) {
+        child.indicesIndex = indices.length
         indices = indices.concat(child.indices)
       }
     }
@@ -57,19 +58,24 @@ export class Scene extends Component {
     gl.bindBuffer(gl.ARRAY_BUFFER, this._vertexBuffer)
     gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this._indexBuffer)
 
-    gl.useProgram(this.program.program)
+    var currentProgram = Program.default
+    gl.useProgram(currentProgram.program)
+
+    let pvMatrix = mat4.create()
+    mat4.mul(pvMatrix, pvMatrix, this.projectionMatrix)
+    mat4.mul(pvMatrix, pvMatrix, this.viewMatrix)
 
     for (let child of this.children) {
-      let mvp = mat4.create()
+      if (!child.program) {
+        continue
+      }
 
-      mat4.mul(mvp, mvp, this.projectionMatrix)
-      mat4.mul(mvp, mvp, this.viewMatrix)
-      mat4.mul(mvp, mvp, child.matrix)
+      if (currentProgram != child.program) {
+        currentProgram = child.program
+        gl.useProgram(currentProgram.program)
+      }
 
-      gl.vertexAttribPointer(this.program.vpos, 3, gl.FLOAT, gl.FALSE, 0, 0)
-
-      gl.uniformMatrix4fv(this.program.mvp, gl.FALSE, new Float32Array(mvp))
-      gl.drawElements(gl.TRIANGLES, child.indices.length, gl.UNSIGNED_BYTE, 0)
+      child.render(pvMatrix)
     }
   }
 

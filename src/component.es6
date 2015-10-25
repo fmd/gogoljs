@@ -8,4 +8,8 @@ export class Component {
     component.parent = this
     this.children.push(component);
   }
+
+  render() {
+
+  }
 }

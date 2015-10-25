@@ -1,6 +1,8 @@
 import { gl } from './engine'
 import { VertexShader, FragmentShader } from './shader'
 
+var _defaultProgram = null
+
 export class Program {
   constructor(vertexShader, fragmentShader) {
     let program = gl.createProgram()
@@ -20,12 +22,20 @@ export class Program {
   }
 
   static get default() {
+    if (_defaultProgram != null) {
+      return _defaultProgram
+    }
+
     var p = new Program(VertexShader.default, FragmentShader.default)
 
     p.mvp = gl.getUniformLocation(p.program, 'mvp');
     p.vpos = gl.getAttribLocation(p.program, 'aVertexPosition');
+
     gl.enableVertexAttribArray(p.vpos);
 
+    _defaultProgram = p
     return p
   }
 }
+
+Program._default = null

@@ -27,12 +27,18 @@ export class Shader {
   }
 }
 
+var _defaultVertexShader = null
+
 export class VertexShader extends Shader {
   constructor() {
     super(gl.VERTEX_SHADER)
   }
 
   static get default() {
+    if (_defaultVertexShader != null) {
+      return _defaultVertexShader
+    }
+
     let src = `attribute vec4 aVertexPosition;
                uniform mat4 mvp;
 
@@ -40,9 +46,12 @@ export class VertexShader extends Shader {
                  gl_Position =  mvp * aVertexPosition;
                }`
 
-    return new VertexShader().compileFromString(src)
+    _defaultVertexShader = new VertexShader().compileFromString(src)
+    return _defaultVertexShader
   }
 }
+
+var _defaultFragmentShader = null
 
 export class FragmentShader extends Shader {
   constructor() {
@@ -50,10 +59,15 @@ export class FragmentShader extends Shader {
   }
 
   static get default() {
+    if (_defaultFragmentShader != null) {
+      return _defaultFragmentShader
+    }
+
     let src = `void main() {
                  gl_FragColor = vec4(1,1,1,1);
                }`
 
-    return new FragmentShader().compileFromString(src)
+    _defaultFragmentShader = new FragmentShader().compileFromString(src)
+    return _defaultFragmentShader
   }
 }
