@@ -4988,6 +4988,9 @@ var _color = require('./color');
 
 var gl;
 exports.gl = gl;
+var gogol;
+
+exports.gogol = gogol;
 
 var Engine = (function () {
   function Engine() {
@@ -5052,6 +5055,8 @@ var Engine = (function () {
 
 exports.Engine = Engine;
 
+exports.gogol = gogol = new Engine();
+
 },{"./color":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/color.es6"}],"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/index.es6":[function(require,module,exports){
 'use strict';
 
@@ -5079,8 +5084,6 @@ var _quad = require('./quad');
 
 var _scene = require('./scene');
 
-var gogol = new _engine.Engine();
-
 exports.
 // Helper Classes
 color = _color.color;
@@ -5098,7 +5101,7 @@ exports.Scene = _scene.Scene;
 exports.
 
 // Objects
-gogol = gogol;
+gogol = _engine.gogol;
 exports.gl = _engine.gl;
 
 },{"./color":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/color.es6","./component":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/component.es6","./engine":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/engine.es6","./material":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/material.es6","./program":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/program.es6","./quad":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/quad.es6","./renderable":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/renderable.es6","./scene":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/scene.es6","./shader":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/shader.es6","./transform":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/transform.es6"}],"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/material.es6":[function(require,module,exports){
@@ -5131,15 +5134,17 @@ var Material = (function (_Component) {
 exports.Material = Material;
 
 },{"./component":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/component.es6"}],"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/program.es6":[function(require,module,exports){
-"use strict";
+'use strict';
 
-Object.defineProperty(exports, "__esModule", {
+Object.defineProperty(exports, '__esModule', {
   value: true
 });
 
-var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
 
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+
+var _engine = require('./engine');
 
 var _shader = require('./shader');
 
@@ -5147,16 +5152,16 @@ var Program = (function () {
   function Program(vertexShader, fragmentShader) {
     _classCallCheck(this, Program);
 
-    var program = gl.createProgram();
+    var program = _engine.gl.createProgram();
 
-    gl.attachShader(program, vertexShader);
-    gl.attachShader(program, fragmentShader);
-    gl.linkProgram(program);
+    _engine.gl.attachShader(program, vertexShader.shader);
+    _engine.gl.attachShader(program, fragmentShader.shader);
+    _engine.gl.linkProgram(program);
 
-    var success = gl.getProgramParameter(program, gl.LINK_STATUS);
+    var success = _engine.gl.getProgramParameter(program, _engine.gl.LINK_STATUS);
 
     if (!success) {
-      throw "Could not compile program:" + gl.getShaderInfoLog(program);
+      throw "Could not compile program:" + _engine.gl.getShaderInfoLog(program);
     }
 
     this.program = program;
@@ -5164,9 +5169,15 @@ var Program = (function () {
   }
 
   _createClass(Program, null, [{
-    key: "default",
+    key: 'default',
     get: function get() {
-      return new Program(_shader.VertexShader["default"], _shader.FragmentShader["default"]);
+      var p = new Program(_shader.VertexShader['default'], _shader.FragmentShader['default']);
+
+      p.mvp = _engine.gl.getUniformLocation(p.program, 'mvp');
+      p.vpos = _engine.gl.getAttribLocation(p.program, 'aVertexPosition');
+      _engine.gl.enableVertexAttribArray(p.vpos);
+
+      return p;
     }
   }]);
 
@@ -5175,7 +5186,7 @@ var Program = (function () {
 
 exports.Program = Program;
 
-},{"./shader":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/shader.es6"}],"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/quad.es6":[function(require,module,exports){
+},{"./engine":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/engine.es6","./shader":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/shader.es6"}],"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/quad.es6":[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -5239,8 +5250,8 @@ var Renderable = (function (_Transform) {
 
     _get(Object.getPrototypeOf(Renderable.prototype), 'constructor', this).call(this);
     this.material = null;
-    this.vertices = null;
-    this.indices = null;
+    this.vertices = [];
+    this.indices = [];
   }
 
   return Renderable;
@@ -5263,9 +5274,13 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
 function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
+var _glMatrix = require('gl-matrix');
+
 var _engine = require('./engine');
 
 var _component = require('./component');
+
+var _program = require('./program');
 
 var Scene = (function (_Component) {
   _inherits(Scene, _Component);
@@ -5278,6 +5293,9 @@ var Scene = (function (_Component) {
     _get(Object.getPrototypeOf(Scene.prototype), 'constructor', this).call(this);
     this._vertexBuffer = null;
     this._indexBuffer = null;
+
+    this.projectionMatrix = _glMatrix.mat4.create();
+    this.viewMatrix = _glMatrix.mat4.create();
 
     this.program = opts.program;
     this.isBaked = false;
@@ -5331,7 +5349,10 @@ var Scene = (function (_Component) {
       _engine.gl.bufferData(_engine.gl.ARRAY_BUFFER, new Float32Array(vertices), _engine.gl.STATIC_DRAW);
 
       _engine.gl.bindBuffer(_engine.gl.ELEMENT_ARRAY_BUFFER, this._indexBuffer);
-      _engine.gl.bufferData(_engine.gl.ELEMENT_ARRAY_BUFFER, new Uint32Array(indices), _engine.gl.STATIC_DRAW);
+      _engine.gl.bufferData(_engine.gl.ELEMENT_ARRAY_BUFFER, new Uint8Array(indices), _engine.gl.STATIC_DRAW);
+
+      _glMatrix.mat4.ortho(this.projectionMatrix, 0.0, _engine.gogol.canvas.width, _engine.gogol.canvas.height, 0.0, 0.0, 100.0);
+      _glMatrix.mat4.lookAt(this.viewMatrix, _glMatrix.vec3.fromValues(0, 0, 1), _glMatrix.vec3.fromValues(0, 0, 0), _glMatrix.vec3.fromValues(0, 1, 0));
 
       this.isBaked = true;
     }
@@ -5340,7 +5361,8 @@ var Scene = (function (_Component) {
     value: function render() {
       _engine.gl.bindBuffer(_engine.gl.ARRAY_BUFFER, this._vertexBuffer);
       _engine.gl.bindBuffer(_engine.gl.ELEMENT_ARRAY_BUFFER, this._indexBuffer);
-      _engine.gl.useProgram(this.program);
+
+      _engine.gl.useProgram(this.program.program);
 
       var _iteratorNormalCompletion2 = true;
       var _didIteratorError2 = false;
@@ -5349,6 +5371,17 @@ var Scene = (function (_Component) {
       try {
         for (var _iterator2 = this.children[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
           var child = _step2.value;
+
+          var mvp = _glMatrix.mat4.create();
+
+          _glMatrix.mat4.mul(mvp, mvp, this.projectionMatrix);
+          _glMatrix.mat4.mul(mvp, mvp, this.viewMatrix);
+          _glMatrix.mat4.mul(mvp, mvp, child.matrix);
+
+          _engine.gl.vertexAttribPointer(this.program.vpos, 3, _engine.gl.FLOAT, _engine.gl.FALSE, 0, 0);
+
+          _engine.gl.uniformMatrix4fv(this.program.mvp, _engine.gl.FALSE, new Float32Array(mvp));
+          _engine.gl.drawElements(_engine.gl.TRIANGLES, child.indices.length, _engine.gl.UNSIGNED_BYTE, 0);
         }
       } catch (err) {
         _didIteratorError2 = true;
@@ -5374,7 +5407,7 @@ var Scene = (function (_Component) {
   }], [{
     key: 'defaultOpts',
     get: function get() {
-      return { program: Program['default'] };
+      return { program: _program.Program['default'] };
     }
   }]);
 
@@ -5383,7 +5416,7 @@ var Scene = (function (_Component) {
 
 exports.Scene = Scene;
 
-},{"./component":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/component.es6","./engine":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/engine.es6"}],"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/shader.es6":[function(require,module,exports){
+},{"./component":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/component.es6","./engine":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/engine.es6","./program":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/program.es6","gl-matrix":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/node_modules/gl-matrix/src/gl-matrix.js"}],"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/shader.es6":[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -5398,11 +5431,13 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
+var _engine = require('./engine');
+
 var Shader = (function () {
-  function Shader(shader) {
+  function Shader(type) {
     _classCallCheck(this, Shader);
 
-    this.shader = gl.createShader(type);
+    this.shader = _engine.gl.createShader(type);
     return this;
   }
 
@@ -5419,12 +5454,12 @@ var Shader = (function () {
   }, {
     key: "compileFromString",
     value: function compileFromString(str) {
-      gl.shaderSource(this.shader, str);
-      gl.compileShader(this.shader);
+      _engine.gl.shaderSource(this.shader, str);
+      _engine.gl.compileShader(this.shader);
 
-      var success = gl.getShaderParameter(this.shader, gl.COMPILE_STATUS);
+      var success = _engine.gl.getShaderParameter(this.shader, _engine.gl.COMPILE_STATUS);
       if (!success) {
-        throw "Could not compile shader:" + gl.getShaderInfoLog(this.shader);
+        throw "Could not compile shader:" + _engine.gl.getShaderInfoLog(this.shader);
       }
 
       return this;
@@ -5442,13 +5477,13 @@ var VertexShader = (function (_Shader) {
   function VertexShader() {
     _classCallCheck(this, VertexShader);
 
-    _get(Object.getPrototypeOf(VertexShader.prototype), "constructor", this).call(this, gl.VERTEX_SHADER);
+    _get(Object.getPrototypeOf(VertexShader.prototype), "constructor", this).call(this, _engine.gl.VERTEX_SHADER);
   }
 
   _createClass(VertexShader, null, [{
     key: "default",
     get: function get() {
-      var src = "#version 330 core\n\n               layout(location = 0) in vec3 vpos;\n               uniform mat4 mvp;\n\n               void main() {\n                 gl_Position =  mvp * vec4(vpos,1);\n               }";
+      var src = "attribute vec4 aVertexPosition;\n               uniform mat4 mvp;\n\n               void main() {\n                 gl_Position =  mvp * aVertexPosition;\n               }";
 
       return new VertexShader().compileFromString(src);
     }
@@ -5465,13 +5500,13 @@ var FragmentShader = (function (_Shader2) {
   function FragmentShader() {
     _classCallCheck(this, FragmentShader);
 
-    _get(Object.getPrototypeOf(FragmentShader.prototype), "constructor", this).call(this, gl.FRAGMENT_SHADER);
+    _get(Object.getPrototypeOf(FragmentShader.prototype), "constructor", this).call(this, _engine.gl.FRAGMENT_SHADER);
   }
 
   _createClass(FragmentShader, null, [{
     key: "default",
     get: function get() {
-      var src = "#version 330 core\n\n               layout(location = 0) out vec3 color;\n\n               void main() {\n                 color = vec3(1,1,1);\n               }";
+      var src = "void main() {\n                 gl_FragColor = vec4(1,1,1,1);\n               }";
 
       return new FragmentShader().compileFromString(src);
     }
@@ -5482,12 +5517,14 @@ var FragmentShader = (function (_Shader2) {
 
 exports.FragmentShader = FragmentShader;
 
-},{}],"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/transform.es6":[function(require,module,exports){
+},{"./engine":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/engine.es6"}],"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/transform.es6":[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
   value: true
 });
+
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
 
 var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; desc = parent = getter = undefined; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
 
@@ -5508,6 +5545,13 @@ var Transform = (function (_Component) {
     _get(Object.getPrototypeOf(Transform.prototype), 'constructor', this).call(this);
     this.matrix = _glMatrix.mat4.create();
   }
+
+  _createClass(Transform, [{
+    key: 'translate',
+    value: function translate(x, y, z) {
+      _glMatrix.mat4.translate(this.matrix, this.matrix, _glMatrix.vec3.fromValues(x, y, z));
+    }
+  }]);
 
   return Transform;
 })(_component.Component);

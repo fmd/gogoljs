@@ -2,9 +2,10 @@ import { gogol, Scene, Quad, Program } from '../src'
 gogol.init('gogol-example')
 
 let s = new Scene()
-let q = new Quad(100, 100)
-
 gogol.scene = s
+
+let q = new Quad(100, 100)
+q.translate(400, 300, 0)
 s.addChild(q)
 s.bake()
 
@@ -14,5 +15,3 @@ function render() {
   gogol.processOneFrame()
   window.setTimeout(render, 1000 / 60)
 }
-
-s.destroy()

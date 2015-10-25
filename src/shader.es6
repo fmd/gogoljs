@@ -1,5 +1,7 @@
+import { gl } from './engine'
+
 export class Shader {
-  constructor(shader) {
+  constructor(type) {
     this.shader = gl.createShader(type);
     return this
   }
@@ -31,13 +33,11 @@ export class VertexShader extends Shader {
   }
 
   static get default() {
-    let src = `#version 330 core
-
-               layout(location = 0) in vec3 vpos;
+    let src = `attribute vec4 aVertexPosition;
                uniform mat4 mvp;
 
                void main() {
-                 gl_Position =  mvp * vec4(vpos,1);
+                 gl_Position =  mvp * aVertexPosition;
                }`
 
     return new VertexShader().compileFromString(src)
@@ -50,12 +50,8 @@ export class FragmentShader extends Shader {
   }
 
   static get default() {
-    let src = `#version 330 core
-
-               layout(location = 0) out vec3 color;
-
-               void main() {
-                 color = vec3(1,1,1);
+    let src = `void main() {
+                 gl_FragColor = vec4(1,1,1,1);
                }`
 
     return new FragmentShader().compileFromString(src)

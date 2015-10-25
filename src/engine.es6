@@ -1,6 +1,8 @@
 import { color } from './color'
 
 export var gl
+export var gogol
+
 export class Engine {
   init(canvasId, opts = this.defaultOpts) {
     this._opts = opts
@@ -44,3 +46,5 @@ export class Engine {
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT)
   }
 }
+
+gogol = new Engine()
