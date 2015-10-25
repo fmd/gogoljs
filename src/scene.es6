@@ -1,5 +1,5 @@
 import { mat4, vec3 } from 'gl-matrix'
-import { gogol, gl, FLOAT_SIZE } from './engine'
+import { gogol, gl } from './engine'
 import { Component } from './component'
 import { Program } from './program'
 
@@ -31,14 +31,8 @@ export class Scene extends Component {
     this._indexBuffer = gl.createBuffer()
 
     for (let child of this.children) {
-      if (child.vertices) {
-        child.verticesIndex = vertices.length * FLOAT_SIZE
-        vertices = vertices.concat(child.vertices)
-      }
-
-      if (child.indices) {
-        child.indicesIndex = indices.length
-        indices = indices.concat(child.indices)
+      if (child.vertices && child.indices) {
+        child.bake(vertices, indices)
       }
     }
 

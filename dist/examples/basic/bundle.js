@@ -8,21 +8,30 @@ _src.gogol.init('gogol-example');
 var s = new _src.Scene();
 _src.gogol.scene = s;
 
-var q = new _src.Quad(10, 10);
-var q2 = new _src.Quad(50, 50);
-q.translate(100, 300, 0);
-q2.translate(600, 300, 0);
+var sun = new _src.Quad(50, 50);
+var earth = new _src.Quad(25, 25);
+var moon = new _src.Quad(10, 10);
 
-s.addChild(q);
-s.addChild(q2);
+sun.addChild(earth);
+earth.translate(200, 0, 0);
+
+earth.addChild(moon);
+moon.translate(50, 0, 0);
+
+s.addChild(sun);
+sun.translate(400, 300, 0);
+
 s.bake();
-
-render();
 
 function render() {
   _src.gogol.processOneFrame();
+  sun.rotate(0.25);
+  earth.rotate(1.0);
+  moon.rotate(2.0);
   window.setTimeout(render, 1000 / 60);
 }
+
+render();
 
 },{"../src":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/index.es6"}],"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/node_modules/gl-matrix/src/gl-matrix.js":[function(require,module,exports){
 /**
@@ -5307,16 +5316,79 @@ var Renderable = (function (_Transform) {
   }
 
   _createClass(Renderable, [{
+    key: 'bake',
+    value: function bake(vertices, indices) {
+      this.verticesIndex = vertices.length * _engine.FLOAT_SIZE;
+      vertices.push.apply(vertices, this.vertices);
+
+      this.indicesIndex = indices.length;
+      indices.push.apply(indices, this.indices);
+
+      var _iteratorNormalCompletion = true;
+      var _didIteratorError = false;
+      var _iteratorError = undefined;
+
+      try {
+        for (var _iterator = this.children[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+          var child = _step.value;
+
+          if (child.vertices && child.indices) {
+            child.bake(vertices, indices);
+          }
+        }
+      } catch (err) {
+        _didIteratorError = true;
+        _iteratorError = err;
+      } finally {
+        try {
+          if (!_iteratorNormalCompletion && _iterator['return']) {
+            _iterator['return']();
+          }
+        } finally {
+          if (_didIteratorError) {
+            throw _iteratorError;
+          }
+        }
+      }
+    }
+  }, {
     key: 'render',
     value: function render(pvMatrix) {
       var mvp = _glMatrix.mat4.create();
-      _glMatrix.mat4.mul(mvp, pvMatrix, this.matrix);
+      _glMatrix.mat4.mul(mvp, pvMatrix, this.worldMatrix);
 
       _engine.gl.vertexAttribPointer(this.program.vpos, _engine.VERTEX_SIZE, _engine.gl.FLOAT, _engine.gl.FALSE, 0, this.verticesIndex);
 
       _engine.gl.uniformMatrix4fv(this.program.mvp, _engine.gl.FALSE, new Float32Array(mvp));
 
       _engine.gl.drawElements(_engine.gl.TRIANGLES, this.indices.length, _engine.gl.UNSIGNED_BYTE, this.indicesIndex);
+
+      var _iteratorNormalCompletion2 = true;
+      var _didIteratorError2 = false;
+      var _iteratorError2 = undefined;
+
+      try {
+        for (var _iterator2 = this.children[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
+          var child = _step2.value;
+
+          if (child.program) {
+            child.render(pvMatrix);
+          }
+        }
+      } catch (err) {
+        _didIteratorError2 = true;
+        _iteratorError2 = err;
+      } finally {
+        try {
+          if (!_iteratorNormalCompletion2 && _iterator2['return']) {
+            _iterator2['return']();
+          }
+        } finally {
+          if (_didIteratorError2) {
+            throw _iteratorError2;
+          }
+        }
+      }
     }
   }]);
 
@@ -5387,14 +5459,8 @@ var Scene = (function (_Component) {
         for (var _iterator = this.children[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
           var child = _step.value;
 
-          if (child.vertices) {
-            child.verticesIndex = vertices.length * _engine.FLOAT_SIZE;
-            vertices = vertices.concat(child.vertices);
-          }
-
-          if (child.indices) {
-            child.indicesIndex = indices.length;
-            indices = indices.concat(child.indices);
+          if (child.vertices && child.indices) {
+            child.bake(vertices, indices);
           }
         }
       } catch (err) {
@@ -5636,6 +5702,22 @@ var Transform = (function (_Component) {
     key: 'translate',
     value: function translate(x, y, z) {
       _glMatrix.mat4.translate(this.matrix, this.matrix, _glMatrix.vec3.fromValues(x, y, z));
+    }
+  }, {
+    key: 'rotate',
+    value: function rotate(deg) {
+      _glMatrix.mat4.rotate(this.matrix, this.matrix, _glMatrix.glMatrix.toRadian(deg), _glMatrix.vec3.fromValues(0.0, 0.0, 1.0));
+    }
+  }, {
+    key: 'worldMatrix',
+    get: function get() {
+      if (this.parent != null && this.parent.matrix != null) {
+        var out = _glMatrix.mat4.create();
+        _glMatrix.mat4.mul(out, this.parent.worldMatrix, this.matrix);
+        return out;
+      }
+
+      return this.matrix;
     }
   }]);
 
