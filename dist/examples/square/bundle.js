@@ -5016,7 +5016,7 @@ var Engine = (function () {
     key: 'processOneFrame',
     value: function processOneFrame() {
       var c = this.opts.clearColor;
-      gl.clearColor(c.r, c.g, c.b, c.a);
+      gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
       if (this.scene != null && this.scene.isBaked) {
         this.scene.render();
@@ -5031,7 +5031,6 @@ var Engine = (function () {
       gl.clearColor(c.r, c.g, c.b, c.a);
       gl.enable(gl.DEPTH_TEST);
       gl.depthFunc(gl.LEQUAL);
-      gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
     }
   }, {
     key: 'opts',
