@@ -1,3 +1,5 @@
+import { ComponentList } from './component_list'
+
 export class Component {
   constructor() {
     this.parent = null

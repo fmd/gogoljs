@@ -1,7 +1,5 @@
-import { Component } from './component'
-
-export class Material extends Component {
+export class Material {
   constructor() {
-    super()
+    this.program = null
   }
 }

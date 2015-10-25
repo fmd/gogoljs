@@ -1,3 +1,5 @@
+import { Color } from './color'
+import { ColorMaterial } from './color_material'
 import { Renderable } from './renderable'
 
 var calculateVertices = function(width, height) {
@@ -18,5 +20,6 @@ export class Quad extends Renderable {
     this.height = height
     this.vertices = calculateVertices(width, height)
     this.indices = calculateIndices()
+    this.material = new ColorMaterial({ color: new Color(1.0, 0.0, 1.0, 1.0) })
   }
 }

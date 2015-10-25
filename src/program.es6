@@ -1,8 +1,6 @@
 import { gl } from './engine'
 import { VertexShader, FragmentShader } from './shader'
 
-var _defaultProgram = null
-
 export class Program {
   constructor(vertexShader, fragmentShader) {
     let program = gl.createProgram()
@@ -11,31 +9,25 @@ export class Program {
     gl.attachShader(program, fragmentShader.shader)
     gl.linkProgram(program)
 
-    let success = gl.getProgramParameter(program, gl.LINK_STATUS);
-
-    if (!success) {
-      throw "Could not compile program:" + gl.getShaderInfoLog(program);
-    }
-
     this.program = program
+    this.checkErrors()
+
     return this
   }
 
-  static get default() {
-    if (_defaultProgram != null) {
-      return _defaultProgram
+  activate() {
+    gl.useProgram(this.program)
+  }
+
+  attr(str) {
+    return gl.getUniformLocation(this.program, str);
+  }
+
+  checkErrors() {
+    let success = gl.getProgramParameter(this.program, gl.LINK_STATUS);
+
+    if (!success) {
+      throw "Could not compile program:" + gl.getShaderInfoLog(this.program);
     }
-
-    var p = new Program(VertexShader.default, FragmentShader.default)
-
-    p.mvp = gl.getUniformLocation(p.program, 'mvp');
-    p.vpos = gl.getAttribLocation(p.program, 'aVertexPosition');
-
-    gl.enableVertexAttribArray(p.vpos);
-
-    _defaultProgram = p
-    return p
   }
 }
-
-Program._default = null

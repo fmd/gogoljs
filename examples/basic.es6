@@ -8,6 +8,10 @@ let sun = new Quad(50, 50)
 let earth = new Quad(25, 25)
 let moon = new Quad(10, 10)
 
+sun.name = 'sun'
+earth.name = 'earth'
+moon.name = 'moon'
+
 sun.addChild(earth)
 earth.translate(200, 0, 0)
 

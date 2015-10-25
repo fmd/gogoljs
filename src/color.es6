@@ -1,4 +1,4 @@
-export class color {
+export class Color {
   init(r, g, b, a) {
     this.r = r
     this.g = g
@@ -7,10 +7,10 @@ export class color {
   }
 
   static get black() {
-    return new color(0.0, 0.0, 0.0, 1.0)
+    return new Color(0.0, 0.0, 0.0, 1.0)
   }
 
   static get white() {
-    return new color(1.0, 1.0, 1.0, 1.0)
+    return new Color(1.0, 1.0, 1.0, 1.0)
   }
 }

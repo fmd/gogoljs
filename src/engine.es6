@@ -1,4 +1,4 @@
-import { color } from './color'
+import { Color } from './color'
 
 export const VERTEX_SIZE = 3
 export const FLOAT_SIZE = 4
@@ -23,7 +23,7 @@ export class Engine {
   }
 
   get defaultOpts() {
-    return { clearColor: color.black }
+    return { clearColor: Color.black }
   }
 
   resize() {
