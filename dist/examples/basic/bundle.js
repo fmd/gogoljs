@@ -9,18 +9,25 @@ var s = new _src.Scene();
 _src.gogol.scene = s;
 
 var sun = new _src.Quad(50, 50);
-var earth = new _src.Quad(25, 25);
-var moon = new _src.Quad(10, 10);
+sun.material.color = _src.Color.fromHex('#f39c12');
 
-sun.name = 'sun';
-earth.name = 'earth';
-moon.name = 'moon';
+var mars = new _src.Quad(20, 20);
+mars.material.color = _src.Color.fromHex('#c0392b');
+
+var earth = new _src.Quad(25, 25);
+earth.material.color = _src.Color.fromHex('#16a085');
+
+var moon = new _src.Quad(10, 10);
+moon.material.color = _src.Color.fromHex('#95a5a6');
 
 sun.addChild(earth);
 earth.translate(200, 0, 0);
 
+sun.addChild(mars);
+mars.translate(0, 100, 0);
+
 earth.addChild(moon);
-moon.translate(50, 0, 0);
+moon.translate(80, 0, 0);
 
 s.addChild(sun);
 sun.translate(400, 300, 0);
@@ -31,6 +38,7 @@ function render() {
   _src.gogol.processOneFrame();
   sun.rotate(0.25);
   earth.rotate(1.0);
+  mars.rotate(5.0);
   moon.rotate(2.0);
   window.setTimeout(render, 1000 / 60);
 }
@@ -4935,36 +4943,48 @@ vec4.str = function (a) {
 module.exports = vec4;
 
 },{"./common.js":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/node_modules/gl-matrix/src/gl-matrix/common.js"}],"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/color.es6":[function(require,module,exports){
-"use strict";
+'use strict';
 
-Object.defineProperty(exports, "__esModule", {
+Object.defineProperty(exports, '__esModule', {
   value: true
 });
 
-var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
 
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 
 var Color = (function () {
-  function Color() {
+  function Color(r, g, b, a) {
     _classCallCheck(this, Color);
+
+    this.r = r;
+    this.g = g;
+    this.b = b;
+    this.a = a;
   }
 
   _createClass(Color, [{
-    key: "init",
-    value: function init(r, g, b, a) {
-      this.r = r;
-      this.g = g;
-      this.b = b;
-      this.a = a;
+    key: 'toVector',
+    value: function toVector() {
+      return new Float32Array([this.r, this.g, this.b, this.a]);
     }
   }], [{
-    key: "black",
+    key: 'fromHex',
+    value: function fromHex(hex) {
+      hex = hex.replace('#', '');
+      var r = parseInt(hex.substring(0, 2), 16) / 255;
+      var g = parseInt(hex.substring(2, 4), 16) / 255;
+      var b = parseInt(hex.substring(4, 6), 16) / 255;
+      var a = 1.0;
+      return new Color(r, g, b, a);
+    }
+  }, {
+    key: 'black',
     get: function get() {
       return new Color(0.0, 0.0, 0.0, 1.0);
     }
   }, {
-    key: "white",
+    key: 'white',
     get: function get() {
       return new Color(1.0, 1.0, 1.0, 1.0);
     }
@@ -4984,7 +5004,7 @@ Object.defineProperty(exports, '__esModule', {
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
 
-var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; desc = parent = getter = undefined; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
+var _get = function get(_x2, _x3, _x4) { var _again = true; _function: while (_again) { var object = _x2, property = _x3, receiver = _x4; desc = parent = getter = undefined; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x2 = parent; _x3 = property; _x4 = receiver; _again = true; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 
@@ -4994,44 +5014,64 @@ var _color = require('./color');
 
 var _engine = require('./engine');
 
-var _program = require('./program');
+var _program2 = require('./program');
 
 var _shader = require('./shader');
 
 var _material = require('./material');
 
-var vertexSrc = '\n  attribute vec4 aVertexPosition;\n  uniform mat4 mvp;\n\n  void main() {\n    gl_Position =  mvp * aVertexPosition;\n  }';
+var vertexSrc = '\n  uniform   mat4 mvp;\n  attribute vec4 aPosition;\n\n  void main() {\n    gl_Position = mvp * aPosition;\n  }';
 
-var fragmentSrc = '\n  void main() {\n    gl_FragColor = vec4(1,1,1,1);\n  }';
+var fragmentSrc = '\n  uniform lowp vec4 uColor;\n\n  void main() {\n    gl_FragColor = uColor;\n  }';
+
+var _program = null;
 
 var ColorMaterial = (function (_Material) {
   _inherits(ColorMaterial, _Material);
 
-  function ColorMaterial(color) {
+  function ColorMaterial() {
+    var opts = arguments.length <= 0 || arguments[0] === undefined ? ColorMaterial.defaultOpts : arguments[0];
+
     _classCallCheck(this, ColorMaterial);
 
     _get(Object.getPrototypeOf(ColorMaterial.prototype), 'constructor', this).call(this);
-
-    var vShader = new _shader.VertexShader().compileFromString(vertexSrc);
-    var fShader = new _shader.FragmentShader().compileFromString(fragmentSrc);
-
-    this.program = new _program.Program(vShader, fShader);
+    this._makeProgram();
+    this.program = _program;
+    this.color = opts.color;
     this.mvp = this.program.attr('mvp');
-    this.aVertexPosition = this.program.attr('aVertexPosition');
+    this.uColor = this.program.attr('uColor');
+    this.aPosition = this.program.attr('aPosition');
   }
 
   _createClass(ColorMaterial, [{
+    key: '_makeProgram',
+    value: function _makeProgram() {
+      if (_program != null) {
+        return;
+      }
+
+      var vShader = new _shader.VertexShader().compileFromString(vertexSrc);
+      var fShader = new _shader.FragmentShader().compileFromString(fragmentSrc);
+      _program = new _program2.Program(vShader, fShader);
+    }
+  }, {
     key: 'render',
     value: function render(mvp, vIndex, iIndex, len) {
       this.program.activate();
 
-      _engine.gl.enableVertexAttribArray(this.aVertexPosition);
+      _engine.gl.enableVertexAttribArray(this.aPosition);
 
-      _engine.gl.vertexAttribPointer(this.aVertexPosition, _engine.VERTEX_SIZE, _engine.gl.FLOAT, _engine.gl.FALSE, 0, vIndex);
+      _engine.gl.vertexAttribPointer(this.aPosition, _engine.VERTEX_SIZE, _engine.gl.FLOAT, _engine.gl.FALSE, 0, vIndex);
+      _engine.gl.uniform4fv(this.uColor, this.color.toVector());
       _engine.gl.uniformMatrix4fv(this.mvp, _engine.gl.FALSE, new Float32Array(mvp));
       _engine.gl.drawElements(_engine.gl.TRIANGLES, len, _engine.gl.UNSIGNED_BYTE, iIndex);
 
-      _engine.gl.disableVertexAttribArray(this.aVertexPosition);
+      _engine.gl.disableVertexAttribArray(this.aPosition);
+    }
+  }], [{
+    key: 'defaultOpts',
+    get: function get() {
+      return { color: new _color.Color(1.0, 1.0, 1.0, 1.0) };
     }
   }]);
 

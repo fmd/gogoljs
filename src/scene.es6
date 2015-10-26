@@ -6,8 +6,8 @@ import { Program } from './program'
 export class Scene extends Component {
   constructor(opts = Scene.defaultOpts) {
     super()
-    this._vertexBuffer = null;
-    this._indexBuffer = null;
+    this._vertexBuffer = null
+    this._indexBuffer = null
 
     this.projectionMatrix = mat4.create()
     this.viewMatrix = mat4.create()

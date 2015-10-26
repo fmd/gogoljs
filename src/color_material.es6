@@ -5,27 +5,35 @@ import { VertexShader, FragmentShader } from './shader'
 import { Material } from './material'
 
 let vertexSrc = `
-  attribute vec4 vpos;
-  uniform mat4 mvp;
+  uniform   mat4 mvp;
+  attribute vec4 aPosition;
 
   void main() {
-    gl_Position =  mvp * vpos;
+    gl_Position = mvp * aPosition;
   }`
 
 let fragmentSrc = `
+  uniform lowp vec4 uColor;
+
   void main() {
-    gl_FragColor = vec4(1,1,1,1);
+    gl_FragColor = uColor;
   }`
 
 var _program = null
 
 export class ColorMaterial extends Material {
-  constructor(color) {
+  constructor(opts = ColorMaterial.defaultOpts) {
     super()
     this._makeProgram()
-
+    this.program = _program
+    this.color = opts.color
     this.mvp = this.program.attr('mvp')
-    this.vpos = this.program.attr('vpos')
+    this.uColor = this.program.attr('uColor')
+    this.aPosition = this.program.attr('aPosition')
+  }
+
+  static get defaultOpts() {
+    return { color: new Color(1.0, 1.0, 1.0, 1.0) }
   }
 
   _makeProgram() {
@@ -36,18 +44,18 @@ export class ColorMaterial extends Material {
     let vShader = new VertexShader().compileFromString(vertexSrc)
     let fShader = new FragmentShader().compileFromString(fragmentSrc)
     _program = new Program(vShader, fShader)
-    this.program = _program
   }
 
   render(mvp, vIndex, iIndex, len) {
     this.program.activate()
 
-    gl.enableVertexAttribArray(this.vpos)
+    gl.enableVertexAttribArray(this.aPosition)
 
-    gl.vertexAttribPointer(this.vpos, VERTEX_SIZE, gl.FLOAT, gl.FALSE, 0, vIndex)
+    gl.vertexAttribPointer(this.aPosition, VERTEX_SIZE, gl.FLOAT, gl.FALSE, 0, vIndex)
+    gl.uniform4fv(this.uColor, this.color.toVector())
     gl.uniformMatrix4fv(this.mvp, gl.FALSE, new Float32Array(mvp))
     gl.drawElements(gl.TRIANGLES, len, gl.UNSIGNED_BYTE, iIndex)
 
-    gl.disableVertexAttribArray(this.vpos)
+    gl.disableVertexAttribArray(this.aPosition)
   }
 }
