@@ -2,9 +2,13 @@ import { Program } from './program'
 import { VertexShader, FragmentShader } from './shader'
 
 export class Material {
-  constructor() {
+  constructor(materialClass, vertexSrc, fragmentSrc) {
+    if (materialClass.program == null) {
+      materialClass.program = this._makeProgram(vertexSrc, fragmentSrc)
+    }
+
+    this.program = materialClass.program
     this.target = null
-    this.program = null
   }
 
   _makeProgram(vertexSrc, fragmentSrc) {
@@ -15,11 +19,11 @@ export class Material {
   }
 
   render() {
-    if (Material.program != this.program) {
-      Material.program = this.program
+    if (Material.currentProgram != this.program) {
+      Material.currentProgram = this.program
       this.program.activate()
     }
   }
 }
 
-Material.program = null
+Material.currentProgram = null

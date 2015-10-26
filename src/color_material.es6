@@ -19,13 +19,8 @@ let fragmentSrc = `
 
 export class ColorMaterial extends Material {
   constructor(opts = ColorMaterial.defaultOpts) {
-    super()
+    super(ColorMaterial, vertexSrc, fragmentSrc)
 
-    if (ColorMaterial.program == null) {
-      ColorMaterial.program = this._makeProgram(vertexSrc, fragmentSrc)
-    }
-
-    this.program = ColorMaterial.program
     this.color = opts.color
     this.mvp = this.program.attr('mvp')
     this.uColor = this.program.attr('uColor')
@@ -38,6 +33,7 @@ export class ColorMaterial extends Material {
 
   render(mvp) {
     super.render()
+
     // Enable attributes
     gl.enableVertexAttribArray(this.aPosition)
     gl.vertexAttribPointer(this.aPosition,
@@ -51,7 +47,7 @@ export class ColorMaterial extends Material {
     gl.uniform4fv(this.uColor, this.color.toVector())
     gl.uniformMatrix4fv(this.mvp, gl.FALSE, new Float32Array(mvp))
 
-    // Draw
+    // Draw elements
     gl.drawElements(gl.TRIANGLES,
                     this.target.indices.length,
                     gl.UNSIGNED_BYTE,

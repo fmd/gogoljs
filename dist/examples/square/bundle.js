@@ -4986,13 +4986,8 @@ var ColorMaterial = (function (_Material) {
 
     _classCallCheck(this, ColorMaterial);
 
-    _get(Object.getPrototypeOf(ColorMaterial.prototype), 'constructor', this).call(this);
+    _get(Object.getPrototypeOf(ColorMaterial.prototype), 'constructor', this).call(this, ColorMaterial, vertexSrc, fragmentSrc);
 
-    if (ColorMaterial.program == null) {
-      ColorMaterial.program = this._makeProgram(vertexSrc, fragmentSrc);
-    }
-
-    this.program = ColorMaterial.program;
     this.color = opts.color;
     this.mvp = this.program.attr('mvp');
     this.uColor = this.program.attr('uColor');
@@ -5003,6 +4998,7 @@ var ColorMaterial = (function (_Material) {
     key: 'render',
     value: function render(mvp) {
       _get(Object.getPrototypeOf(ColorMaterial.prototype), 'render', this).call(this);
+
       // Enable attributes
       _engine.gl.enableVertexAttribArray(this.aPosition);
       _engine.gl.vertexAttribPointer(this.aPosition, _engine.VERTEX_SIZE, _engine.gl.FLOAT, _engine.gl.FALSE, 0, this.target.verticesIndex);
@@ -5011,7 +5007,7 @@ var ColorMaterial = (function (_Material) {
       _engine.gl.uniform4fv(this.uColor, this.color.toVector());
       _engine.gl.uniformMatrix4fv(this.mvp, _engine.gl.FALSE, new Float32Array(mvp));
 
-      // Draw
+      // Draw elements
       _engine.gl.drawElements(_engine.gl.TRIANGLES, this.target.indices.length, _engine.gl.UNSIGNED_BYTE, this.target.indicesIndex);
 
       // Disable attributes
@@ -5282,11 +5278,15 @@ var _program = require('./program');
 var _shader = require('./shader');
 
 var Material = (function () {
-  function Material() {
+  function Material(materialClass, vertexSrc, fragmentSrc) {
     _classCallCheck(this, Material);
 
+    if (materialClass.program == null) {
+      materialClass.program = this._makeProgram(vertexSrc, fragmentSrc);
+    }
+
+    this.program = materialClass.program;
     this.target = null;
-    this.program = null;
   }
 
   _createClass(Material, [{
@@ -5300,8 +5300,8 @@ var Material = (function () {
   }, {
     key: 'render',
     value: function render() {
-      if (Material.program != this.program) {
-        Material.program = this.program;
+      if (Material.currentProgram != this.program) {
+        Material.currentProgram = this.program;
         this.program.activate();
       }
     }
@@ -5312,7 +5312,7 @@ var Material = (function () {
 
 exports.Material = Material;
 
-Material.program = null;
+Material.currentProgram = null;
 
 },{"./program":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/program.es6","./shader":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/shader.es6"}],"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/program.es6":[function(require,module,exports){
 'use strict';
@@ -5577,6 +5577,7 @@ var Scene = (function (_Component) {
       _engine.gl.bufferData(_engine.gl.ELEMENT_ARRAY_BUFFER, new Uint8Array(indices), _engine.gl.STATIC_DRAW);
 
       _glMatrix.mat4.ortho(this.projectionMatrix, 0.0, _engine.gogol.canvas.width, _engine.gogol.canvas.height, 0.0, 0.0, 100.0);
+
       _glMatrix.mat4.lookAt(this.viewMatrix, _glMatrix.vec3.fromValues(0, 0, 1), _glMatrix.vec3.fromValues(0, 0, 0), _glMatrix.vec3.fromValues(0, 1, 0));
 
       this.isBaked = true;

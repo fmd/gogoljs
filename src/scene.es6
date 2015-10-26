@@ -43,6 +43,7 @@ export class Scene extends Component {
     gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint8Array(indices), gl.STATIC_DRAW)
 
     mat4.ortho(this.projectionMatrix, 0.0, gogol.canvas.width, gogol.canvas.height, 0.0, 0.0, 100.0)
+
     mat4.lookAt(this.viewMatrix, vec3.fromValues(0,0,1), vec3.fromValues(0,0,0), vec3.fromValues(0,1,0))
 
     this.isBaked = true
