@@ -5427,7 +5427,7 @@ var Quad = (function (_Renderable) {
     this.height = height;
     this.vertices = calculateVertices(width, height);
     this.indices = calculateIndices();
-    this.material = new _color_material.ColorMaterial({ color: new _color.Color(1.0, 0.0, 1.0, 1.0) });
+    this.useMaterial(new _color_material.ColorMaterial());
   }
 
   return Quad;
@@ -5463,17 +5463,22 @@ var Renderable = (function (_Transform) {
     _classCallCheck(this, Renderable);
 
     _get(Object.getPrototypeOf(Renderable.prototype), 'constructor', this).call(this);
-    this.material = null;
+    this._material = null;
 
     this.vertices = [];
     this.indices = [];
 
-    // Set when the scene is baked.
     this.verticesIndex = null;
     this.indicesIndex = null;
   }
 
   _createClass(Renderable, [{
+    key: 'useMaterial',
+    value: function useMaterial(material) {
+      this._material = material;
+      material.target = this;
+    }
+  }, {
     key: 'bake',
     value: function bake(vertices, indices) {
       this.verticesIndex = vertices.length * _engine.FLOAT_SIZE;
@@ -5489,6 +5494,11 @@ var Renderable = (function (_Transform) {
       var mvp = _glMatrix.mat4.create();
       _glMatrix.mat4.mul(mvp, pvMatrix, this.worldMatrix);
       this.material.render(mvp, this.verticesIndex, this.indicesIndex, this.indices.length);
+    }
+  }, {
+    key: 'material',
+    get: function get() {
+      return this._material;
     }
   }]);
 

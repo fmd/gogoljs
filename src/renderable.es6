@@ -5,14 +5,22 @@ import { Transform } from './transform'
 export class Renderable extends Transform {
   constructor() {
     super()
-    this.material = null
+    this._material = null
 
     this.vertices = []
     this.indices = []
 
-    // Set when the scene is baked.
     this.verticesIndex = null
     this.indicesIndex = null
+  }
+
+  useMaterial(material) {
+    this._material = material
+    material.target = this
+  }
+
+  get material() {
+    return this._material
   }
 
   bake(vertices, indices) {
