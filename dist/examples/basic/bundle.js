@@ -38,7 +38,7 @@ function render() {
   _src.gogol.processOneFrame();
   sun.rotate(0.25);
   earth.rotate(1.0);
-  mars.rotate(5.0);
+  mars.rotate(1.2);
   moon.rotate(2.0);
   window.setTimeout(render, 1000 / 60);
 }
