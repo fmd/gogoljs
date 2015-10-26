@@ -4972,17 +4972,11 @@ var _color = require('./color');
 
 var _engine = require('./engine');
 
-var _program2 = require('./program');
-
-var _shader = require('./shader');
-
 var _material = require('./material');
 
 var vertexSrc = '\n  uniform   mat4 mvp;\n  attribute vec4 aPosition;\n\n  void main() {\n    gl_Position = mvp * aPosition;\n  }';
 
 var fragmentSrc = '\n  uniform lowp vec4 uColor;\n\n  void main() {\n    gl_FragColor = uColor;\n  }';
-
-var _program = null;
 
 var ColorMaterial = (function (_Material) {
   _inherits(ColorMaterial, _Material);
@@ -4993,8 +4987,12 @@ var ColorMaterial = (function (_Material) {
     _classCallCheck(this, ColorMaterial);
 
     _get(Object.getPrototypeOf(ColorMaterial.prototype), 'constructor', this).call(this);
-    this._makeProgram();
-    this.program = _program;
+
+    if (ColorMaterial.program == null) {
+      ColorMaterial.program = this._makeProgram(vertexSrc, fragmentSrc);
+    }
+
+    this.program = ColorMaterial.program;
     this.color = opts.color;
     this.mvp = this.program.attr('mvp');
     this.uColor = this.program.attr('uColor');
@@ -5002,28 +5000,20 @@ var ColorMaterial = (function (_Material) {
   }
 
   _createClass(ColorMaterial, [{
-    key: '_makeProgram',
-    value: function _makeProgram() {
-      if (_program != null) {
-        return;
-      }
-
-      var vShader = new _shader.VertexShader().compileFromString(vertexSrc);
-      var fShader = new _shader.FragmentShader().compileFromString(fragmentSrc);
-      _program = new _program2.Program(vShader, fShader);
-    }
-  }, {
     key: 'render',
-    value: function render(mvp, vIndex, iIndex, len) {
-      this.program.activate();
-
+    value: function render(mvp) {
+      // Enable attributes
       _engine.gl.enableVertexAttribArray(this.aPosition);
+      _engine.gl.vertexAttribPointer(this.aPosition, _engine.VERTEX_SIZE, _engine.gl.FLOAT, _engine.gl.FALSE, 0, this.target.verticesIndex);
 
-      _engine.gl.vertexAttribPointer(this.aPosition, _engine.VERTEX_SIZE, _engine.gl.FLOAT, _engine.gl.FALSE, 0, vIndex);
+      // Pass variables into program
       _engine.gl.uniform4fv(this.uColor, this.color.toVector());
       _engine.gl.uniformMatrix4fv(this.mvp, _engine.gl.FALSE, new Float32Array(mvp));
-      _engine.gl.drawElements(_engine.gl.TRIANGLES, len, _engine.gl.UNSIGNED_BYTE, iIndex);
 
+      // Draw
+      _engine.gl.drawElements(_engine.gl.TRIANGLES, this.target.indices.length, _engine.gl.UNSIGNED_BYTE, this.target.indicesIndex);
+
+      // Disable attributes
       _engine.gl.disableVertexAttribArray(this.aPosition);
     }
   }], [{
@@ -5038,7 +5028,9 @@ var ColorMaterial = (function (_Material) {
 
 exports.ColorMaterial = ColorMaterial;
 
-},{"./color":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/color.es6","./engine":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/engine.es6","./material":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/material.es6","./program":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/program.es6","./shader":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/shader.es6"}],"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/component.es6":[function(require,module,exports){
+ColorMaterial.program = null;
+
+},{"./color":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/color.es6","./engine":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/engine.es6","./material":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/material.es6"}],"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/component.es6":[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -5274,23 +5266,44 @@ gogol = _engine.gogol;
 exports.gl = _engine.gl;
 
 },{"./color":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/color.es6","./component":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/component.es6","./engine":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/engine.es6","./material":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/material.es6","./program":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/program.es6","./quad":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/quad.es6","./renderable":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/renderable.es6","./scene":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/scene.es6","./shader":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/shader.es6","./transform":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/transform.es6"}],"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/material.es6":[function(require,module,exports){
-"use strict";
+'use strict';
 
-Object.defineProperty(exports, "__esModule", {
+Object.defineProperty(exports, '__esModule', {
   value: true
 });
 
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
 
-var Material = function Material() {
-  _classCallCheck(this, Material);
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 
-  this.program = null;
-};
+var _program = require('./program');
+
+var _shader = require('./shader');
+
+var Material = (function () {
+  function Material() {
+    _classCallCheck(this, Material);
+
+    this.target = null;
+    this.program = null;
+  }
+
+  _createClass(Material, [{
+    key: '_makeProgram',
+    value: function _makeProgram(vertexSrc, fragmentSrc) {
+      this.vertexShader = new _shader.VertexShader().compileFromString(vertexSrc);
+      this.fragmentShader = new _shader.FragmentShader().compileFromString(fragmentSrc);
+      this.program = new _program.Program(this.vertexShader, this.fragmentShader);
+      return this.program;
+    }
+  }]);
+
+  return Material;
+})();
 
 exports.Material = Material;
 
-},{}],"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/program.es6":[function(require,module,exports){
+},{"./program":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/program.es6","./shader":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/shader.es6"}],"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/program.es6":[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -5451,7 +5464,7 @@ var Renderable = (function (_Transform) {
     value: function render(pvMatrix) {
       var mvp = _glMatrix.mat4.create();
       _glMatrix.mat4.mul(mvp, pvMatrix, this.worldMatrix);
-      this.material.render(mvp, this.verticesIndex, this.indicesIndex, this.indices.length);
+      this.material.render(mvp);
     }
   }, {
     key: 'material',
@@ -5579,6 +5592,11 @@ var Scene = (function (_Component) {
 
           if (!child.material) {
             continue;
+          }
+
+          if (child.material.program != currentProgram) {
+            currentProgram = child.material.program;
+            currentProgram.activate();
           }
 
           child.render(pvMatrix);

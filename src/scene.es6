@@ -52,7 +52,7 @@ export class Scene extends Component {
     gl.bindBuffer(gl.ARRAY_BUFFER, this._vertexBuffer)
     gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this._indexBuffer)
 
-    var currentProgram = null
+    let currentProgram = null
 
     let pvMatrix = mat4.create()
     mat4.mul(pvMatrix, pvMatrix, this.projectionMatrix)
@@ -61,6 +61,11 @@ export class Scene extends Component {
     for (let child of this.children.flatten()) {
       if (!child.material) {
         continue
+      }
+
+      if (child.material.program != currentProgram) {
+        currentProgram = child.material.program
+        currentProgram.activate()
       }
 
       child.render(pvMatrix)

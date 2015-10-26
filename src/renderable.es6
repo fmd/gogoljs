@@ -35,6 +35,6 @@ export class Renderable extends Transform {
   render(pvMatrix) {
     let mvp = mat4.create()
     mat4.mul(mvp, pvMatrix, this.worldMatrix)
-    this.material.render(mvp, this.verticesIndex, this.indicesIndex, this.indices.length)
+    this.material.render(mvp)
   }
 }

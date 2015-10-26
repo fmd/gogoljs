@@ -1,7 +1,5 @@
 import { Color } from './color'
 import { gl, VERTEX_SIZE } from './engine'
-import { Program } from './program'
-import { VertexShader, FragmentShader } from './shader'
 import { Material } from './material'
 
 let vertexSrc = `
@@ -19,13 +17,15 @@ let fragmentSrc = `
     gl_FragColor = uColor;
   }`
 
-var _program = null
-
 export class ColorMaterial extends Material {
   constructor(opts = ColorMaterial.defaultOpts) {
     super()
-    this._makeProgram()
-    this.program = _program
+
+    if (ColorMaterial.program == null) {
+      ColorMaterial.program = this._makeProgram(vertexSrc, fragmentSrc)
+    }
+
+    this.program = ColorMaterial.program
     this.color = opts.color
     this.mvp = this.program.attr('mvp')
     this.uColor = this.program.attr('uColor')
@@ -36,26 +36,29 @@ export class ColorMaterial extends Material {
     return { color: new Color(1.0, 1.0, 1.0, 1.0) }
   }
 
-  _makeProgram() {
-    if (_program != null) {
-      return
-    }
-
-    let vShader = new VertexShader().compileFromString(vertexSrc)
-    let fShader = new FragmentShader().compileFromString(fragmentSrc)
-    _program = new Program(vShader, fShader)
-  }
-
-  render(mvp, vIndex, iIndex, len) {
-    this.program.activate()
-
+  render(mvp) {
+    // Enable attributes
     gl.enableVertexAttribArray(this.aPosition)
+    gl.vertexAttribPointer(this.aPosition,
+                           VERTEX_SIZE,
+                           gl.FLOAT,
+                           gl.FALSE,
+                           0,
+                           this.target.verticesIndex)
 
-    gl.vertexAttribPointer(this.aPosition, VERTEX_SIZE, gl.FLOAT, gl.FALSE, 0, vIndex)
+    // Pass variables into program
     gl.uniform4fv(this.uColor, this.color.toVector())
     gl.uniformMatrix4fv(this.mvp, gl.FALSE, new Float32Array(mvp))
-    gl.drawElements(gl.TRIANGLES, len, gl.UNSIGNED_BYTE, iIndex)
 
+    // Draw
+    gl.drawElements(gl.TRIANGLES,
+                    this.target.indices.length,
+                    gl.UNSIGNED_BYTE,
+                    this.target.indicesIndex)
+
+    // Disable attributes
     gl.disableVertexAttribArray(this.aPosition)
   }
 }
+
+ColorMaterial.program = null
