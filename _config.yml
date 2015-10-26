@@ -1,0 +1,13 @@
+# Site settings
+title: gogoljs
+email: fareeddudhia@gmail.com
+description: > # this means to ignore newlines until "baseurl:"
+  WebGL as it should be.
+baseurl: "" # the subpath of your site, e.g. /blog/
+url: "http://fmd.github.io/gogoljs" # the base hostname & protocol for your site
+twitter_username: fmdud
+github_username:  fmd
+
+# Build settings
+markdown: kramdown
+exclude: [node_modules, lib]
