@@ -5002,6 +5002,7 @@ var ColorMaterial = (function (_Material) {
   _createClass(ColorMaterial, [{
     key: 'render',
     value: function render(mvp) {
+      _get(Object.getPrototypeOf(ColorMaterial.prototype), 'render', this).call(this);
       // Enable attributes
       _engine.gl.enableVertexAttribArray(this.aPosition);
       _engine.gl.vertexAttribPointer(this.aPosition, _engine.VERTEX_SIZE, _engine.gl.FLOAT, _engine.gl.FALSE, 0, this.target.verticesIndex);
@@ -5296,12 +5297,22 @@ var Material = (function () {
       this.program = new _program.Program(this.vertexShader, this.fragmentShader);
       return this.program;
     }
+  }, {
+    key: 'render',
+    value: function render() {
+      if (Material.program != this.program) {
+        Material.program = this.program;
+        this.program.activate();
+      }
+    }
   }]);
 
   return Material;
 })();
 
 exports.Material = Material;
+
+Material.program = null;
 
 },{"./program":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/program.es6","./shader":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/shader.es6"}],"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/program.es6":[function(require,module,exports){
 'use strict';
@@ -5592,11 +5603,6 @@ var Scene = (function (_Component) {
 
           if (!child.material) {
             continue;
-          }
-
-          if (child.material.program != currentProgram) {
-            currentProgram = child.material.program;
-            currentProgram.activate();
           }
 
           child.render(pvMatrix);

@@ -37,6 +37,7 @@ export class ColorMaterial extends Material {
   }
 
   render(mvp) {
+    super.render()
     // Enable attributes
     gl.enableVertexAttribArray(this.aPosition)
     gl.vertexAttribPointer(this.aPosition,

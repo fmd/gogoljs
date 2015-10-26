@@ -13,4 +13,13 @@ export class Material {
     this.program = new Program(this.vertexShader, this.fragmentShader)
     return this.program
   }
+
+  render() {
+    if (Material.program != this.program) {
+      Material.program = this.program
+      this.program.activate()
+    }
+  }
 }
+
+Material.program = null

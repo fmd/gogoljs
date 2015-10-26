@@ -63,11 +63,6 @@ export class Scene extends Component {
         continue
       }
 
-      if (child.material.program != currentProgram) {
-        currentProgram = child.material.program
-        currentProgram.activate()
-      }
-
       child.render(pvMatrix)
     }
   }
