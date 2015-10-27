@@ -6,6 +6,9 @@ npm install -g gogol
 ```
 
 * Handle fullscreen canvases and window resizing.
+* Texture smoothing
+* option merging
+
 * Allow multiple `Engine`s.
 * Camera system.
 * 3D.

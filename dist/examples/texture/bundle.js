@@ -6032,25 +6032,20 @@ var _engine = require('./engine');
 
 var Texture = (function () {
   function Texture(src) {
+    var _this = this;
+
     _classCallCheck(this, Texture);
 
     var texture = _engine.gl.createTexture();
     var image = new Image();
     image.crossOrigin = 'anonymous';
     image.onload = function () {
-      _engine.gl.bindTexture(_engine.gl.TEXTURE_2D, texture);
-      _engine.gl.texImage2D(_engine.gl.TEXTURE_2D, 0, _engine.gl.RGBA, _engine.gl.RGBA, _engine.gl.UNSIGNED_BYTE, image);
-      _engine.gl.texParameteri(_engine.gl.TEXTURE_2D, _engine.gl.TEXTURE_MAG_FILTER, _engine.gl.NEAREST);
-      _engine.gl.texParameteri(_engine.gl.TEXTURE_2D, _engine.gl.TEXTURE_MIN_FILTER, _engine.gl.LINEAR_MIPMAP_NEAREST);
-      _engine.gl.generateMipmap(_engine.gl.TEXTURE_2D);
-
-      // Bind
-      _engine.gl.bindTexture(_engine.gl.TEXTURE_2D, null);
+      _this._load(image, texture);
     };
-
     image.src = src;
-    this._image = image;
-    this._texture = texture;
+
+    this._texture = null;
+    this._image = null;
   }
 
   _createClass(Texture, [{
@@ -6059,6 +6054,19 @@ var Texture = (function () {
       _engine.gl.activeTexture(_engine.gl.TEXTURE0);
       _engine.gl.bindTexture(_engine.gl.TEXTURE_2D, this._texture);
       _engine.gl.uniform1i(sampler, 0);
+    }
+  }, {
+    key: '_load',
+    value: function _load(image, texture) {
+      _engine.gl.bindTexture(_engine.gl.TEXTURE_2D, texture);
+      _engine.gl.texImage2D(_engine.gl.TEXTURE_2D, 0, _engine.gl.RGBA, _engine.gl.RGBA, _engine.gl.UNSIGNED_BYTE, image);
+      _engine.gl.texParameteri(_engine.gl.TEXTURE_2D, _engine.gl.TEXTURE_MAG_FILTER, _engine.gl.NEAREST);
+      _engine.gl.texParameteri(_engine.gl.TEXTURE_2D, _engine.gl.TEXTURE_MIN_FILTER, _engine.gl.LINEAR_MIPMAP_NEAREST);
+      _engine.gl.generateMipmap(_engine.gl.TEXTURE_2D);
+      _engine.gl.bindTexture(_engine.gl.TEXTURE_2D, null);
+
+      this._image = image;
+      this._texture = texture;
     }
   }, {
     key: 'texture',
