@@ -1,33 +1,26 @@
-(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/examples/basic.es6":[function(require,module,exports){
+(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/examples/texture.es6":[function(require,module,exports){
 'use strict';
 
 var _src = require('../src');
 
-_src.gogol.init('gogol-example');
+_src.gogol.init('gogol-example', { clearColor: _src.Color.fromHex('#232323') });
 
 var s = new _src.Scene();
 _src.gogol.scene = s;
 
-var sun = new _src.Quad(50, 50);
-sun.material.color = _src.Color.fromHex('#f39c12');
-
-var mars = new _src.Quad(20, 20);
-mars.material.color = _src.Color.fromHex('#c0392b');
-
-var earth = new _src.Quad(25, 25);
-earth.material.color = _src.Color.fromHex('#16a085');
-
-var moon = new _src.Quad(10, 10);
-moon.material.color = _src.Color.fromHex('#95a5a6');
+var sun = new _src.Sprite(128, 128, 'texture.jpg');
+var mars = new _src.Sprite(64, 64, 'texture.png');
+var earth = new _src.Sprite(32, 32, 'texture.png');
+var moon = new _src.Sprite(32, 32, 'texture.png');
 
 sun.addChild(earth);
-earth.translate(200, 0, 0);
+earth.translate(100, 0, 0);
 
 sun.addChild(mars);
-mars.translate(0, 100, 0);
+mars.translate(0, 50, 0);
 
 earth.addChild(moon);
-moon.translate(80, 0, 0);
+moon.translate(20, 0, 0);
 
 s.addChild(sun);
 sun.translate(400, 300, 0);
@@ -6040,7 +6033,7 @@ var Transform = (function (_Component) {
 
 exports.Transform = Transform;
 
-},{"./component":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/component.es6","gl-matrix":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/node_modules/gl-matrix/src/gl-matrix.js"}]},{},["/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/examples/basic.es6"])
+},{"./component":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/component.es6","gl-matrix":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/node_modules/gl-matrix/src/gl-matrix.js"}]},{},["/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/examples/texture.es6"])
 
 
 //# sourceMappingURL=bundle.js.map
