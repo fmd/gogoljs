@@ -13,13 +13,26 @@ let calculateIndices = function() {
   return [0, 1, 2, 3, 0, 2, 3]
 }
 
+let calculateTexCoords = function() {
+  return [0.0,  0.0,
+          0.0,  1.0,
+          1.0,  1.0,
+          1.0,  0.0]
+}
+
 export class Quad extends Renderable {
-  constructor(width, height) {
+  constructor(opts = Quad.defaultOpts) {
     super()
-    this.width = width
-    this.height = height
-    this.vertices = calculateVertices(width, height)
+
+    this.width = opts.width
+    this.height = opts.height
+    this.vertices = calculateVertices(opts.width, opts.height)
     this.indices = calculateIndices()
-    this.useMaterial(new ColorMaterial())
+    this.texCoords = calculateTexCoords();
+    this.useMaterial(opts.material)
+  }
+
+  static get defaultOpts() {
+    return { width: 32, height: 32, material: new ColorMaterial() }
   }
 }

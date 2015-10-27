@@ -1,19 +1,21 @@
-import { gogol, Scene, Quad, Program, Color } from '../src'
+import { gogol, Scene, Quad, Program, Color, ColorMaterial } from '../src'
 gogol.init('gogol-example')
 
 let s = new Scene()
 gogol.scene = s
 
-let sun = new Quad(50, 50)
+let mat = () => { return new ColorMaterial() }
+
+let sun = new Quad({ width: 50, height: 50, material: mat() })
 sun.material.color = Color.fromHex('#f39c12')
 
-let mars = new Quad(20, 20)
+let mars = new Quad({ width: 20, height: 20, material: mat() })
 mars.material.color = Color.fromHex('#c0392b')
 
-let earth = new Quad(25, 25)
+let earth = new Quad({ width: 25, height: 25, material: mat() })
 earth.material.color = Color.fromHex('#16a085')
 
-let moon = new Quad(10, 10)
+let moon = new Quad({ width: 10, height: 10, material: mat() })
 moon.material.color = Color.fromHex('#95a5a6')
 
 sun.addChild(earth)

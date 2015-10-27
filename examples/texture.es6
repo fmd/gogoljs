@@ -1,13 +1,15 @@
-import { gogol, Scene, Sprite, Program, Color } from '../src'
+import { gogol, Scene, Quad, Program, Color, TextureMaterial } from '../src'
 gogol.init('gogol-example', { clearColor: Color.fromHex('#232323') })
 
 let s = new Scene()
 gogol.scene = s
 
-let sun = new Sprite({ width: 128, height: 128, src: 'texture.jpg' })
-let mars = new Sprite({ width: 64, height: 64, src: 'texture.png' })
-let earth = new Sprite({ width: 32, height: 32, src: 'texture.png' })
-let moon = new Sprite({ width: 32, height: 32, src: 'texture.png' })
+let mat = () => { return new TextureMaterial({ src: 'texture.png' }) }
+
+let sun = new Quad({ width: 128, height: 128, material: mat() })
+let mars = new Quad({ width: 64, height: 64, material: mat() })
+let earth = new Quad({ width: 32, height: 32, material: mat() })
+let moon = new Quad({ width: 32, height: 32, material: mat() })
 
 sun.addChild(earth)
 earth.translate(100, 0, 0)
