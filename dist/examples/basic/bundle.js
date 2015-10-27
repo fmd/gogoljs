@@ -5031,8 +5031,8 @@ var ColorMaterial = (function (_Material) {
     _get(Object.getPrototypeOf(ColorMaterial.prototype), 'constructor', this).call(this, ColorMaterial, vertexSrc, fragmentSrc);
 
     this.color = opts.color;
-    this.mvp = this.program.attr('mvp');
-    this.uColor = this.program.attr('uColor');
+    this.mvp = this.program.uniform('mvp');
+    this.uColor = this.program.uniform('uColor');
     this.aPosition = this.program.attr('aPosition');
   }
 

@@ -22,8 +22,8 @@ export class ColorMaterial extends Material {
     super(ColorMaterial, vertexSrc, fragmentSrc)
 
     this.color = opts.color
-    this.mvp = this.program.attr('mvp')
-    this.uColor = this.program.attr('uColor')
+    this.mvp = this.program.uniform('mvp')
+    this.uColor = this.program.uniform('uColor')
     this.aPosition = this.program.attr('aPosition')
   }
 
