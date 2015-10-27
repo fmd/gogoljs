@@ -4976,10 +4976,9 @@ var Camera = (function (_Transform) {
     get: function get() {
       var m = _glMatrix.mat4.create();
       var i = _glMatrix.mat4.create();
-
-      _glMatrix.mat4.invert(i, this.matrix);
+      //mat4.invert(i, this.matrix)
       _glMatrix.mat4.mul(m, m, this.projection);
-      _glMatrix.mat4.mul(m, m, i);
+      _glMatrix.mat4.mul(m, m, this.matrix);
 
       return m;
     }
@@ -5013,7 +5012,7 @@ var PerspectiveCamera = (function (_Camera) {
     get: function get() {
       return { fovy: 45.0,
         aspect: 4.0 / 3.0,
-        near: 1.0,
+        near: 0.1,
         far: 1000.0 };
     }
   }]);
@@ -5285,7 +5284,66 @@ var ComponentList = (function (_Array) {
 
 exports.ComponentList = ComponentList;
 
-},{}],"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/engine.es6":[function(require,module,exports){
+},{}],"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/cube.es6":[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, '__esModule', {
+  value: true
+});
+
+var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; desc = parent = getter = undefined; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var _color = require('./color');
+
+var _color_material = require('./color_material');
+
+var _renderable = require('./renderable');
+
+var calculateVertices = function calculateVertices(width, height, depth) {
+  return [-width, -height, depth, width, -height, depth, width, height, depth, -width, height, depth, -width, -height, -depth, -width, height, -depth, width, height, -depth, width, -height, -depth,
+
+  // Top face
+  -width, height, -depth, -width, height, depth, width, height, depth, width, height, -depth,
+
+  // Bottom face
+  -width, -height, -depth, width, -height, -depth, width, -height, depth, -width, -height, depth,
+
+  // Right face
+  width, -height, -depth, width, height, -depth, width, height, depth, width, -height, depth,
+
+  // Left face
+  -width, -height, -depth, -width, -height, depth, -width, height, depth, -width, height, -depth];
+};
+
+var calculateIndices = function calculateIndices() {
+  return [0, 1, 2, 0, 2, 3, 4, 5, 6, 4, 6, 7, 8, 9, 10, 8, 10, 11, 12, 13, 14, 12, 14, 15, 16, 17, 18, 16, 18, 19, 20, 21, 22, 20, 22, 23];
+};
+
+var Cube = (function (_Renderable) {
+  _inherits(Cube, _Renderable);
+
+  function Cube(width, height, depth) {
+    _classCallCheck(this, Cube);
+
+    _get(Object.getPrototypeOf(Cube.prototype), 'constructor', this).call(this);
+    this.width = width;
+    this.height = height;
+    this.depth = depth;
+    this.vertices = calculateVertices(width, height, depth);
+    this.indices = calculateIndices();
+    this.useMaterial(new _color_material.ColorMaterial());
+  }
+
+  return Cube;
+})(_renderable.Renderable);
+
+exports.Cube = Cube;
+
+},{"./color":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/color.es6","./color_material":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/color_material.es6","./renderable":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/renderable.es6"}],"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/engine.es6":[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -5403,6 +5461,8 @@ var _camera = require('./camera');
 
 var _renderable = require('./renderable');
 
+var _cube = require('./cube');
+
 var _quad = require('./quad');
 
 var _sprite = require('./sprite');
@@ -5425,6 +5485,7 @@ exports.PerspectiveCamera = _camera.PerspectiveCamera;
 exports.OrthographicCamera = _camera.OrthographicCamera;
 exports.Renderable = _renderable.Renderable;
 exports.Quad = _quad.Quad;
+exports.Cube = _cube.Cube;
 exports.Sprite = _sprite.Sprite;
 exports.Scene = _scene.Scene;
 exports.
@@ -5433,7 +5494,7 @@ exports.
 gogol = _engine.gogol;
 exports.gl = _engine.gl;
 
-},{"./camera":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/camera.es6","./color":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/color.es6","./component":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/component.es6","./engine":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/engine.es6","./material":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/material.es6","./program":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/program.es6","./quad":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/quad.es6","./renderable":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/renderable.es6","./scene":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/scene.es6","./shader":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/shader.es6","./sprite":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/sprite.es6","./transform":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/transform.es6"}],"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/material.es6":[function(require,module,exports){
+},{"./camera":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/camera.es6","./color":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/color.es6","./component":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/component.es6","./cube":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/cube.es6","./engine":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/engine.es6","./material":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/material.es6","./program":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/program.es6","./quad":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/quad.es6","./renderable":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/renderable.es6","./scene":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/scene.es6","./shader":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/shader.es6","./sprite":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/sprite.es6","./transform":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/transform.es6"}],"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/material.es6":[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -5774,7 +5835,7 @@ var Scene = (function (_Component) {
   }, {
     key: 'render',
     value: function render() {
-      var pvMatrix = this.camera.pv;
+      var pv = this.camera.pv;
 
       var _iteratorNormalCompletion2 = true;
       var _didIteratorError2 = false;
@@ -5788,7 +5849,7 @@ var Scene = (function (_Component) {
             continue;
           }
 
-          child.render(pvMatrix);
+          child.render(pv);
         }
       } catch (err) {
         _didIteratorError2 = true;
@@ -6145,7 +6206,7 @@ var Transform = (function (_Component) {
     value: function translate(x, y, z) {
       this.position[0] += x;
       this.position[1] += y;
-      this.position[1] += z;
+      this.position[2] += z;
     }
   }, {
     key: 'rotate',

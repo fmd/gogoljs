@@ -28,7 +28,7 @@ export class Transform extends Component {
   translate(x, y, z) {
     this.position[0] += x
     this.position[1] += y
-    this.position[1] += z
+    this.position[2] += z
   }
 
   rotate(deg, axis = vec3.fromValues(0,0,1)) {

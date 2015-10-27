@@ -10,10 +10,9 @@ export class Camera extends Transform {
   get pv() {
     let m = mat4.create()
     let i = mat4.create()
-
-    mat4.invert(i, this.matrix)
+    //mat4.invert(i, this.matrix)
     mat4.mul(m, m, this.projection)
-    mat4.mul(m, m, i)
+    mat4.mul(m, m, this.matrix)
 
     return m
   }
@@ -37,7 +36,7 @@ export class PerspectiveCamera extends Camera {
   static get defaultOpts() {
     return { fovy: 45.0,
              aspect: 4.0 / 3.0,
-             near: 1.0,
+             near: 0.1,
              far: 1000.0 }
   }
 }

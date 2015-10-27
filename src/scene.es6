@@ -1,4 +1,4 @@
-import { mat4, vec3 } from 'gl-matrix'
+import { mat4, vec3, glMatrix } from 'gl-matrix'
 import { gogol, gl } from './engine'
 import { Component } from './component'
 import { Program } from './program'
@@ -56,14 +56,14 @@ export class Scene extends Component {
   }
 
   render() {
-    let pvMatrix = this.camera.pv
+    let pv = this.camera.pv
 
     for (let child of this.children.flatten()) {
       if (!child.material) {
         continue
       }
 
-      child.render(pvMatrix)
+      child.render(pv)
     }
   }
 
