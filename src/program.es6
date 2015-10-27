@@ -19,8 +19,12 @@ export class Program {
     gl.useProgram(this.program)
   }
 
-  attr(str) {
+  uniform(str) {
     return gl.getUniformLocation(this.program, str);
+  }
+
+  attr(str) {
+    return gl.getAttribLocation(this.program, str);
   }
 
   checkErrors() {

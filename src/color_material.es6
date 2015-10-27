@@ -36,6 +36,7 @@ export class ColorMaterial extends Material {
 
     // Enable attributes
     gl.enableVertexAttribArray(this.aPosition)
+    gl.bindBuffer(gl.ARRAY_BUFFER, this.vertexBuffer)
     gl.vertexAttribPointer(this.aPosition,
                            VERTEX_SIZE,
                            gl.FLOAT,
@@ -48,6 +49,7 @@ export class ColorMaterial extends Material {
     gl.uniformMatrix4fv(this.mvp, gl.FALSE, new Float32Array(mvp))
 
     // Draw elements
+    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.indexBuffer)
     gl.drawElements(gl.TRIANGLES,
                     this.target.indices.length,
                     gl.UNSIGNED_BYTE,

@@ -7,9 +7,11 @@ export class Renderable extends Transform {
     super()
     this._material = null
 
+    this.texCoords = []
     this.vertices = []
     this.indices = []
 
+    this.texCoordsIndex = null
     this.verticesIndex = null
     this.indicesIndex = null
   }
@@ -23,13 +25,17 @@ export class Renderable extends Transform {
     return this._material
   }
 
-  bake(vertices, indices) {
+  bake(vertices, indices, texCoords) {
     this.verticesIndex = vertices.length * FLOAT_SIZE
-
     vertices.push.apply(vertices, this.vertices)
 
     this.indicesIndex = indices.length
     indices.push.apply(indices, this.indices)
+
+    if (this.texCoords) {
+      this.texCoordsIndex = texCoords.length * FLOAT_SIZE
+      texCoords.push.apply(texCoords, this.texCoords)
+    }
   }
 
   render(pvMatrix) {

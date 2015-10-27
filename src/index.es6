@@ -7,6 +7,7 @@ import { Material } from './material'
 import { Transform } from './transform'
 import { Renderable } from './renderable'
 import { Quad } from './quad'
+import { Sprite } from './sprite'
 import { Scene } from './scene'
 
 export {
@@ -21,6 +22,7 @@ export {
   Transform,
   Renderable,
   Quad,
+  Sprite,
   Scene,
 
   // Objects

@@ -1,5 +1,6 @@
 import { Color } from './color'
 
+export const TEX_COORD_SIZE = 2
 export const VERTEX_SIZE = 3
 export const FLOAT_SIZE = 4
 
@@ -44,6 +45,8 @@ export class Engine {
 
     gl = this.canvas.getContext('webgl')
     gl.clearColor(c.r, c.g, c.b, c.a)
+    gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA)
+    gl.enable(gl.BLEND)
     gl.enable(gl.DEPTH_TEST)
     gl.depthFunc(gl.LEQUAL)
   }

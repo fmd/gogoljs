@@ -28,6 +28,7 @@ moon.translate(80, 0, 0)
 s.addChild(sun)
 sun.translate(400, 300, 0)
 
+
 s.bake()
 
 function render() {

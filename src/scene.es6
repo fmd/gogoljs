@@ -6,6 +6,7 @@ import { Program } from './program'
 export class Scene extends Component {
   constructor(opts = Scene.defaultOpts) {
     super()
+    this._texCoordBuffer = null
     this._vertexBuffer = null
     this._indexBuffer = null
 
@@ -24,17 +25,26 @@ export class Scene extends Component {
       return
     }
 
+    let texCoords = []
     let vertices = []
     let indices = []
 
+    this._texCoordBuffer = gl.createBuffer()
     this._vertexBuffer = gl.createBuffer()
     this._indexBuffer = gl.createBuffer()
 
     for (let child of this.children.flatten()) {
       if (child.vertices && child.indices) {
-        child.bake(vertices, indices)
+        child.material.texCoordBuffer = this._texCoordBuffer
+        child.material.vertexBuffer = this._vertexBuffer
+        child.material.indexBuffer = this._indexBuffer
+
+        child.bake(vertices, indices, texCoords)
       }
     }
+
+    gl.bindBuffer(gl.ARRAY_BUFFER, this._texCoordBuffer)
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(texCoords), gl.STATIC_DRAW)
 
     gl.bindBuffer(gl.ARRAY_BUFFER, this._vertexBuffer)
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW)
@@ -50,11 +60,6 @@ export class Scene extends Component {
   }
 
   render() {
-    gl.bindBuffer(gl.ARRAY_BUFFER, this._vertexBuffer)
-    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this._indexBuffer)
-
-    let currentProgram = null
-
     let pvMatrix = mat4.create()
     mat4.mul(pvMatrix, pvMatrix, this.projectionMatrix)
     mat4.mul(pvMatrix, pvMatrix, this.viewMatrix)

@@ -2,14 +2,14 @@ import { Color } from './color'
 import { ColorMaterial } from './color_material'
 import { Renderable } from './renderable'
 
-var calculateVertices = function(width, height) {
+let calculateVertices = function(width, height) {
   return [-width, -height, 0.0,
           -width, height, 0.0,
           width,  height, 0.0,
           width,  -height, 0.0]
 }
 
-var calculateIndices = function() {
+let calculateIndices = function() {
   return [0, 1, 2, 3, 0, 2, 3]
 }
 
