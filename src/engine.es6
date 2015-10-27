@@ -13,6 +13,7 @@ export class Engine {
     this._canvas = document.getElementById(canvasId)
     this._initContext(opts)
     this.scene = null
+    this.resize()
   }
 
   get opts() {

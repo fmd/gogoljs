@@ -5,6 +5,7 @@ import { Program } from './program'
 import { Component } from './component'
 import { Material } from './material'
 import { Transform } from './transform'
+import { Camera, PerspectiveCamera, OrthographicCamera } from './camera'
 import { Renderable } from './renderable'
 import { Quad } from './quad'
 import { Sprite } from './sprite'
@@ -20,6 +21,9 @@ export {
   Component,
   Material,
   Transform,
+  Camera,
+  PerspectiveCamera,
+  OrthographicCamera,
   Renderable,
   Quad,
   Sprite,

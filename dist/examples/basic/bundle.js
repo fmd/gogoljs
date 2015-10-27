@@ -4942,7 +4942,121 @@ vec4.str = function (a) {
 
 module.exports = vec4;
 
-},{"./common.js":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/node_modules/gl-matrix/src/gl-matrix/common.js"}],"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/color.es6":[function(require,module,exports){
+},{"./common.js":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/node_modules/gl-matrix/src/gl-matrix/common.js"}],"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/camera.es6":[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, '__esModule', {
+  value: true
+});
+
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+var _get = function get(_x3, _x4, _x5) { var _again = true; _function: while (_again) { var object = _x3, property = _x4, receiver = _x5; desc = parent = getter = undefined; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x3 = parent; _x4 = property; _x5 = receiver; _again = true; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var _glMatrix = require('gl-matrix');
+
+var _transform = require('./transform');
+
+var Camera = (function (_Transform) {
+  _inherits(Camera, _Transform);
+
+  function Camera() {
+    _classCallCheck(this, Camera);
+
+    _get(Object.getPrototypeOf(Camera.prototype), 'constructor', this).call(this);
+    this.projection = _glMatrix.mat4.create();
+  }
+
+  _createClass(Camera, [{
+    key: 'pv',
+    get: function get() {
+      var m = _glMatrix.mat4.create();
+      var i = _glMatrix.mat4.create();
+
+      _glMatrix.mat4.invert(i, this.matrix);
+      _glMatrix.mat4.mul(m, m, this.projection);
+      _glMatrix.mat4.mul(m, m, i);
+
+      return m;
+    }
+  }]);
+
+  return Camera;
+})(_transform.Transform);
+
+exports.Camera = Camera;
+
+var PerspectiveCamera = (function (_Camera) {
+  _inherits(PerspectiveCamera, _Camera);
+
+  function PerspectiveCamera() {
+    var opts = arguments.length <= 0 || arguments[0] === undefined ? PerspectiveCamera.defaultOpts : arguments[0];
+
+    _classCallCheck(this, PerspectiveCamera);
+
+    _get(Object.getPrototypeOf(PerspectiveCamera.prototype), 'constructor', this).call(this);
+    this.opts = opts;
+    this.refresh();
+  }
+
+  _createClass(PerspectiveCamera, [{
+    key: 'refresh',
+    value: function refresh() {
+      _glMatrix.mat4.perspective(this.projection, _glMatrix.glMatrix.toRadian(this.opts.fovy), this.opts.aspect, this.opts.near, this.opts.far);
+    }
+  }], [{
+    key: 'defaultOpts',
+    get: function get() {
+      return { fovy: 45.0,
+        aspect: 4.0 / 3.0,
+        near: 1.0,
+        far: 1000.0 };
+    }
+  }]);
+
+  return PerspectiveCamera;
+})(Camera);
+
+exports.PerspectiveCamera = PerspectiveCamera;
+
+var OrthographicCamera = (function (_Camera2) {
+  _inherits(OrthographicCamera, _Camera2);
+
+  function OrthographicCamera() {
+    var opts = arguments.length <= 0 || arguments[0] === undefined ? OrthographicCamera.defaultOpts : arguments[0];
+
+    _classCallCheck(this, OrthographicCamera);
+
+    _get(Object.getPrototypeOf(OrthographicCamera.prototype), 'constructor', this).call(this);
+    this.opts = opts;
+    this.refresh();
+  }
+
+  _createClass(OrthographicCamera, [{
+    key: 'refresh',
+    value: function refresh() {
+      _glMatrix.mat4.ortho(this.projection, 0.0, this.opts.width, this.opts.height, 0.0, this.opts.near, this.opts.far);
+    }
+  }], [{
+    key: 'defaultOpts',
+    get: function get() {
+      return { width: 800.0,
+        height: 600.0,
+        near: 0.0,
+        far: 100.0 };
+    }
+  }]);
+
+  return OrthographicCamera;
+})(Camera);
+
+exports.OrthographicCamera = OrthographicCamera;
+
+},{"./transform":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/transform.es6","gl-matrix":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/node_modules/gl-matrix/src/gl-matrix.js"}],"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/color.es6":[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -5211,6 +5325,7 @@ var Engine = (function () {
       this._canvas = document.getElementById(canvasId);
       this._initContext(opts);
       this.scene = null;
+      this.resize();
     }
   }, {
     key: 'resize',
@@ -5284,6 +5399,8 @@ var _material = require('./material');
 
 var _transform = require('./transform');
 
+var _camera = require('./camera');
+
 var _renderable = require('./renderable');
 
 var _quad = require('./quad');
@@ -5303,6 +5420,9 @@ exports.Program = _program.Program;
 exports.Component = _component.Component;
 exports.Material = _material.Material;
 exports.Transform = _transform.Transform;
+exports.Camera = _camera.Camera;
+exports.PerspectiveCamera = _camera.PerspectiveCamera;
+exports.OrthographicCamera = _camera.OrthographicCamera;
 exports.Renderable = _renderable.Renderable;
 exports.Quad = _quad.Quad;
 exports.Sprite = _sprite.Sprite;
@@ -5313,7 +5433,7 @@ exports.
 gogol = _engine.gogol;
 exports.gl = _engine.gl;
 
-},{"./color":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/color.es6","./component":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/component.es6","./engine":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/engine.es6","./material":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/material.es6","./program":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/program.es6","./quad":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/quad.es6","./renderable":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/renderable.es6","./scene":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/scene.es6","./shader":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/shader.es6","./sprite":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/sprite.es6","./transform":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/transform.es6"}],"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/material.es6":[function(require,module,exports){
+},{"./camera":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/camera.es6","./color":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/color.es6","./component":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/component.es6","./engine":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/engine.es6","./material":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/material.es6","./program":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/program.es6","./quad":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/quad.es6","./renderable":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/renderable.es6","./scene":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/scene.es6","./shader":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/shader.es6","./sprite":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/sprite.es6","./transform":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/transform.es6"}],"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/material.es6":[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -5574,6 +5694,8 @@ var _component = require('./component');
 
 var _program = require('./program');
 
+var _camera = require('./camera');
+
 var Scene = (function (_Component) {
   _inherits(Scene, _Component);
 
@@ -5583,12 +5705,11 @@ var Scene = (function (_Component) {
     _classCallCheck(this, Scene);
 
     _get(Object.getPrototypeOf(Scene.prototype), 'constructor', this).call(this);
+    this.camera = opts.camera;
+
     this._texCoordBuffer = null;
     this._vertexBuffer = null;
     this._indexBuffer = null;
-
-    this.projectionMatrix = _glMatrix.mat4.create();
-    this.viewMatrix = _glMatrix.mat4.create();
 
     this.isBaked = false;
   }
@@ -5648,18 +5769,12 @@ var Scene = (function (_Component) {
       _engine.gl.bindBuffer(_engine.gl.ELEMENT_ARRAY_BUFFER, this._indexBuffer);
       _engine.gl.bufferData(_engine.gl.ELEMENT_ARRAY_BUFFER, new Uint8Array(indices), _engine.gl.STATIC_DRAW);
 
-      _glMatrix.mat4.ortho(this.projectionMatrix, 0.0, _engine.gogol.canvas.width, _engine.gogol.canvas.height, 0.0, 0.0, 100.0);
-
-      _glMatrix.mat4.lookAt(this.viewMatrix, _glMatrix.vec3.fromValues(0, 0, 1), _glMatrix.vec3.fromValues(0, 0, 0), _glMatrix.vec3.fromValues(0, 1, 0));
-
       this.isBaked = true;
     }
   }, {
     key: 'render',
     value: function render() {
-      var pvMatrix = _glMatrix.mat4.create();
-      _glMatrix.mat4.mul(pvMatrix, pvMatrix, this.projectionMatrix);
-      _glMatrix.mat4.mul(pvMatrix, pvMatrix, this.viewMatrix);
+      var pvMatrix = this.camera.pv;
 
       var _iteratorNormalCompletion2 = true;
       var _didIteratorError2 = false;
@@ -5699,7 +5814,7 @@ var Scene = (function (_Component) {
   }], [{
     key: 'defaultOpts',
     get: function get() {
-      return {};
+      return { camera: new _camera.OrthographicCamera() };
     }
   }]);
 
@@ -5708,7 +5823,7 @@ var Scene = (function (_Component) {
 
 exports.Scene = Scene;
 
-},{"./component":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/component.es6","./engine":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/engine.es6","./program":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/program.es6","gl-matrix":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/node_modules/gl-matrix/src/gl-matrix.js"}],"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/shader.es6":[function(require,module,exports){
+},{"./camera":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/camera.es6","./component":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/component.es6","./engine":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/engine.es6","./program":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/program.es6","gl-matrix":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/node_modules/gl-matrix/src/gl-matrix.js"}],"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/shader.es6":[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -6003,7 +6118,7 @@ Object.defineProperty(exports, '__esModule', {
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
 
-var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; desc = parent = getter = undefined; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
+var _get = function get(_x2, _x3, _x4) { var _again = true; _function: while (_again) { var object = _x2, property = _x3, receiver = _x4; desc = parent = getter = undefined; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x2 = parent; _x3 = property; _x4 = receiver; _again = true; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 
@@ -6020,18 +6135,33 @@ var Transform = (function (_Component) {
     _classCallCheck(this, Transform);
 
     _get(Object.getPrototypeOf(Transform.prototype), 'constructor', this).call(this);
-    this.matrix = _glMatrix.mat4.create();
+    this.rotation = _glMatrix.quat.create();
+    this.position = _glMatrix.vec3.create();
+    this.scale = _glMatrix.vec3.fromValues(1, 1, 1);
   }
 
   _createClass(Transform, [{
     key: 'translate',
     value: function translate(x, y, z) {
-      _glMatrix.mat4.translate(this.matrix, this.matrix, _glMatrix.vec3.fromValues(x, y, z));
+      this.position[0] += x;
+      this.position[1] += y;
+      this.position[1] += z;
     }
   }, {
     key: 'rotate',
     value: function rotate(deg) {
-      _glMatrix.mat4.rotate(this.matrix, this.matrix, _glMatrix.glMatrix.toRadian(deg), _glMatrix.vec3.fromValues(0.0, 0.0, 1.0));
+      var axis = arguments.length <= 1 || arguments[1] === undefined ? _glMatrix.vec3.fromValues(0, 0, 1) : arguments[1];
+
+      var q = _glMatrix.quat.create();
+      _glMatrix.quat.setAxisAngle(q, axis, _glMatrix.glMatrix.toRadian(deg));
+      _glMatrix.quat.mul(this.rotation, this.rotation, q);
+    }
+  }, {
+    key: 'matrix',
+    get: function get() {
+      var m = _glMatrix.mat4.create();
+      _glMatrix.mat4.fromRotationTranslationScale(m, this.rotation, this.position, this.scale);
+      return m;
     }
   }, {
     key: 'worldMatrix',

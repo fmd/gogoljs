@@ -1,29 +1,40 @@
-(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/examples/texture.es6":[function(require,module,exports){
+(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/examples/camera.es6":[function(require,module,exports){
 'use strict';
+
+var _glMatrix = require('gl-matrix');
 
 var _src = require('../src');
 
-_src.gogol.init('gogol-example', { clearColor: _src.Color.fromHex('#232323') });
+_src.gogol.init('gogol-example');
 
-var s = new _src.Scene();
+var s = new _src.Scene({ camera: new _src.PerspectiveCamera() });
 _src.gogol.scene = s;
 
-var sun = new _src.Sprite({ width: 128, height: 128, src: 'texture.jpg' });
-var mars = new _src.Sprite({ width: 64, height: 64, src: 'texture.png' });
-var earth = new _src.Sprite({ width: 32, height: 32, src: 'texture.png' });
-var moon = new _src.Sprite({ width: 32, height: 32, src: 'texture.png' });
+s.camera.translate(0.0, 10.0, 100.0);
+
+var sun = new _src.Quad(5.0, 5.0);
+sun.material.color = _src.Color.fromHex('#f39c12');
+
+var mars = new _src.Quad(2.0, 2.0);
+mars.material.color = _src.Color.fromHex('#c0392b');
+
+var earth = new _src.Quad(2.5, 2.5);
+earth.material.color = _src.Color.fromHex('#16a085');
+
+var moon = new _src.Quad(1.0, 1.0);
+moon.material.color = _src.Color.fromHex('#95a5a6');
 
 sun.addChild(earth);
-earth.translate(100, 0, 0);
+earth.translate(20.0, 0, 0);
 
 sun.addChild(mars);
-mars.translate(0, 50, 0);
+mars.translate(0, 10.0, 0);
 
 earth.addChild(moon);
-moon.translate(20, 0, 0);
+moon.translate(8.0, 0, 0);
 
 s.addChild(sun);
-sun.translate(400, 300, 0);
+//sun.translate(0, 0, 0)
 
 s.bake();
 
@@ -38,7 +49,7 @@ function render() {
 
 render();
 
-},{"../src":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/index.es6"}],"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/node_modules/gl-matrix/src/gl-matrix.js":[function(require,module,exports){
+},{"../src":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/index.es6","gl-matrix":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/node_modules/gl-matrix/src/gl-matrix.js"}],"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/node_modules/gl-matrix/src/gl-matrix.js":[function(require,module,exports){
 /**
  * @fileoverview gl-matrix - High performance matrix and vector operations
  * @author Brandon Jones
@@ -6174,7 +6185,7 @@ var Transform = (function (_Component) {
 
 exports.Transform = Transform;
 
-},{"./component":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/component.es6","gl-matrix":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/node_modules/gl-matrix/src/gl-matrix.js"}]},{},["/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/examples/texture.es6"])
+},{"./component":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/component.es6","gl-matrix":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/node_modules/gl-matrix/src/gl-matrix.js"}]},{},["/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/examples/camera.es6"])
 
 
 //# sourceMappingURL=bundle.js.map
