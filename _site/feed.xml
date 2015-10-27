@@ -4,10 +4,10 @@
     <title>gogoljs</title>
     <description>WebGL as it should be.
 </description>
-    <link>http://fmd.github.io/gogoljs/gogoljs/</link>
-    <atom:link href="http://fmd.github.io/gogoljs/gogoljs/feed.xml" rel="self" type="application/rss+xml"/>
-    <pubDate>Tue, 27 Oct 2015 08:47:22 +0000</pubDate>
-    <lastBuildDate>Tue, 27 Oct 2015 08:47:22 +0000</lastBuildDate>
+    <link>http://fmd.github.io/gogoljs/gogoljs//</link>
+    <atom:link href="http://fmd.github.io/gogoljs/gogoljs//feed.xml" rel="self" type="application/rss+xml"/>
+    <pubDate>Tue, 27 Oct 2015 08:58:06 +0000</pubDate>
+    <lastBuildDate>Tue, 27 Oct 2015 08:58:06 +0000</lastBuildDate>
     <generator>Jekyll v2.5.3</generator>
     
       <item>
@@ -28,8 +28,8 @@
 
 </description>
         <pubDate>Mon, 26 Oct 2015 22:03:15 +0000</pubDate>
-        <link>http://fmd.github.io/gogoljs/gogoljs/jekyll/update/2015/10/26/welcome-to-jekyll.html</link>
-        <guid isPermaLink="true">http://fmd.github.io/gogoljs/gogoljs/jekyll/update/2015/10/26/welcome-to-jekyll.html</guid>
+        <link>http://fmd.github.io/gogoljs/gogoljs//jekyll/update/2015/10/26/welcome-to-jekyll.html</link>
+        <guid isPermaLink="true">http://fmd.github.io/gogoljs/gogoljs//jekyll/update/2015/10/26/welcome-to-jekyll.html</guid>
         
         
         <category>jekyll</category>
