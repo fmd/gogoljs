@@ -4,10 +4,10 @@ gogol.init('gogol-example', { clearColor: Color.fromHex('#232323') })
 let s = new Scene()
 gogol.scene = s
 
-let sun = new Sprite(128, 128, 'texture.jpg')
-let mars = new Sprite(64, 64, 'texture.png')
-let earth = new Sprite(32, 32, 'texture.png')
-let moon = new Sprite(32, 32, 'texture.png')
+let sun = new Sprite({ width: 128, height: 128, src: 'texture.jpg' })
+let mars = new Sprite({ width: 64, height: 64, src: 'texture.png' })
+let earth = new Sprite({ width: 32, height: 32, src: 'texture.png' })
+let moon = new Sprite({ width: 32, height: 32, src: 'texture.png' })
 
 sun.addChild(earth)
 earth.translate(100, 0, 0)

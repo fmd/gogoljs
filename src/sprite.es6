@@ -10,9 +10,13 @@ let calculateTexCoords = function() {
 }
 
 export class Sprite extends Quad {
-  constructor(width, height, texture) {
-    super(width, height)
-    this.texCoords = calculateTexCoords(width, height)
-    this.useMaterial(new TextureMaterial({ texture: texture }))
+  constructor(opts = Sprite.defaultOpts()) {
+    super(opts.width, opts.height)
+    this.texCoords = calculateTexCoords(opts.width, opts.height)
+    this.useMaterial(new TextureMaterial({ src: opts.src }))
+  }
+
+  static get defaultOpts() {
+    return { width: 32, height: 32, src: null }
   }
 }

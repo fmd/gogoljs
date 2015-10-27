@@ -28,8 +28,8 @@ export class TextureMaterial extends Material {
   constructor(opts = TextureMaterial.defaultOpts) {
     super(TextureMaterial, vertexSrc, fragmentSrc)
 
-    if (opts.texture != null) {
-      this.texture = new Texture(opts.texture)
+    if (opts.src != null) {
+      this.texture = new Texture(opts.src)
     }
 
     this.mvp = this.program.uniform('mvp')
@@ -39,7 +39,7 @@ export class TextureMaterial extends Material {
   }
 
   static get defaultOpts() {
-    return { texture: null }
+    return { src: null }
   }
 
   render(mvp) {
