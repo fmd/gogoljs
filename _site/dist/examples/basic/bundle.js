@@ -8,16 +8,16 @@ _src.gogol.init('gogol-example');
 var s = new _src.Scene();
 _src.gogol.scene = s;
 
-var sun = new _src.Quad(50, 50);
+var sun = new _src.Quad({ width: 50, height: 50 });
 sun.material.color = _src.Color.fromHex('#f39c12');
 
-var mars = new _src.Quad(20, 20);
+var mars = new _src.Quad({ width: 20, height: 20 });
 mars.material.color = _src.Color.fromHex('#c0392b');
 
-var earth = new _src.Quad(25, 25);
+var earth = new _src.Quad({ width: 25, height: 25 });
 earth.material.color = _src.Color.fromHex('#16a085');
 
-var moon = new _src.Quad(10, 10);
+var moon = new _src.Quad({ width: 10, height: 10 });
 moon.material.color = _src.Color.fromHex('#95a5a6');
 
 sun.addChild(earth);
@@ -5291,7 +5291,11 @@ Object.defineProperty(exports, '__esModule', {
   value: true
 });
 
-var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; desc = parent = getter = undefined; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
+var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+var _get = function get(_x2, _x3, _x4) { var _again = true; _function: while (_again) { var object = _x2, property = _x3, receiver = _x4; desc = parent = getter = undefined; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x2 = parent; _x3 = property; _x4 = receiver; _again = true; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 
@@ -5323,20 +5327,38 @@ var calculateIndices = function calculateIndices() {
   return [0, 1, 2, 0, 2, 3, 4, 5, 6, 4, 6, 7, 8, 9, 10, 8, 10, 11, 12, 13, 14, 12, 14, 15, 16, 17, 18, 16, 18, 19, 20, 21, 22, 20, 22, 23];
 };
 
+var calculateTexCoords = function calculateTexCoords() {
+  return [0.0, 0.0, 0.0, 1.0, 1.0, 1.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 1.0, 1.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 1.0, 1.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 1.0, 1.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 1.0, 1.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 1.0, 1.0, 1.0, 0.0];
+};
+
 var Cube = (function (_Renderable) {
   _inherits(Cube, _Renderable);
 
-  function Cube(width, height, depth) {
+  function Cube() {
+    var opts = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
+
     _classCallCheck(this, Cube);
 
+    opts = _extends({}, Cube.defaultOpts, opts);
     _get(Object.getPrototypeOf(Cube.prototype), 'constructor', this).call(this);
-    this.width = width;
-    this.height = height;
-    this.depth = depth;
-    this.vertices = calculateVertices(width, height, depth);
+    this.width = opts.width;
+    this.height = opts.height;
+    this.depth = opts.depth;
+    this.vertices = calculateVertices(opts.width, opts.height, opts.depth);
     this.indices = calculateIndices();
-    this.useMaterial(new _color_material.ColorMaterial());
+    this.texCoords = calculateTexCoords();
+    this.useMaterial(opts.material);
   }
+
+  _createClass(Cube, null, [{
+    key: 'defaultOpts',
+    get: function get() {
+      return { width: 5.0,
+        height: 5.0,
+        depth: 5.0,
+        material: new _color_material.ColorMaterial() };
+    }
+  }]);
 
   return Cube;
 })(_renderable.Renderable);
@@ -5349,6 +5371,8 @@ exports.Cube = Cube;
 Object.defineProperty(exports, '__esModule', {
   value: true
 });
+
+var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
 
@@ -5377,17 +5401,34 @@ var Engine = (function () {
   _createClass(Engine, [{
     key: 'init',
     value: function init(canvasId) {
-      var opts = arguments.length <= 1 || arguments[1] === undefined ? this.defaultOpts : arguments[1];
+      var _this = this;
 
+      var opts = arguments.length <= 1 || arguments[1] === undefined ? {} : arguments[1];
+
+      opts = _extends({}, Engine.defaultOpts, opts);
       this._opts = opts;
       this._canvas = document.getElementById(canvasId);
       this._initContext(opts);
       this.scene = null;
+
+      window.addEventListener('resize', function () {
+        return _this.resize();
+      }, false);
       this.resize();
+      this.fullscreen();
+    }
+  }, {
+    key: 'fullscreen',
+    value: function fullscreen() {
+      if (this.opts.fullscreen) {
+        this._canvas.width = window.innerWidth;
+        this._canvas.height = window.innerHeight;
+      }
     }
   }, {
     key: 'resize',
     value: function resize() {
+      this.fullscreen();
       gl.viewport(0, 0, this.canvas.width, this.canvas.height);
     }
   }, {
@@ -5422,10 +5463,10 @@ var Engine = (function () {
     get: function get() {
       return this._canvas;
     }
-  }, {
+  }], [{
     key: 'defaultOpts',
     get: function get() {
-      return { clearColor: _color.Color.black };
+      return { clearColor: _color.Color.black, fullscreen: false };
     }
   }]);
 
@@ -5453,6 +5494,10 @@ var _program = require('./program');
 
 var _component = require('./component');
 
+var _color_material = require('./color_material');
+
+var _texture_material = require('./texture_material');
+
 var _material = require('./material');
 
 var _transform = require('./transform');
@@ -5465,8 +5510,6 @@ var _cube = require('./cube');
 
 var _quad = require('./quad');
 
-var _sprite = require('./sprite');
-
 var _scene = require('./scene');
 
 exports.
@@ -5478,6 +5521,8 @@ exports.
 Shader = _shader.Shader;
 exports.Program = _program.Program;
 exports.Component = _component.Component;
+exports.ColorMaterial = _color_material.ColorMaterial;
+exports.TextureMaterial = _texture_material.TextureMaterial;
 exports.Material = _material.Material;
 exports.Transform = _transform.Transform;
 exports.Camera = _camera.Camera;
@@ -5486,7 +5531,6 @@ exports.OrthographicCamera = _camera.OrthographicCamera;
 exports.Renderable = _renderable.Renderable;
 exports.Quad = _quad.Quad;
 exports.Cube = _cube.Cube;
-exports.Sprite = _sprite.Sprite;
 exports.Scene = _scene.Scene;
 exports.
 
@@ -5494,7 +5538,7 @@ exports.
 gogol = _engine.gogol;
 exports.gl = _engine.gl;
 
-},{"./camera":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/camera.es6","./color":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/color.es6","./component":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/component.es6","./cube":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/cube.es6","./engine":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/engine.es6","./material":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/material.es6","./program":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/program.es6","./quad":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/quad.es6","./renderable":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/renderable.es6","./scene":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/scene.es6","./shader":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/shader.es6","./sprite":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/sprite.es6","./transform":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/transform.es6"}],"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/material.es6":[function(require,module,exports){
+},{"./camera":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/camera.es6","./color":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/color.es6","./color_material":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/color_material.es6","./component":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/component.es6","./cube":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/cube.es6","./engine":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/engine.es6","./material":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/material.es6","./program":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/program.es6","./quad":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/quad.es6","./renderable":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/renderable.es6","./scene":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/scene.es6","./shader":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/shader.es6","./texture_material":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/texture_material.es6","./transform":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/transform.es6"}],"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/material.es6":[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -5615,7 +5659,11 @@ Object.defineProperty(exports, '__esModule', {
   value: true
 });
 
-var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; desc = parent = getter = undefined; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
+var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+var _get = function get(_x2, _x3, _x4) { var _again = true; _function: while (_again) { var object = _x2, property = _x3, receiver = _x4; desc = parent = getter = undefined; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x2 = parent; _x3 = property; _x4 = receiver; _again = true; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 
@@ -5635,19 +5683,35 @@ var calculateIndices = function calculateIndices() {
   return [0, 1, 2, 3, 0, 2, 3];
 };
 
+var calculateTexCoords = function calculateTexCoords() {
+  return [0.0, 0.0, 0.0, 1.0, 1.0, 1.0, 1.0, 0.0];
+};
+
 var Quad = (function (_Renderable) {
   _inherits(Quad, _Renderable);
 
-  function Quad(width, height) {
+  function Quad() {
+    var opts = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
+
     _classCallCheck(this, Quad);
 
+    opts = _extends({}, Quad.defaultOpts, opts);
     _get(Object.getPrototypeOf(Quad.prototype), 'constructor', this).call(this);
-    this.width = width;
-    this.height = height;
-    this.vertices = calculateVertices(width, height);
+
+    this.width = opts.width;
+    this.height = opts.height;
+    this.vertices = calculateVertices(opts.width, opts.height);
     this.indices = calculateIndices();
-    this.useMaterial(new _color_material.ColorMaterial());
+    this.texCoords = calculateTexCoords();
+    this.useMaterial(opts.material);
   }
+
+  _createClass(Quad, null, [{
+    key: 'defaultOpts',
+    get: function get() {
+      return { width: 5.0, height: 5.0, material: new _color_material.ColorMaterial() };
+    }
+  }]);
 
   return Quad;
 })(_renderable.Renderable);
@@ -5974,57 +6038,7 @@ var FragmentShader = (function (_Shader2) {
 
 exports.FragmentShader = FragmentShader;
 
-},{"./engine":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/engine.es6"}],"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/sprite.es6":[function(require,module,exports){
-'use strict';
-
-Object.defineProperty(exports, '__esModule', {
-  value: true
-});
-
-var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
-
-var _get = function get(_x2, _x3, _x4) { var _again = true; _function: while (_again) { var object = _x2, property = _x3, receiver = _x4; desc = parent = getter = undefined; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x2 = parent; _x3 = property; _x4 = receiver; _again = true; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-var _texture_material = require('./texture_material');
-
-var _texture = require('./texture');
-
-var _quad = require('./quad');
-
-var calculateTexCoords = function calculateTexCoords() {
-  return [0.0, 0.0, 0.0, 1.0, 1.0, 1.0, 1.0, 0.0];
-};
-
-var Sprite = (function (_Quad) {
-  _inherits(Sprite, _Quad);
-
-  function Sprite() {
-    var opts = arguments.length <= 0 || arguments[0] === undefined ? Sprite.defaultOpts() : arguments[0];
-
-    _classCallCheck(this, Sprite);
-
-    _get(Object.getPrototypeOf(Sprite.prototype), 'constructor', this).call(this, opts.width, opts.height);
-    this.texCoords = calculateTexCoords(opts.width, opts.height);
-    this.useMaterial(new _texture_material.TextureMaterial({ src: opts.src }));
-  }
-
-  _createClass(Sprite, null, [{
-    key: 'defaultOpts',
-    get: function get() {
-      return { width: 32, height: 32, src: null };
-    }
-  }]);
-
-  return Sprite;
-})(_quad.Quad);
-
-exports.Sprite = Sprite;
-
-},{"./quad":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/quad.es6","./texture":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/texture.es6","./texture_material":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/texture_material.es6"}],"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/texture.es6":[function(require,module,exports){
+},{"./engine":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/engine.es6"}],"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/texture.es6":[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -6039,25 +6053,20 @@ var _engine = require('./engine');
 
 var Texture = (function () {
   function Texture(src) {
+    var _this = this;
+
     _classCallCheck(this, Texture);
 
     var texture = _engine.gl.createTexture();
     var image = new Image();
     image.crossOrigin = 'anonymous';
     image.onload = function () {
-      _engine.gl.bindTexture(_engine.gl.TEXTURE_2D, texture);
-      _engine.gl.texImage2D(_engine.gl.TEXTURE_2D, 0, _engine.gl.RGBA, _engine.gl.RGBA, _engine.gl.UNSIGNED_BYTE, image);
-      _engine.gl.texParameteri(_engine.gl.TEXTURE_2D, _engine.gl.TEXTURE_MAG_FILTER, _engine.gl.NEAREST);
-      _engine.gl.texParameteri(_engine.gl.TEXTURE_2D, _engine.gl.TEXTURE_MIN_FILTER, _engine.gl.LINEAR_MIPMAP_NEAREST);
-      _engine.gl.generateMipmap(_engine.gl.TEXTURE_2D);
-
-      // Bind
-      _engine.gl.bindTexture(_engine.gl.TEXTURE_2D, null);
+      _this._load(image, texture);
     };
-
     image.src = src;
-    this._image = image;
-    this._texture = texture;
+
+    this._texture = null;
+    this._image = null;
   }
 
   _createClass(Texture, [{
@@ -6066,6 +6075,19 @@ var Texture = (function () {
       _engine.gl.activeTexture(_engine.gl.TEXTURE0);
       _engine.gl.bindTexture(_engine.gl.TEXTURE_2D, this._texture);
       _engine.gl.uniform1i(sampler, 0);
+    }
+  }, {
+    key: '_load',
+    value: function _load(image, texture) {
+      _engine.gl.bindTexture(_engine.gl.TEXTURE_2D, texture);
+      _engine.gl.texImage2D(_engine.gl.TEXTURE_2D, 0, _engine.gl.RGBA, _engine.gl.RGBA, _engine.gl.UNSIGNED_BYTE, image);
+      _engine.gl.texParameteri(_engine.gl.TEXTURE_2D, _engine.gl.TEXTURE_MAG_FILTER, _engine.gl.NEAREST);
+      _engine.gl.texParameteri(_engine.gl.TEXTURE_2D, _engine.gl.TEXTURE_MIN_FILTER, _engine.gl.LINEAR_MIPMAP_NEAREST);
+      _engine.gl.generateMipmap(_engine.gl.TEXTURE_2D);
+      _engine.gl.bindTexture(_engine.gl.TEXTURE_2D, null);
+
+      this._image = image;
+      this._texture = texture;
     }
   }, {
     key: 'texture',
