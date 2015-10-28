@@ -8,12 +8,16 @@ export var gl
 export var gogol
 
 export class Engine {
-  init(canvasId, opts = this.defaultOpts) {
+  init(canvasId, opts = {}) {
+    opts = { ...Engine.defaultOpts, ...opts }
     this._opts = opts
     this._canvas = document.getElementById(canvasId)
     this._initContext(opts)
     this.scene = null
+
+    window.addEventListener('resize', () => this.resize(), false);
     this.resize()
+    this.fullscreen()
   }
 
   get opts() {
@@ -24,11 +28,19 @@ export class Engine {
     return this._canvas
   }
 
-  get defaultOpts() {
-    return { clearColor: Color.black }
+  static get defaultOpts() {
+    return { clearColor: Color.black, fullscreen: false }
+  }
+
+  fullscreen() {
+    if (this.opts.fullscreen) {
+      this._canvas.width = window.innerWidth;
+      this._canvas.height = window.innerHeight;
+    }
   }
 
   resize() {
+    this.fullscreen()
     gl.viewport(0, 0, this.canvas.width, this.canvas.height)
   }
 

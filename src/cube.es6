@@ -47,14 +47,55 @@ let calculateIndices = function() {
           20, 21, 22, 20, 22, 23]
 }
 
+let calculateTexCoords = function() {
+  return [0.0,  0.0,
+          0.0,  1.0,
+          1.0,  1.0,
+          1.0,  0.0,
+
+          0.0,  0.0,
+          0.0,  1.0,
+          1.0,  1.0,
+          1.0,  0.0,
+
+          0.0,  0.0,
+          0.0,  1.0,
+          1.0,  1.0,
+          1.0,  0.0,
+
+          0.0,  0.0,
+          0.0,  1.0,
+          1.0,  1.0,
+          1.0,  0.0,
+
+          0.0,  0.0,
+          0.0,  1.0,
+          1.0,  1.0,
+          1.0,  0.0,
+
+          0.0,  0.0,
+          0.0,  1.0,
+          1.0,  1.0,
+          1.0,  0.0]
+}
+
 export class Cube extends Renderable {
-  constructor(width, height, depth) {
+  constructor(opts = {}) {
+    opts = {...Cube.defaultOpts, ...opts}
     super()
-    this.width = width
-    this.height = height
-    this.depth = depth
-    this.vertices = calculateVertices(width, height, depth)
+    this.width = opts.width
+    this.height = opts.height
+    this.depth = opts.depth
+    this.vertices = calculateVertices(opts.width, opts.height, opts.depth)
     this.indices = calculateIndices()
-    this.useMaterial(new ColorMaterial())
+    this.texCoords = calculateTexCoords()
+    this.useMaterial(opts.material)
+  }
+
+  static get defaultOpts() {
+    return { width: 5.0,
+             height: 5.0,
+             depth: 5.0,
+             material: new ColorMaterial() }
   }
 }

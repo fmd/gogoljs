@@ -21,7 +21,8 @@ let calculateTexCoords = function() {
 }
 
 export class Quad extends Renderable {
-  constructor(opts = Quad.defaultOpts) {
+  constructor(opts = {}) {
+    opts = {...Quad.defaultOpts, ...opts}
     super()
 
     this.width = opts.width
@@ -33,6 +34,6 @@ export class Quad extends Renderable {
   }
 
   static get defaultOpts() {
-    return { width: 32, height: 32, material: new ColorMaterial() }
+    return { width: 5.0, height: 5.0, material: new ColorMaterial() }
   }
 }
