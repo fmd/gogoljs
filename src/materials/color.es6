@@ -1,6 +1,6 @@
-import { Color } from './color'
-import { gl, VERTEX_SIZE } from './engine'
-import { Material } from './material'
+import { Color } from '../core/color'
+import { gl, VERTEX_SIZE } from '../core/engine'
+import { Material } from '../core/material'
 
 let vertexSrc = `
   uniform   mat4 mvp;

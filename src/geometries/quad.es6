@@ -1,6 +1,6 @@
-import { Color } from './color'
-import { ColorMaterial } from './color_material'
-import { Renderable } from './renderable'
+import { Color } from '../core/color'
+import { ColorMaterial } from '../materials/color'
+import { Geometry } from '../core/geometry'
 
 let calculateVertices = function(width, height) {
   return [-width, -height, 0.0,
@@ -20,7 +20,7 @@ let calculateTexCoords = function() {
           1.0,  0.0]
 }
 
-export class Quad extends Renderable {
+export class Quad extends Geometry {
   constructor(opts = {}) {
     opts = {...Quad.defaultOpts, ...opts}
     super()

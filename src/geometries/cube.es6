@@ -1,6 +1,6 @@
-import { Color } from './color'
-import { ColorMaterial } from './color_material'
-import { Renderable } from './renderable'
+import { Color } from '../core/color'
+import { ColorMaterial } from '../materials/color'
+import { Geometry } from '../core/geometry'
 
 let calculateVertices = function(width, height, depth) {
   return [-width, -height, depth,
@@ -79,7 +79,7 @@ let calculateTexCoords = function() {
           1.0,  0.0]
 }
 
-export class Cube extends Renderable {
+export class Cube extends Geometry {
   constructor(opts = {}) {
     opts = {...Cube.defaultOpts, ...opts}
     super()

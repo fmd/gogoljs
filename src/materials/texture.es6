@@ -1,7 +1,7 @@
-import { Color } from './color'
-import { Texture } from './texture'
-import { gl, VERTEX_SIZE, TEX_COORD_SIZE } from './engine'
-import { Material } from './material'
+import { Color } from '../core/color'
+import { Texture } from '../core/texture'
+import { gl, VERTEX_SIZE, TEX_COORD_SIZE } from '../core/engine'
+import { Material } from '../core/material'
 
 let vertexSrc = `
   uniform   mat4 mvp;

@@ -2,7 +2,7 @@ import { mat4 } from 'gl-matrix'
 import { gl, VERTEX_SIZE, FLOAT_SIZE } from './engine'
 import { Transform } from './transform'
 
-export class Renderable extends Transform {
+export class Geometry extends Transform {
   constructor() {
     super()
     this._material = null
