@@ -5,7 +5,8 @@ gogol.init('gogol-example')
 let s = new Scene({ camera: new PerspectiveCamera() })
 gogol.scene = s
 
-s.camera.translate(0.0, 0.0, -100.0)
+//s.camera.rotate(10.0, vec3.fromValues(0,1,0))
+s.camera.translate(0.0, 0.0, 100.0)
 
 let sun = new Cube({ width: 5.0, height: 5.0, depth: 5.0 })
 sun.material.color = Color.fromHex('#f39c12')
@@ -42,9 +43,10 @@ s.bake()
 
 function render() {
   gogol.processOneFrame()
-  s.camera.rotate(0.5, vec3.fromValues(0,1,0))
+  //s.camera.rotate(0.5, vec3.fromValues(0,1,0))
 
-  sun.rotate(0.25)
+  sun.rotate(0.25, vec3.fromValues(0,0,1))
+  sun.rotate(0.25, vec3.fromValues(0,1,0))
 
   earthJoint.rotate(1.0, vec3.fromValues(0,1,0))
   marsJoint.rotate(1.2, vec3.fromValues(0,0,1))

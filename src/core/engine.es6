@@ -34,8 +34,8 @@ export class Engine {
 
   fullscreen() {
     if (this.opts.fullscreen) {
-      this._canvas.width = window.innerWidth;
-      this._canvas.height = window.innerHeight;
+      this._canvas.width = window.innerWidth
+      this._canvas.height = window.innerHeight
     }
   }
 

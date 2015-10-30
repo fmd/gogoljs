@@ -3,11 +3,13 @@ import { gl, VERTEX_SIZE } from '../core/engine'
 import { Material } from '../core/material'
 
 let vertexSrc = `
-  uniform   mat4 mvp;
+  uniform   mat4 modelMatrix;
+  uniform   mat4 viewMatrix;
+  uniform   mat4 projectionMatrix;
   attribute vec4 aPosition;
 
   void main() {
-    gl_Position = mvp * aPosition;
+    gl_Position = projectionMatrix * viewMatrix * modelMatrix  * aPosition;
   }`
 
 let fragmentSrc = `
@@ -22,7 +24,9 @@ export class ColorMaterial extends Material {
     super(ColorMaterial, vertexSrc, fragmentSrc)
 
     this.color = opts.color
-    this.mvp = this.program.uniform('mvp')
+    this.modelMatrix = this.program.uniform('modelMatrix')
+    this.viewMatrix = this.program.uniform('viewMatrix')
+    this.projectionMatrix = this.program.uniform('projectionMatrix')
     this.uColor = this.program.uniform('uColor')
     this.aPosition = this.program.attr('aPosition')
   }
@@ -31,7 +35,7 @@ export class ColorMaterial extends Material {
     return { color: new Color(1.0, 1.0, 1.0, 1.0) }
   }
 
-  render(mvp) {
+  render(m, v, p) {
     super.render()
 
     // Enable attributes
@@ -46,7 +50,9 @@ export class ColorMaterial extends Material {
 
     // Pass variables into program
     gl.uniform4fv(this.uColor, this.color.toVector())
-    gl.uniformMatrix4fv(this.mvp, gl.FALSE, new Float32Array(mvp))
+    gl.uniformMatrix4fv(this.modelMatrix, gl.FALSE, new Float32Array(m))
+    gl.uniformMatrix4fv(this.viewMatrix, gl.FALSE, new Float32Array(v))
+    gl.uniformMatrix4fv(this.projectionMatrix, gl.FALSE, new Float32Array(p))
 
     // Draw elements
     gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.indexBuffer)

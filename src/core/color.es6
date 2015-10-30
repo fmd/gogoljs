@@ -7,10 +7,10 @@ export class Color {
   }
 
   static fromHex(hex) {
-    hex = hex.replace('#','');
-    let r = parseInt(hex.substring(0,2), 16) / 255;
-    let g = parseInt(hex.substring(2,4), 16) / 255;
-    let b = parseInt(hex.substring(4,6), 16) / 255;
+    hex = hex.replace('#','')
+    let r = parseInt(hex.substring(0,2), 16) / 255
+    let g = parseInt(hex.substring(2,4), 16) / 255
+    let b = parseInt(hex.substring(4,6), 16) / 255
     let a = 1.0
     return new Color(r, g, b, a)
   }

@@ -8,7 +8,7 @@ export class Component {
 
   addChild(component) {
     component.parent = this
-    this.children.push(component);
+    this.children.push(component)
   }
 
   render() {

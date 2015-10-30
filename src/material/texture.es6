@@ -4,14 +4,16 @@ import { gl, VERTEX_SIZE, TEX_COORD_SIZE } from '../core/engine'
 import { Material } from '../core/material'
 
 let vertexSrc = `
-  uniform   mat4 mvp;
+  uniform   mat4 modelMatrix;
+  uniform   mat4 viewMatrix;
+  uniform   mat4 projectionMatrix;
   attribute vec4 aPosition;
   attribute vec2 aTextureCoord;
 
   varying highp vec2 vTextureCoord;
 
   void main() {
-    gl_Position = mvp * aPosition;
+    gl_Position = projectionMatrix * viewMatrix * modelMatrix * aPosition;
     vTextureCoord = aTextureCoord;
   }`
 
@@ -32,7 +34,9 @@ export class TextureMaterial extends Material {
       this.texture = new Texture(opts.src)
     }
 
-    this.mvp = this.program.uniform('mvp')
+    this.modelMatrix = this.program.uniform('modelMatrix')
+    this.viewMatrix = this.program.uniform('viewMatrix')
+    this.projectionMatrix = this.program.uniform('projectionMatrix')
     this.uSampler = this.program.uniform('uSampler')
     this.aPosition = this.program.attr('aPosition')
     this.aTextureCoord = this.program.attr('aTextureCoord')
@@ -42,7 +46,7 @@ export class TextureMaterial extends Material {
     return { src: null }
   }
 
-  render(mvp) {
+  render(m, v, p) {
     super.render()
 
     // Enable attributes
@@ -70,7 +74,9 @@ export class TextureMaterial extends Material {
     }
 
     // Pass variables into program
-    gl.uniformMatrix4fv(this.mvp, gl.FALSE, new Float32Array(mvp))
+    gl.uniformMatrix4fv(this.modelMatrix, gl.FALSE, new Float32Array(m))
+    gl.uniformMatrix4fv(this.viewMatrix, gl.FALSE, new Float32Array(v))
+    gl.uniformMatrix4fv(this.projectionMatrix, gl.FALSE, new Float32Array(p))
 
     // Draw elements
     gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.indexBuffer)

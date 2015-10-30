@@ -25,7 +25,7 @@ export class Geometry extends Transform {
     return this._material
   }
 
-  bake(vertices, indices, texCoords) {
+  bake(vertices, indices, texCoords, normals) {
     this.verticesIndex = vertices.length * FLOAT_SIZE
     vertices.push.apply(vertices, this.vertices)
 
@@ -36,11 +36,14 @@ export class Geometry extends Transform {
       this.texCoordsIndex = texCoords.length * FLOAT_SIZE
       texCoords.push.apply(texCoords, this.texCoords)
     }
+
+    if (this.normals) {
+      this.normalsIndex = normals.length * FLOAT_SIZE
+      normals.push.apply(normals, this.normals)
+    }
   }
 
-  render(pvMatrix) {
-    let mvp = mat4.create()
-    mat4.mul(mvp, pvMatrix, this.worldMatrix)
-    this.material.render(mvp)
+  render(v, p) {
+    this.material.render(this.worldMatrix, v, p)
   }
 }

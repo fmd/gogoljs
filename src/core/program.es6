@@ -20,18 +20,18 @@ export class Program {
   }
 
   uniform(str) {
-    return gl.getUniformLocation(this.program, str);
+    return gl.getUniformLocation(this.program, str)
   }
 
   attr(str) {
-    return gl.getAttribLocation(this.program, str);
+    return gl.getAttribLocation(this.program, str)
   }
 
   checkErrors() {
-    let success = gl.getProgramParameter(this.program, gl.LINK_STATUS);
+    let success = gl.getProgramParameter(this.program, gl.LINK_STATUS)
 
     if (!success) {
-      throw "Could not compile program:" + gl.getShaderInfoLog(this.program);
+      throw "Could not compile program:" + gl.getShaderInfoLog(this.program)
     }
   }
 }

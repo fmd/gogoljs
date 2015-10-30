@@ -7,14 +7,10 @@ export class Camera extends Transform {
     this.projection = mat4.create()
   }
 
-  get pv() {
-    let m = mat4.create()
+  get view() {
     let i = mat4.create()
     mat4.invert(i, this.matrix)
-    mat4.mul(m, m, this.projection)
-    mat4.mul(m, m, this.matrix)
-
-    return m
+    return i
   }
 }
 

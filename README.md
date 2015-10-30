@@ -45,3 +45,46 @@ s = scene
 g = cube
 
 s.add(g)
+
+
+resource
+
+
+// program/attribute.es6
+export class Attribute {
+
+}
+
+// program/program.es6
+export class Program {
+  constructor(vertex, fragment) {
+    this.vertex = vertex
+    this.fragment = fragment
+    this.attributes = this.vertex.attributes + this.fragment.attributes
+  }
+}
+
+// program/shader.es6
+export class Shader {
+  constructor() {
+    this.attributes = []
+  }
+}
+
+export class VertexShader {
+  constructor() {
+    this.attributes = []
+  }
+}
+
+export class FragmentShader {
+  constructor() {
+    this.attributes = []
+  }
+}
+
+export class Resource {
+  constructor() {
+
+  }
+}

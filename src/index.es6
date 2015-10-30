@@ -11,12 +11,13 @@ import { Geometry } from './core/geometry'
 import { Camera, PerspectiveCamera, OrthographicCamera } from './core/camera'
 
 // Materials
-import { ColorMaterial } from './materials/color'
-import { TextureMaterial } from './materials/texture'
+import { ColorMaterial } from './material/color'
+import { TextureMaterial } from './material/texture'
+import { ColorLightingMaterial } from './material/color_lighting'
 
 // Geometries
-import { Cube } from './geometries/cube'
-import { Quad } from './geometries/quad'
+import { Cube } from './geometry/cube'
+import { Quad } from './geometry/quad'
 
 export {
   // Core
@@ -35,6 +36,7 @@ export {
   // Materials
   ColorMaterial,
   TextureMaterial,
+  ColorLightingMaterial,
 
   // Geometries
   Quad,

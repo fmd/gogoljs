@@ -12,6 +12,7 @@ export class Scene extends Component {
     this._texCoordBuffer = null
     this._vertexBuffer = null
     this._indexBuffer = null
+    this._normalBuffer = null
 
     this.isBaked = false;
   }
@@ -28,23 +29,29 @@ export class Scene extends Component {
     let texCoords = []
     let vertices = []
     let indices = []
+    let normals = []
 
     this._texCoordBuffer = gl.createBuffer()
     this._vertexBuffer = gl.createBuffer()
     this._indexBuffer = gl.createBuffer()
+    this._normalBuffer = gl.createBuffer()
 
     for (let child of this.children.flatten()) {
       if (child.vertices && child.indices) {
         child.material.texCoordBuffer = this._texCoordBuffer
         child.material.vertexBuffer = this._vertexBuffer
         child.material.indexBuffer = this._indexBuffer
+        child.material.normalBuffer = this._normalBuffer
 
-        child.bake(vertices, indices, texCoords)
+        child.bake(vertices, indices, texCoords, normals)
       }
     }
 
     gl.bindBuffer(gl.ARRAY_BUFFER, this._texCoordBuffer)
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(texCoords), gl.STATIC_DRAW)
+
+    gl.bindBuffer(gl.ARRAY_BUFFER, this._normalBuffer)
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(normals), gl.STATIC_DRAW)
 
     gl.bindBuffer(gl.ARRAY_BUFFER, this._vertexBuffer)
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW)
@@ -56,14 +63,15 @@ export class Scene extends Component {
   }
 
   render() {
-    let pv = this.camera.pv
+    let p = this.camera.projection
+    let v = this.camera.view
 
     for (let child of this.children.flatten()) {
       if (!child.material) {
         continue
       }
 
-      child.render(pv)
+      child.render(v, p)
     }
   }
 

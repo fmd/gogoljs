@@ -1,19 +1,19 @@
 import { Color } from '../core/color'
-import { ColorMaterial } from '../materials/color'
+import { ColorMaterial } from '../material/color'
 import { Geometry } from '../core/geometry'
 
-let calculateVertices = function(width, height) {
+let vertices = function(width, height) {
   return [-width, -height, 0.0,
           -width, height, 0.0,
           width,  height, 0.0,
           width,  -height, 0.0]
 }
 
-let calculateIndices = function() {
+let indices = function() {
   return [0, 1, 2, 3, 0, 2, 3]
 }
 
-let calculateTexCoords = function() {
+let texCoords = function() {
   return [0.0,  0.0,
           0.0,  1.0,
           1.0,  1.0,
@@ -22,14 +22,11 @@ let calculateTexCoords = function() {
 
 export class Quad extends Geometry {
   constructor(opts = {}) {
-    opts = {...Quad.defaultOpts, ...opts}
     super()
-
-    this.width = opts.width
-    this.height = opts.height
-    this.vertices = calculateVertices(opts.width, opts.height)
-    this.indices = calculateIndices()
-    this.texCoords = calculateTexCoords();
+    opts = {...Quad.defaultOpts, ...opts}
+    this.vertices = vertices(opts.width, opts.height)
+    this.indices = indices()
+    this.texCoords = texCoords();
     this.useMaterial(opts.material)
   }
 
