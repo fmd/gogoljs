@@ -4939,7 +4939,7 @@ vec4.str = function (a) {
 
 module.exports = vec4;
 
-},{"./common.js":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/node_modules/gl-matrix/src/gl-matrix/common.js"}],"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/camera.es6":[function(require,module,exports){
+},{"./common.js":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/node_modules/gl-matrix/src/gl-matrix/common.js"}],"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/core/camera.es6":[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -4969,15 +4969,11 @@ var Camera = (function (_Transform) {
   }
 
   _createClass(Camera, [{
-    key: 'pv',
+    key: 'view',
     get: function get() {
-      var m = _glMatrix.mat4.create();
       var i = _glMatrix.mat4.create();
-      //mat4.invert(i, this.matrix)
-      _glMatrix.mat4.mul(m, m, this.projection);
-      _glMatrix.mat4.mul(m, m, this.matrix);
-
-      return m;
+      _glMatrix.mat4.invert(i, this.matrix);
+      return i;
     }
   }]);
 
@@ -5052,7 +5048,7 @@ var OrthographicCamera = (function (_Camera2) {
 
 exports.OrthographicCamera = OrthographicCamera;
 
-},{"./transform":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/transform.es6","gl-matrix":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/node_modules/gl-matrix/src/gl-matrix.js"}],"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/color.es6":[function(require,module,exports){
+},{"./transform":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/core/transform.es6","gl-matrix":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/node_modules/gl-matrix/src/gl-matrix.js"}],"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/core/color.es6":[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -5105,83 +5101,7 @@ var Color = (function () {
 
 exports.Color = Color;
 
-},{}],"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/color_material.es6":[function(require,module,exports){
-'use strict';
-
-Object.defineProperty(exports, '__esModule', {
-  value: true
-});
-
-var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
-
-var _get = function get(_x2, _x3, _x4) { var _again = true; _function: while (_again) { var object = _x2, property = _x3, receiver = _x4; desc = parent = getter = undefined; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x2 = parent; _x3 = property; _x4 = receiver; _again = true; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-var _color = require('./color');
-
-var _engine = require('./engine');
-
-var _material = require('./material');
-
-var vertexSrc = '\n  uniform   mat4 mvp;\n  attribute vec4 aPosition;\n\n  void main() {\n    gl_Position = mvp * aPosition;\n  }';
-
-var fragmentSrc = '\n  uniform lowp vec4 uColor;\n\n  void main() {\n    gl_FragColor = uColor;\n  }';
-
-var ColorMaterial = (function (_Material) {
-  _inherits(ColorMaterial, _Material);
-
-  function ColorMaterial() {
-    var opts = arguments.length <= 0 || arguments[0] === undefined ? ColorMaterial.defaultOpts : arguments[0];
-
-    _classCallCheck(this, ColorMaterial);
-
-    _get(Object.getPrototypeOf(ColorMaterial.prototype), 'constructor', this).call(this, ColorMaterial, vertexSrc, fragmentSrc);
-
-    this.color = opts.color;
-    this.mvp = this.program.uniform('mvp');
-    this.uColor = this.program.uniform('uColor');
-    this.aPosition = this.program.attr('aPosition');
-  }
-
-  _createClass(ColorMaterial, [{
-    key: 'render',
-    value: function render(mvp) {
-      _get(Object.getPrototypeOf(ColorMaterial.prototype), 'render', this).call(this);
-
-      // Enable attributes
-      _engine.gl.enableVertexAttribArray(this.aPosition);
-      _engine.gl.bindBuffer(_engine.gl.ARRAY_BUFFER, this.vertexBuffer);
-      _engine.gl.vertexAttribPointer(this.aPosition, _engine.VERTEX_SIZE, _engine.gl.FLOAT, _engine.gl.FALSE, 0, this.target.verticesIndex);
-
-      // Pass variables into program
-      _engine.gl.uniform4fv(this.uColor, this.color.toVector());
-      _engine.gl.uniformMatrix4fv(this.mvp, _engine.gl.FALSE, new Float32Array(mvp));
-
-      // Draw elements
-      _engine.gl.bindBuffer(_engine.gl.ELEMENT_ARRAY_BUFFER, this.indexBuffer);
-      _engine.gl.drawElements(_engine.gl.TRIANGLES, this.target.indices.length, _engine.gl.UNSIGNED_BYTE, this.target.indicesIndex);
-
-      // Disable attributes
-      _engine.gl.disableVertexAttribArray(this.aPosition);
-    }
-  }], [{
-    key: 'defaultOpts',
-    get: function get() {
-      return { color: new _color.Color(1.0, 1.0, 1.0, 1.0) };
-    }
-  }]);
-
-  return ColorMaterial;
-})(_material.Material);
-
-exports.ColorMaterial = ColorMaterial;
-
-ColorMaterial.program = null;
-
-},{"./color":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/color.es6","./engine":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/engine.es6","./material":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/material.es6"}],"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/component.es6":[function(require,module,exports){
+},{}],"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/core/component.es6":[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -5218,7 +5138,7 @@ var Component = (function () {
 
 exports.Component = Component;
 
-},{"./component_list":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/component_list.es6"}],"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/component_list.es6":[function(require,module,exports){
+},{"./component_list":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/core/component_list.es6"}],"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/core/component_list.es6":[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -5281,88 +5201,7 @@ var ComponentList = (function (_Array) {
 
 exports.ComponentList = ComponentList;
 
-},{}],"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/cube.es6":[function(require,module,exports){
-'use strict';
-
-Object.defineProperty(exports, '__esModule', {
-  value: true
-});
-
-var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
-
-var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
-
-var _get = function get(_x2, _x3, _x4) { var _again = true; _function: while (_again) { var object = _x2, property = _x3, receiver = _x4; desc = parent = getter = undefined; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x2 = parent; _x3 = property; _x4 = receiver; _again = true; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-var _color = require('./color');
-
-var _color_material = require('./color_material');
-
-var _renderable = require('./renderable');
-
-var calculateVertices = function calculateVertices(width, height, depth) {
-  return [-width, -height, depth, width, -height, depth, width, height, depth, -width, height, depth, -width, -height, -depth, -width, height, -depth, width, height, -depth, width, -height, -depth,
-
-  // Top face
-  -width, height, -depth, -width, height, depth, width, height, depth, width, height, -depth,
-
-  // Bottom face
-  -width, -height, -depth, width, -height, -depth, width, -height, depth, -width, -height, depth,
-
-  // Right face
-  width, -height, -depth, width, height, -depth, width, height, depth, width, -height, depth,
-
-  // Left face
-  -width, -height, -depth, -width, -height, depth, -width, height, depth, -width, height, -depth];
-};
-
-var calculateIndices = function calculateIndices() {
-  return [0, 1, 2, 0, 2, 3, 4, 5, 6, 4, 6, 7, 8, 9, 10, 8, 10, 11, 12, 13, 14, 12, 14, 15, 16, 17, 18, 16, 18, 19, 20, 21, 22, 20, 22, 23];
-};
-
-var calculateTexCoords = function calculateTexCoords() {
-  return [0.0, 0.0, 0.0, 1.0, 1.0, 1.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 1.0, 1.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 1.0, 1.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 1.0, 1.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 1.0, 1.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 1.0, 1.0, 1.0, 0.0];
-};
-
-var Cube = (function (_Renderable) {
-  _inherits(Cube, _Renderable);
-
-  function Cube() {
-    var opts = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
-
-    _classCallCheck(this, Cube);
-
-    opts = _extends({}, Cube.defaultOpts, opts);
-    _get(Object.getPrototypeOf(Cube.prototype), 'constructor', this).call(this);
-    this.width = opts.width;
-    this.height = opts.height;
-    this.depth = opts.depth;
-    this.vertices = calculateVertices(opts.width, opts.height, opts.depth);
-    this.indices = calculateIndices();
-    this.texCoords = calculateTexCoords();
-    this.useMaterial(opts.material);
-  }
-
-  _createClass(Cube, null, [{
-    key: 'defaultOpts',
-    get: function get() {
-      return { width: 5.0,
-        height: 5.0,
-        depth: 5.0,
-        material: new _color_material.ColorMaterial() };
-    }
-  }]);
-
-  return Cube;
-})(_renderable.Renderable);
-
-exports.Cube = Cube;
-
-},{"./color":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/color.es6","./color_material":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/color_material.es6","./renderable":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/renderable.es6"}],"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/engine.es6":[function(require,module,exports){
+},{}],"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/core/engine.es6":[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -5474,68 +5313,88 @@ exports.Engine = Engine;
 
 exports.gogol = gogol = new Engine();
 
-},{"./color":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/color.es6"}],"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/index.es6":[function(require,module,exports){
+},{"./color":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/core/color.es6"}],"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/core/geometry.es6":[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
   value: true
 });
 
-var _color = require('./color');
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; desc = parent = getter = undefined; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var _glMatrix = require('gl-matrix');
 
 var _engine = require('./engine');
 
-var _shader = require('./shader');
-
-var _program = require('./program');
-
-var _component = require('./component');
-
-var _color_material = require('./color_material');
-
-var _texture_material = require('./texture_material');
-
-var _material = require('./material');
-
 var _transform = require('./transform');
 
-var _camera = require('./camera');
+var Geometry = (function (_Transform) {
+  _inherits(Geometry, _Transform);
 
-var _renderable = require('./renderable');
+  function Geometry() {
+    _classCallCheck(this, Geometry);
 
-var _cube = require('./cube');
+    _get(Object.getPrototypeOf(Geometry.prototype), 'constructor', this).call(this);
+    this._material = null;
 
-var _quad = require('./quad');
+    this.texCoords = [];
+    this.vertices = [];
+    this.indices = [];
 
-var _scene = require('./scene');
+    this.texCoordsIndex = null;
+    this.verticesIndex = null;
+    this.indicesIndex = null;
+  }
 
-exports.
-// Helper Classes
-Color = _color.Color;
-exports.
+  _createClass(Geometry, [{
+    key: 'useMaterial',
+    value: function useMaterial(material) {
+      this._material = material;
+      material.target = this;
+    }
+  }, {
+    key: 'bake',
+    value: function bake(vertices, indices, texCoords, normals) {
+      this.verticesIndex = vertices.length * _engine.FLOAT_SIZE;
+      vertices.push.apply(vertices, this.vertices);
 
-// Classes
-Shader = _shader.Shader;
-exports.Program = _program.Program;
-exports.Component = _component.Component;
-exports.ColorMaterial = _color_material.ColorMaterial;
-exports.TextureMaterial = _texture_material.TextureMaterial;
-exports.Material = _material.Material;
-exports.Transform = _transform.Transform;
-exports.Camera = _camera.Camera;
-exports.PerspectiveCamera = _camera.PerspectiveCamera;
-exports.OrthographicCamera = _camera.OrthographicCamera;
-exports.Renderable = _renderable.Renderable;
-exports.Quad = _quad.Quad;
-exports.Cube = _cube.Cube;
-exports.Scene = _scene.Scene;
-exports.
+      this.indicesIndex = indices.length;
+      indices.push.apply(indices, this.indices);
 
-// Objects
-gogol = _engine.gogol;
-exports.gl = _engine.gl;
+      if (this.texCoords) {
+        this.texCoordsIndex = texCoords.length * _engine.FLOAT_SIZE;
+        texCoords.push.apply(texCoords, this.texCoords);
+      }
 
-},{"./camera":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/camera.es6","./color":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/color.es6","./color_material":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/color_material.es6","./component":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/component.es6","./cube":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/cube.es6","./engine":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/engine.es6","./material":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/material.es6","./program":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/program.es6","./quad":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/quad.es6","./renderable":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/renderable.es6","./scene":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/scene.es6","./shader":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/shader.es6","./texture_material":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/texture_material.es6","./transform":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/transform.es6"}],"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/material.es6":[function(require,module,exports){
+      if (this.normals) {
+        this.normalsIndex = normals.length * _engine.FLOAT_SIZE;
+        normals.push.apply(normals, this.normals);
+      }
+    }
+  }, {
+    key: 'render',
+    value: function render(v, p) {
+      this.material.render(this.worldMatrix, v, p);
+    }
+  }, {
+    key: 'material',
+    get: function get() {
+      return this._material;
+    }
+  }]);
+
+  return Geometry;
+})(_transform.Transform);
+
+exports.Geometry = Geometry;
+
+},{"./engine":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/core/engine.es6","./transform":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/core/transform.es6","gl-matrix":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/node_modules/gl-matrix/src/gl-matrix.js"}],"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/core/material.es6":[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -5587,7 +5446,7 @@ exports.Material = Material;
 
 Material.currentProgram = null;
 
-},{"./program":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/program.es6","./shader":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/shader.es6"}],"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/program.es6":[function(require,module,exports){
+},{"./program":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/core/program.es6","./shader":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/core/shader.es6"}],"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/core/program.es6":[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -5649,151 +5508,7 @@ var Program = (function () {
 
 exports.Program = Program;
 
-},{"./engine":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/engine.es6","./shader":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/shader.es6"}],"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/quad.es6":[function(require,module,exports){
-'use strict';
-
-Object.defineProperty(exports, '__esModule', {
-  value: true
-});
-
-var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
-
-var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
-
-var _get = function get(_x2, _x3, _x4) { var _again = true; _function: while (_again) { var object = _x2, property = _x3, receiver = _x4; desc = parent = getter = undefined; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x2 = parent; _x3 = property; _x4 = receiver; _again = true; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-var _color = require('./color');
-
-var _color_material = require('./color_material');
-
-var _renderable = require('./renderable');
-
-var calculateVertices = function calculateVertices(width, height) {
-  return [-width, -height, 0.0, -width, height, 0.0, width, height, 0.0, width, -height, 0.0];
-};
-
-var calculateIndices = function calculateIndices() {
-  return [0, 1, 2, 3, 0, 2, 3];
-};
-
-var calculateTexCoords = function calculateTexCoords() {
-  return [0.0, 0.0, 0.0, 1.0, 1.0, 1.0, 1.0, 0.0];
-};
-
-var Quad = (function (_Renderable) {
-  _inherits(Quad, _Renderable);
-
-  function Quad() {
-    var opts = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
-
-    _classCallCheck(this, Quad);
-
-    opts = _extends({}, Quad.defaultOpts, opts);
-    _get(Object.getPrototypeOf(Quad.prototype), 'constructor', this).call(this);
-
-    this.width = opts.width;
-    this.height = opts.height;
-    this.vertices = calculateVertices(opts.width, opts.height);
-    this.indices = calculateIndices();
-    this.texCoords = calculateTexCoords();
-    this.useMaterial(opts.material);
-  }
-
-  _createClass(Quad, null, [{
-    key: 'defaultOpts',
-    get: function get() {
-      return { width: 5.0, height: 5.0, material: new _color_material.ColorMaterial() };
-    }
-  }]);
-
-  return Quad;
-})(_renderable.Renderable);
-
-exports.Quad = Quad;
-
-},{"./color":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/color.es6","./color_material":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/color_material.es6","./renderable":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/renderable.es6"}],"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/renderable.es6":[function(require,module,exports){
-'use strict';
-
-Object.defineProperty(exports, '__esModule', {
-  value: true
-});
-
-var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
-
-var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; desc = parent = getter = undefined; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-var _glMatrix = require('gl-matrix');
-
-var _engine = require('./engine');
-
-var _transform = require('./transform');
-
-var Renderable = (function (_Transform) {
-  _inherits(Renderable, _Transform);
-
-  function Renderable() {
-    _classCallCheck(this, Renderable);
-
-    _get(Object.getPrototypeOf(Renderable.prototype), 'constructor', this).call(this);
-    this._material = null;
-
-    this.texCoords = [];
-    this.vertices = [];
-    this.indices = [];
-
-    this.texCoordsIndex = null;
-    this.verticesIndex = null;
-    this.indicesIndex = null;
-  }
-
-  _createClass(Renderable, [{
-    key: 'useMaterial',
-    value: function useMaterial(material) {
-      this._material = material;
-      material.target = this;
-    }
-  }, {
-    key: 'bake',
-    value: function bake(vertices, indices, texCoords) {
-      this.verticesIndex = vertices.length * _engine.FLOAT_SIZE;
-      vertices.push.apply(vertices, this.vertices);
-
-      this.indicesIndex = indices.length;
-      indices.push.apply(indices, this.indices);
-
-      if (this.texCoords) {
-        this.texCoordsIndex = texCoords.length * _engine.FLOAT_SIZE;
-        texCoords.push.apply(texCoords, this.texCoords);
-      }
-    }
-  }, {
-    key: 'render',
-    value: function render(pvMatrix) {
-      var mvp = _glMatrix.mat4.create();
-      _glMatrix.mat4.mul(mvp, pvMatrix, this.worldMatrix);
-      this.material.render(mvp);
-    }
-  }, {
-    key: 'material',
-    get: function get() {
-      return this._material;
-    }
-  }]);
-
-  return Renderable;
-})(_transform.Transform);
-
-exports.Renderable = Renderable;
-
-},{"./engine":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/engine.es6","./transform":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/transform.es6","gl-matrix":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/node_modules/gl-matrix/src/gl-matrix.js"}],"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/scene.es6":[function(require,module,exports){
+},{"./engine":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/core/engine.es6","./shader":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/core/shader.es6"}],"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/core/scene.es6":[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -5832,6 +5547,7 @@ var Scene = (function (_Component) {
     this._texCoordBuffer = null;
     this._vertexBuffer = null;
     this._indexBuffer = null;
+    this._normalBuffer = null;
 
     this.isBaked = false;
   }
@@ -5846,10 +5562,12 @@ var Scene = (function (_Component) {
       var texCoords = [];
       var vertices = [];
       var indices = [];
+      var normals = [];
 
       this._texCoordBuffer = _engine.gl.createBuffer();
       this._vertexBuffer = _engine.gl.createBuffer();
       this._indexBuffer = _engine.gl.createBuffer();
+      this._normalBuffer = _engine.gl.createBuffer();
 
       var _iteratorNormalCompletion = true;
       var _didIteratorError = false;
@@ -5863,8 +5581,9 @@ var Scene = (function (_Component) {
             child.material.texCoordBuffer = this._texCoordBuffer;
             child.material.vertexBuffer = this._vertexBuffer;
             child.material.indexBuffer = this._indexBuffer;
+            child.material.normalBuffer = this._normalBuffer;
 
-            child.bake(vertices, indices, texCoords);
+            child.bake(vertices, indices, texCoords, normals);
           }
         }
       } catch (err) {
@@ -5885,6 +5604,9 @@ var Scene = (function (_Component) {
       _engine.gl.bindBuffer(_engine.gl.ARRAY_BUFFER, this._texCoordBuffer);
       _engine.gl.bufferData(_engine.gl.ARRAY_BUFFER, new Float32Array(texCoords), _engine.gl.STATIC_DRAW);
 
+      _engine.gl.bindBuffer(_engine.gl.ARRAY_BUFFER, this._normalBuffer);
+      _engine.gl.bufferData(_engine.gl.ARRAY_BUFFER, new Float32Array(normals), _engine.gl.STATIC_DRAW);
+
       _engine.gl.bindBuffer(_engine.gl.ARRAY_BUFFER, this._vertexBuffer);
       _engine.gl.bufferData(_engine.gl.ARRAY_BUFFER, new Float32Array(vertices), _engine.gl.STATIC_DRAW);
 
@@ -5896,7 +5618,8 @@ var Scene = (function (_Component) {
   }, {
     key: 'render',
     value: function render() {
-      var pv = this.camera.pv;
+      var p = this.camera.projection;
+      var v = this.camera.view;
 
       var _iteratorNormalCompletion2 = true;
       var _didIteratorError2 = false;
@@ -5910,7 +5633,7 @@ var Scene = (function (_Component) {
             continue;
           }
 
-          child.render(pv);
+          child.render(v, p);
         }
       } catch (err) {
         _didIteratorError2 = true;
@@ -5945,7 +5668,7 @@ var Scene = (function (_Component) {
 
 exports.Scene = Scene;
 
-},{"./camera":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/camera.es6","./component":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/component.es6","./engine":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/engine.es6","./program":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/program.es6","gl-matrix":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/node_modules/gl-matrix/src/gl-matrix.js"}],"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/shader.es6":[function(require,module,exports){
+},{"./camera":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/core/camera.es6","./component":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/core/component.es6","./engine":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/core/engine.es6","./program":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/core/program.es6","gl-matrix":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/node_modules/gl-matrix/src/gl-matrix.js"}],"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/core/shader.es6":[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -6035,7 +5758,7 @@ var FragmentShader = (function (_Shader2) {
 
 exports.FragmentShader = FragmentShader;
 
-},{"./engine":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/engine.es6"}],"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/texture.es6":[function(require,module,exports){
+},{"./engine":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/core/engine.es6"}],"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/core/texture.es6":[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -6098,98 +5821,7 @@ var Texture = (function () {
 
 exports.Texture = Texture;
 
-},{"./engine":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/engine.es6"}],"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/texture_material.es6":[function(require,module,exports){
-'use strict';
-
-Object.defineProperty(exports, '__esModule', {
-  value: true
-});
-
-var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
-
-var _get = function get(_x2, _x3, _x4) { var _again = true; _function: while (_again) { var object = _x2, property = _x3, receiver = _x4; desc = parent = getter = undefined; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x2 = parent; _x3 = property; _x4 = receiver; _again = true; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-var _color = require('./color');
-
-var _texture = require('./texture');
-
-var _engine = require('./engine');
-
-var _material = require('./material');
-
-var vertexSrc = '\n  uniform   mat4 mvp;\n  attribute vec4 aPosition;\n  attribute vec2 aTextureCoord;\n\n  varying highp vec2 vTextureCoord;\n\n  void main() {\n    gl_Position = mvp * aPosition;\n    vTextureCoord = aTextureCoord;\n  }';
-
-var fragmentSrc = '\n  varying highp vec2 vTextureCoord;\n\n  uniform sampler2D uSampler;\n\n  void main() {\n    gl_FragColor = texture2D(uSampler, vec2(vTextureCoord.s, vTextureCoord.t));\n  }';
-
-var TextureMaterial = (function (_Material) {
-  _inherits(TextureMaterial, _Material);
-
-  function TextureMaterial() {
-    var opts = arguments.length <= 0 || arguments[0] === undefined ? TextureMaterial.defaultOpts : arguments[0];
-
-    _classCallCheck(this, TextureMaterial);
-
-    _get(Object.getPrototypeOf(TextureMaterial.prototype), 'constructor', this).call(this, TextureMaterial, vertexSrc, fragmentSrc);
-
-    if (opts.src != null) {
-      this.texture = new _texture.Texture(opts.src);
-    }
-
-    this.mvp = this.program.uniform('mvp');
-    this.uSampler = this.program.uniform('uSampler');
-    this.aPosition = this.program.attr('aPosition');
-    this.aTextureCoord = this.program.attr('aTextureCoord');
-  }
-
-  _createClass(TextureMaterial, [{
-    key: 'render',
-    value: function render(mvp) {
-      _get(Object.getPrototypeOf(TextureMaterial.prototype), 'render', this).call(this);
-
-      // Enable attributes
-      _engine.gl.enableVertexAttribArray(this.aPosition);
-      _engine.gl.enableVertexAttribArray(this.aTextureCoord);
-
-      _engine.gl.bindBuffer(_engine.gl.ARRAY_BUFFER, this.vertexBuffer);
-      _engine.gl.vertexAttribPointer(this.aPosition, _engine.VERTEX_SIZE, _engine.gl.FLOAT, _engine.gl.FALSE, 0, this.target.verticesIndex);
-
-      _engine.gl.bindBuffer(_engine.gl.ARRAY_BUFFER, this.texCoordBuffer);
-      _engine.gl.vertexAttribPointer(this.aTextureCoord, _engine.TEX_COORD_SIZE, _engine.gl.FLOAT, _engine.gl.FALSE, 0, this.target.texCoordsIndex);
-
-      if (this.texture) {
-        this.texture.bind(this.uSampler);
-      }
-
-      // Pass variables into program
-      _engine.gl.uniformMatrix4fv(this.mvp, _engine.gl.FALSE, new Float32Array(mvp));
-
-      // Draw elements
-      _engine.gl.bindBuffer(_engine.gl.ELEMENT_ARRAY_BUFFER, this.indexBuffer);
-      _engine.gl.drawElements(_engine.gl.TRIANGLES, this.target.indices.length, _engine.gl.UNSIGNED_BYTE, this.target.indicesIndex);
-
-      // Disable attributes
-      _engine.gl.disableVertexAttribArray(this.aTextureCoord);
-      _engine.gl.disableVertexAttribArray(this.aPosition);
-    }
-  }], [{
-    key: 'defaultOpts',
-    get: function get() {
-      return { src: null };
-    }
-  }]);
-
-  return TextureMaterial;
-})(_material.Material);
-
-exports.TextureMaterial = TextureMaterial;
-
-TextureMaterial.program = null;
-
-},{"./color":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/color.es6","./engine":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/engine.es6","./material":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/material.es6","./texture":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/texture.es6"}],"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/transform.es6":[function(require,module,exports){
+},{"./engine":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/core/engine.es6"}],"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/core/transform.es6":[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -6261,7 +5893,512 @@ var Transform = (function (_Component) {
 
 exports.Transform = Transform;
 
-},{"./component":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/component.es6","gl-matrix":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/node_modules/gl-matrix/src/gl-matrix.js"}]},{},["/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/examples/texture.es6"])
+},{"./component":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/core/component.es6","gl-matrix":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/node_modules/gl-matrix/src/gl-matrix.js"}],"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/geometry/cube.es6":[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, '__esModule', {
+  value: true
+});
+
+var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+var _get = function get(_x2, _x3, _x4) { var _again = true; _function: while (_again) { var object = _x2, property = _x3, receiver = _x4; desc = parent = getter = undefined; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x2 = parent; _x3 = property; _x4 = receiver; _again = true; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var _coreColor = require('../core/color');
+
+var _materialColor = require('../material/color');
+
+var _coreGeometry = require('../core/geometry');
+
+var vertices = function vertices(width, height, depth) {
+  return [-width, -height, depth, width, -height, depth, width, height, depth, -width, height, depth, -width, -height, -depth, -width, height, -depth, width, height, -depth, width, -height, -depth,
+
+  // Top face
+  -width, height, -depth, -width, height, depth, width, height, depth, width, height, -depth,
+
+  // Bottom face
+  -width, -height, -depth, width, -height, -depth, width, -height, depth, -width, -height, depth,
+
+  // Right face
+  width, -height, -depth, width, height, -depth, width, height, depth, width, -height, depth,
+
+  // Left face
+  -width, -height, -depth, -width, -height, depth, -width, height, depth, -width, height, -depth];
+};
+
+var indices = function indices() {
+  return [0, 1, 2, 0, 2, 3, 4, 5, 6, 4, 6, 7, 8, 9, 10, 8, 10, 11, 12, 13, 14, 12, 14, 15, 16, 17, 18, 16, 18, 19, 20, 21, 22, 20, 22, 23];
+};
+
+var texCoords = function texCoords() {
+  return [0.0, 0.0, 0.0, 1.0, 1.0, 1.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 1.0, 1.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 1.0, 1.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 1.0, 1.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 1.0, 1.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 1.0, 1.0, 1.0, 0.0];
+};
+
+var normals = function normals() {
+  return [
+  // Front
+  0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0,
+
+  // Back
+  0.0, 0.0, -1.0, 0.0, 0.0, -1.0, 0.0, 0.0, -1.0, 0.0, 0.0, -1.0,
+
+  // Top
+  0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0,
+
+  // Bottom
+  0.0, -1.0, 0.0, 0.0, -1.0, 0.0, 0.0, -1.0, 0.0, 0.0, -1.0, 0.0,
+
+  // Right
+  1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0,
+
+  // Left
+  -1.0, 0.0, 0.0, -1.0, 0.0, 0.0, -1.0, 0.0, 0.0, -1.0, 0.0, 0.0];
+};
+
+var Cube = (function (_Geometry) {
+  _inherits(Cube, _Geometry);
+
+  function Cube() {
+    var opts = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
+
+    _classCallCheck(this, Cube);
+
+    opts = _extends({}, Cube.defaultOpts, opts);
+    _get(Object.getPrototypeOf(Cube.prototype), 'constructor', this).call(this);
+    this.vertices = vertices(opts.width, opts.height, opts.depth);
+    this.indices = indices();
+    this.normals = normals();
+    this.texCoords = texCoords();
+    this.useMaterial(opts.material);
+  }
+
+  _createClass(Cube, null, [{
+    key: 'defaultOpts',
+    get: function get() {
+      return { width: 5.0,
+        height: 5.0,
+        depth: 5.0,
+        material: new _materialColor.ColorMaterial() };
+    }
+  }]);
+
+  return Cube;
+})(_coreGeometry.Geometry);
+
+exports.Cube = Cube;
+
+},{"../core/color":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/core/color.es6","../core/geometry":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/core/geometry.es6","../material/color":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/material/color.es6"}],"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/geometry/quad.es6":[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, '__esModule', {
+  value: true
+});
+
+var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+var _get = function get(_x2, _x3, _x4) { var _again = true; _function: while (_again) { var object = _x2, property = _x3, receiver = _x4; desc = parent = getter = undefined; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x2 = parent; _x3 = property; _x4 = receiver; _again = true; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var _coreColor = require('../core/color');
+
+var _materialColor = require('../material/color');
+
+var _coreGeometry = require('../core/geometry');
+
+var vertices = function vertices(width, height) {
+  return [-width, -height, 0.0, -width, height, 0.0, width, height, 0.0, width, -height, 0.0];
+};
+
+var indices = function indices() {
+  return [0, 1, 2, 3, 0, 2, 3];
+};
+
+var texCoords = function texCoords() {
+  return [0.0, 0.0, 0.0, 1.0, 1.0, 1.0, 1.0, 0.0];
+};
+
+var Quad = (function (_Geometry) {
+  _inherits(Quad, _Geometry);
+
+  function Quad() {
+    var opts = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
+
+    _classCallCheck(this, Quad);
+
+    _get(Object.getPrototypeOf(Quad.prototype), 'constructor', this).call(this);
+    opts = _extends({}, Quad.defaultOpts, opts);
+    this.vertices = vertices(opts.width, opts.height);
+    this.indices = indices();
+    this.texCoords = texCoords();
+    this.useMaterial(opts.material);
+  }
+
+  _createClass(Quad, null, [{
+    key: 'defaultOpts',
+    get: function get() {
+      return { width: 5.0, height: 5.0, material: new _materialColor.ColorMaterial() };
+    }
+  }]);
+
+  return Quad;
+})(_coreGeometry.Geometry);
+
+exports.Quad = Quad;
+
+},{"../core/color":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/core/color.es6","../core/geometry":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/core/geometry.es6","../material/color":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/material/color.es6"}],"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/index.es6":[function(require,module,exports){
+// Core
+'use strict';
+
+Object.defineProperty(exports, '__esModule', {
+  value: true
+});
+
+var _coreEngine = require('./core/engine');
+
+var _coreColor = require('./core/color');
+
+var _coreShader = require('./core/shader');
+
+var _coreProgram = require('./core/program');
+
+var _coreComponent = require('./core/component');
+
+var _coreMaterial = require('./core/material');
+
+var _coreScene = require('./core/scene');
+
+var _coreTransform = require('./core/transform');
+
+var _coreGeometry = require('./core/geometry');
+
+var _coreCamera = require('./core/camera');
+
+// Materials
+
+var _materialColor = require('./material/color');
+
+var _materialTexture = require('./material/texture');
+
+var _materialColor_lighting = require('./material/color_lighting');
+
+// Geometries
+
+var _geometryCube = require('./geometry/cube');
+
+var _geometryQuad = require('./geometry/quad');
+
+exports.
+// Core
+Color = _coreColor.Color;
+exports.Shader = _coreShader.Shader;
+exports.Program = _coreProgram.Program;
+exports.Transform = _coreTransform.Transform;
+exports.Component = _coreComponent.Component;
+exports.Geometry = _coreGeometry.Geometry;
+exports.Material = _coreMaterial.Material;
+exports.Scene = _coreScene.Scene;
+exports.Camera = _coreCamera.Camera;
+exports.PerspectiveCamera = _coreCamera.PerspectiveCamera;
+exports.OrthographicCamera = _coreCamera.OrthographicCamera;
+exports.
+
+// Materials
+ColorMaterial = _materialColor.ColorMaterial;
+exports.TextureMaterial = _materialTexture.TextureMaterial;
+exports.ColorLightingMaterial = _materialColor_lighting.ColorLightingMaterial;
+exports.
+
+// Geometries
+Quad = _geometryQuad.Quad;
+exports.Cube = _geometryCube.Cube;
+exports.
+
+// Objects
+gogol = _coreEngine.gogol;
+exports.gl = _coreEngine.gl;
+
+},{"./core/camera":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/core/camera.es6","./core/color":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/core/color.es6","./core/component":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/core/component.es6","./core/engine":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/core/engine.es6","./core/geometry":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/core/geometry.es6","./core/material":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/core/material.es6","./core/program":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/core/program.es6","./core/scene":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/core/scene.es6","./core/shader":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/core/shader.es6","./core/transform":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/core/transform.es6","./geometry/cube":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/geometry/cube.es6","./geometry/quad":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/geometry/quad.es6","./material/color":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/material/color.es6","./material/color_lighting":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/material/color_lighting.es6","./material/texture":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/material/texture.es6"}],"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/material/color.es6":[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, '__esModule', {
+  value: true
+});
+
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+var _get = function get(_x2, _x3, _x4) { var _again = true; _function: while (_again) { var object = _x2, property = _x3, receiver = _x4; desc = parent = getter = undefined; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x2 = parent; _x3 = property; _x4 = receiver; _again = true; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var _coreColor = require('../core/color');
+
+var _coreEngine = require('../core/engine');
+
+var _coreMaterial = require('../core/material');
+
+var vertexSrc = '\n  uniform   mat4 modelMatrix;\n  uniform   mat4 viewMatrix;\n  uniform   mat4 projectionMatrix;\n  attribute vec4 aPosition;\n\n  void main() {\n    gl_Position = projectionMatrix * viewMatrix * modelMatrix  * aPosition;\n  }';
+
+var fragmentSrc = '\n  uniform lowp vec4 uColor;\n\n  void main() {\n    gl_FragColor = uColor;\n  }';
+
+var ColorMaterial = (function (_Material) {
+  _inherits(ColorMaterial, _Material);
+
+  function ColorMaterial() {
+    var opts = arguments.length <= 0 || arguments[0] === undefined ? ColorMaterial.defaultOpts : arguments[0];
+
+    _classCallCheck(this, ColorMaterial);
+
+    _get(Object.getPrototypeOf(ColorMaterial.prototype), 'constructor', this).call(this, ColorMaterial, vertexSrc, fragmentSrc);
+
+    this.color = opts.color;
+    this.modelMatrix = this.program.uniform('modelMatrix');
+    this.viewMatrix = this.program.uniform('viewMatrix');
+    this.projectionMatrix = this.program.uniform('projectionMatrix');
+    this.uColor = this.program.uniform('uColor');
+    this.aPosition = this.program.attr('aPosition');
+  }
+
+  _createClass(ColorMaterial, [{
+    key: 'render',
+    value: function render(m, v, p) {
+      _get(Object.getPrototypeOf(ColorMaterial.prototype), 'render', this).call(this);
+
+      // Enable attributes
+      _coreEngine.gl.enableVertexAttribArray(this.aPosition);
+      _coreEngine.gl.bindBuffer(_coreEngine.gl.ARRAY_BUFFER, this.vertexBuffer);
+      _coreEngine.gl.vertexAttribPointer(this.aPosition, _coreEngine.VERTEX_SIZE, _coreEngine.gl.FLOAT, _coreEngine.gl.FALSE, 0, this.target.verticesIndex);
+
+      // Pass variables into program
+      _coreEngine.gl.uniform4fv(this.uColor, this.color.toVector());
+      _coreEngine.gl.uniformMatrix4fv(this.modelMatrix, _coreEngine.gl.FALSE, new Float32Array(m));
+      _coreEngine.gl.uniformMatrix4fv(this.viewMatrix, _coreEngine.gl.FALSE, new Float32Array(v));
+      _coreEngine.gl.uniformMatrix4fv(this.projectionMatrix, _coreEngine.gl.FALSE, new Float32Array(p));
+
+      // Draw elements
+      _coreEngine.gl.bindBuffer(_coreEngine.gl.ELEMENT_ARRAY_BUFFER, this.indexBuffer);
+      _coreEngine.gl.drawElements(_coreEngine.gl.TRIANGLES, this.target.indices.length, _coreEngine.gl.UNSIGNED_BYTE, this.target.indicesIndex);
+
+      // Disable attributes
+      _coreEngine.gl.disableVertexAttribArray(this.aPosition);
+    }
+  }], [{
+    key: 'defaultOpts',
+    get: function get() {
+      return { color: new _coreColor.Color(1.0, 1.0, 1.0, 1.0) };
+    }
+  }]);
+
+  return ColorMaterial;
+})(_coreMaterial.Material);
+
+exports.ColorMaterial = ColorMaterial;
+
+ColorMaterial.program = null;
+
+},{"../core/color":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/core/color.es6","../core/engine":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/core/engine.es6","../core/material":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/core/material.es6"}],"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/material/color_lighting.es6":[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, '__esModule', {
+  value: true
+});
+
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+var _get = function get(_x2, _x3, _x4) { var _again = true; _function: while (_again) { var object = _x2, property = _x3, receiver = _x4; desc = parent = getter = undefined; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x2 = parent; _x3 = property; _x4 = receiver; _again = true; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var _glMatrix = require('gl-matrix');
+
+var _coreColor = require('../core/color');
+
+var _coreEngine = require('../core/engine');
+
+var _coreMaterial = require('../core/material');
+
+var vertexSrc = '\n  uniform   mat4 projectionMatrix;\n  uniform   mat4 viewMatrix;\n  uniform   mat4 modelMatrix;\n  uniform   mat4 uNormalMatrix;\n\n  attribute highp vec3 aNormal;\n  attribute highp vec3 aPosition;\n  varying highp vec3 vLighting;\n\n  void main() {\n    gl_Position = projectionMatrix * viewMatrix * modelMatrix * vec4(aPosition, 1.0);\n\n    highp vec3 ambientLight = vec3(0.6, 0.6, 0.6);\n    highp vec3 directionalLightColor = vec3(0.5, 0.5, 0.75);\n    highp vec3 directionalVector = vec3(0.85, 0.8, 0.75);\n\n    highp vec4 transformedNormal = uNormalMatrix * vec4(aNormal, 1.0);\n\n    highp float directional = max(dot(transformedNormal.xyz, directionalVector), 0.0);\n    vLighting = ambientLight + (directionalLightColor * directional);\n  }';
+
+var fragmentSrc = '\n  uniform lowp vec4 uColor;\n  varying highp vec3 vLighting;\n\n  void main() {\n    gl_FragColor =  vec4(uColor.rgb * vLighting, uColor.a);\n  }';
+
+var ColorLightingMaterial = (function (_Material) {
+  _inherits(ColorLightingMaterial, _Material);
+
+  function ColorLightingMaterial() {
+    var opts = arguments.length <= 0 || arguments[0] === undefined ? ColorLightingMaterial.defaultOpts : arguments[0];
+
+    _classCallCheck(this, ColorLightingMaterial);
+
+    _get(Object.getPrototypeOf(ColorLightingMaterial.prototype), 'constructor', this).call(this, ColorLightingMaterial, vertexSrc, fragmentSrc);
+
+    this.color = opts.color;
+    this.modelMatrix = this.program.uniform('modelMatrix');
+    this.viewMatrix = this.program.uniform('viewMatrix');
+    this.projectionMatrix = this.program.uniform('projectionMatrix');
+    this.uColor = this.program.uniform('uColor');
+    this.uNormalMatrix = this.program.uniform('uNormalMatrix');
+    this.aPosition = this.program.attr('aPosition');
+    this.aNormal = this.program.attr('aNormal');
+  }
+
+  _createClass(ColorLightingMaterial, [{
+    key: 'render',
+    value: function render(m, v, p) {
+      _get(Object.getPrototypeOf(ColorLightingMaterial.prototype), 'render', this).call(this);
+
+      var normalMatrix = _glMatrix.mat4.create();
+      _glMatrix.mat4.mul(normalMatrix, v, m);
+      _glMatrix.mat4.invert(normalMatrix, normalMatrix);
+      _glMatrix.mat4.transpose(normalMatrix, normalMatrix);
+
+      // Enable attributes
+      _coreEngine.gl.enableVertexAttribArray(this.aPosition);
+      _coreEngine.gl.enableVertexAttribArray(this.aNormal);
+
+      _coreEngine.gl.bindBuffer(_coreEngine.gl.ARRAY_BUFFER, this.vertexBuffer);
+      _coreEngine.gl.vertexAttribPointer(this.aPosition, _coreEngine.VERTEX_SIZE, _coreEngine.gl.FLOAT, _coreEngine.gl.FALSE, 0, this.target.verticesIndex);
+
+      _coreEngine.gl.bindBuffer(_coreEngine.gl.ARRAY_BUFFER, this.normalBuffer);
+      _coreEngine.gl.vertexAttribPointer(this.aNormal, _coreEngine.VERTEX_SIZE, _coreEngine.gl.FLOAT, _coreEngine.gl.FALSE, 0, this.target.normalsIndex);
+
+      // Pass variables into program
+      _coreEngine.gl.uniform4fv(this.uColor, this.color.toVector());
+      _coreEngine.gl.uniformMatrix4fv(this.modelMatrix, _coreEngine.gl.FALSE, new Float32Array(m));
+      _coreEngine.gl.uniformMatrix4fv(this.viewMatrix, _coreEngine.gl.FALSE, new Float32Array(v));
+      _coreEngine.gl.uniformMatrix4fv(this.projectionMatrix, _coreEngine.gl.FALSE, new Float32Array(p));
+      _coreEngine.gl.uniformMatrix4fv(this.uNormalMatrix, _coreEngine.gl.FALSE, new Float32Array(normalMatrix));
+
+      // Draw elements
+      _coreEngine.gl.bindBuffer(_coreEngine.gl.ELEMENT_ARRAY_BUFFER, this.indexBuffer);
+      _coreEngine.gl.drawElements(_coreEngine.gl.TRIANGLES, this.target.indices.length, _coreEngine.gl.UNSIGNED_BYTE, this.target.indicesIndex);
+
+      // Disable attributes
+      _coreEngine.gl.disableVertexAttribArray(this.aPosition);
+    }
+  }], [{
+    key: 'defaultOpts',
+    get: function get() {
+      return { color: new _coreColor.Color(1.0, 1.0, 1.0, 1.0) };
+    }
+  }]);
+
+  return ColorLightingMaterial;
+})(_coreMaterial.Material);
+
+exports.ColorLightingMaterial = ColorLightingMaterial;
+
+ColorLightingMaterial.program = null;
+
+},{"../core/color":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/core/color.es6","../core/engine":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/core/engine.es6","../core/material":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/core/material.es6","gl-matrix":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/node_modules/gl-matrix/src/gl-matrix.js"}],"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/material/texture.es6":[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, '__esModule', {
+  value: true
+});
+
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+var _get = function get(_x2, _x3, _x4) { var _again = true; _function: while (_again) { var object = _x2, property = _x3, receiver = _x4; desc = parent = getter = undefined; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x2 = parent; _x3 = property; _x4 = receiver; _again = true; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var _coreColor = require('../core/color');
+
+var _coreTexture = require('../core/texture');
+
+var _coreEngine = require('../core/engine');
+
+var _coreMaterial = require('../core/material');
+
+var vertexSrc = '\n  uniform   mat4 modelMatrix;\n  uniform   mat4 viewMatrix;\n  uniform   mat4 projectionMatrix;\n  attribute vec4 aPosition;\n  attribute vec2 aTextureCoord;\n\n  varying highp vec2 vTextureCoord;\n\n  void main() {\n    gl_Position = projectionMatrix * viewMatrix * modelMatrix * aPosition;\n    vTextureCoord = aTextureCoord;\n  }';
+
+var fragmentSrc = '\n  varying highp vec2 vTextureCoord;\n\n  uniform sampler2D uSampler;\n\n  void main() {\n    gl_FragColor = texture2D(uSampler, vec2(vTextureCoord.s, vTextureCoord.t));\n  }';
+
+var TextureMaterial = (function (_Material) {
+  _inherits(TextureMaterial, _Material);
+
+  function TextureMaterial() {
+    var opts = arguments.length <= 0 || arguments[0] === undefined ? TextureMaterial.defaultOpts : arguments[0];
+
+    _classCallCheck(this, TextureMaterial);
+
+    _get(Object.getPrototypeOf(TextureMaterial.prototype), 'constructor', this).call(this, TextureMaterial, vertexSrc, fragmentSrc);
+
+    if (opts.src != null) {
+      this.texture = new _coreTexture.Texture(opts.src);
+    }
+
+    this.modelMatrix = this.program.uniform('modelMatrix');
+    this.viewMatrix = this.program.uniform('viewMatrix');
+    this.projectionMatrix = this.program.uniform('projectionMatrix');
+    this.uSampler = this.program.uniform('uSampler');
+    this.aPosition = this.program.attr('aPosition');
+    this.aTextureCoord = this.program.attr('aTextureCoord');
+  }
+
+  _createClass(TextureMaterial, [{
+    key: 'render',
+    value: function render(m, v, p) {
+      _get(Object.getPrototypeOf(TextureMaterial.prototype), 'render', this).call(this);
+
+      // Enable attributes
+      _coreEngine.gl.enableVertexAttribArray(this.aPosition);
+      _coreEngine.gl.enableVertexAttribArray(this.aTextureCoord);
+
+      _coreEngine.gl.bindBuffer(_coreEngine.gl.ARRAY_BUFFER, this.vertexBuffer);
+      _coreEngine.gl.vertexAttribPointer(this.aPosition, _coreEngine.VERTEX_SIZE, _coreEngine.gl.FLOAT, _coreEngine.gl.FALSE, 0, this.target.verticesIndex);
+
+      _coreEngine.gl.bindBuffer(_coreEngine.gl.ARRAY_BUFFER, this.texCoordBuffer);
+      _coreEngine.gl.vertexAttribPointer(this.aTextureCoord, _coreEngine.TEX_COORD_SIZE, _coreEngine.gl.FLOAT, _coreEngine.gl.FALSE, 0, this.target.texCoordsIndex);
+
+      if (this.texture) {
+        this.texture.bind(this.uSampler);
+      }
+
+      // Pass variables into program
+      _coreEngine.gl.uniformMatrix4fv(this.modelMatrix, _coreEngine.gl.FALSE, new Float32Array(m));
+      _coreEngine.gl.uniformMatrix4fv(this.viewMatrix, _coreEngine.gl.FALSE, new Float32Array(v));
+      _coreEngine.gl.uniformMatrix4fv(this.projectionMatrix, _coreEngine.gl.FALSE, new Float32Array(p));
+
+      // Draw elements
+      _coreEngine.gl.bindBuffer(_coreEngine.gl.ELEMENT_ARRAY_BUFFER, this.indexBuffer);
+      _coreEngine.gl.drawElements(_coreEngine.gl.TRIANGLES, this.target.indices.length, _coreEngine.gl.UNSIGNED_BYTE, this.target.indicesIndex);
+
+      // Disable attributes
+      _coreEngine.gl.disableVertexAttribArray(this.aTextureCoord);
+      _coreEngine.gl.disableVertexAttribArray(this.aPosition);
+    }
+  }], [{
+    key: 'defaultOpts',
+    get: function get() {
+      return { src: null };
+    }
+  }]);
+
+  return TextureMaterial;
+})(_coreMaterial.Material);
+
+exports.TextureMaterial = TextureMaterial;
+
+TextureMaterial.program = null;
+
+},{"../core/color":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/core/color.es6","../core/engine":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/core/engine.es6","../core/material":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/core/material.es6","../core/texture":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/core/texture.es6"}]},{},["/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/examples/texture.es6"])
 
 
 //# sourceMappingURL=bundle.js.map
