@@ -1,5 +1,5 @@
 import { mat4, vec3 } from 'gl-matrix'
-import { gogol, Scene, Cube, Transform, Program, ColorLightingMaterial, Color, PerspectiveCamera } from '../src'
+import { gogol, Scene, Cube, Transform, Program, ColorLightingTextureMaterial, Color, PerspectiveCamera } from '../src'
 gogol.init('gogol-example')
 
 let s = new Scene({ camera: new PerspectiveCamera() })
@@ -7,7 +7,7 @@ gogol.scene = s
 
 s.camera.translate(0.0, 0.0, 100.0)
 
-let mat = () => { return new ColorLightingMaterial() }
+let mat = () => { return new ColorLightingTextureMaterial({ src: 'texture.jpg' }) }
 
 let sun = new Cube({ width: 5.0, height: 5.0, depth: 5.0, material: mat() })
 sun.material.color = Color.fromHex('#f39c12')

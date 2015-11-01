@@ -14,6 +14,7 @@ import { Camera, PerspectiveCamera, OrthographicCamera } from './core/camera'
 import { ColorMaterial } from './material/color'
 import { TextureMaterial } from './material/texture'
 import { ColorLightingMaterial } from './material/color_lighting'
+import { ColorLightingTextureMaterial } from './material/color_lighting_texture'
 
 // Geometries
 import { Cube } from './geometry/cube'
@@ -37,6 +38,7 @@ export {
   ColorMaterial,
   TextureMaterial,
   ColorLightingMaterial,
+  ColorLightingTextureMaterial,
 
   // Geometries
   Quad,

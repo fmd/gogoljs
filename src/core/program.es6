@@ -9,6 +9,8 @@ export class Program {
     gl.attachShader(program, fragmentShader.shader)
     gl.linkProgram(program)
 
+    this.vertexShader = vertexShader
+    this.fragmentShader = fragmentShader
     this.program = program
     this.checkErrors()
 
@@ -31,7 +33,9 @@ export class Program {
     let success = gl.getProgramParameter(this.program, gl.LINK_STATUS)
 
     if (!success) {
-      throw "Could not compile program:" + gl.getShaderInfoLog(this.program)
+      let v = gl.getShaderInfoLog(this.vertexShader.shader)
+      let f = gl.getShaderInfoLog(this.fragmentShader.shader)
+      throw `Could not compile program: ${v} - ${f}`
     }
   }
 }
