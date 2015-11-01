@@ -5471,6 +5471,8 @@ var Program = (function () {
     _engine.gl.attachShader(program, fragmentShader.shader);
     _engine.gl.linkProgram(program);
 
+    this.vertexShader = vertexShader;
+    this.fragmentShader = fragmentShader;
     this.program = program;
     this.checkErrors();
 
@@ -5498,7 +5500,9 @@ var Program = (function () {
       var success = _engine.gl.getProgramParameter(this.program, _engine.gl.LINK_STATUS);
 
       if (!success) {
-        throw "Could not compile program:" + _engine.gl.getShaderInfoLog(this.program);
+        var v = _engine.gl.getShaderInfoLog(this.vertexShader.shader);
+        var f = _engine.gl.getShaderInfoLog(this.fragmentShader.shader);
+        throw 'Could not compile program: ' + v + ' - ' + f;
       }
     }
   }]);
@@ -6092,6 +6096,8 @@ var _materialTexture = require('./material/texture');
 
 var _materialColor_lighting = require('./material/color_lighting');
 
+var _materialColor_lighting_texture = require('./material/color_lighting_texture');
+
 // Geometries
 
 var _geometryCube = require('./geometry/cube');
@@ -6117,6 +6123,7 @@ exports.
 ColorMaterial = _materialColor.ColorMaterial;
 exports.TextureMaterial = _materialTexture.TextureMaterial;
 exports.ColorLightingMaterial = _materialColor_lighting.ColorLightingMaterial;
+exports.ColorLightingTextureMaterial = _materialColor_lighting_texture.ColorLightingTextureMaterial;
 exports.
 
 // Geometries
@@ -6128,7 +6135,7 @@ exports.
 gogol = _coreEngine.gogol;
 exports.gl = _coreEngine.gl;
 
-},{"./core/camera":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/core/camera.es6","./core/color":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/core/color.es6","./core/component":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/core/component.es6","./core/engine":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/core/engine.es6","./core/geometry":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/core/geometry.es6","./core/material":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/core/material.es6","./core/program":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/core/program.es6","./core/scene":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/core/scene.es6","./core/shader":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/core/shader.es6","./core/transform":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/core/transform.es6","./geometry/cube":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/geometry/cube.es6","./geometry/quad":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/geometry/quad.es6","./material/color":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/material/color.es6","./material/color_lighting":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/material/color_lighting.es6","./material/texture":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/material/texture.es6"}],"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/material/color.es6":[function(require,module,exports){
+},{"./core/camera":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/core/camera.es6","./core/color":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/core/color.es6","./core/component":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/core/component.es6","./core/engine":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/core/engine.es6","./core/geometry":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/core/geometry.es6","./core/material":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/core/material.es6","./core/program":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/core/program.es6","./core/scene":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/core/scene.es6","./core/shader":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/core/shader.es6","./core/transform":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/core/transform.es6","./geometry/cube":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/geometry/cube.es6","./geometry/quad":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/geometry/quad.es6","./material/color":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/material/color.es6","./material/color_lighting":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/material/color_lighting.es6","./material/color_lighting_texture":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/material/color_lighting_texture.es6","./material/texture":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/material/texture.es6"}],"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/material/color.es6":[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -6303,7 +6310,125 @@ exports.ColorLightingMaterial = ColorLightingMaterial;
 
 ColorLightingMaterial.program = null;
 
-},{"../core/color":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/core/color.es6","../core/engine":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/core/engine.es6","../core/material":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/core/material.es6","gl-matrix":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/node_modules/gl-matrix/src/gl-matrix.js"}],"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/material/texture.es6":[function(require,module,exports){
+},{"../core/color":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/core/color.es6","../core/engine":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/core/engine.es6","../core/material":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/core/material.es6","gl-matrix":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/node_modules/gl-matrix/src/gl-matrix.js"}],"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/material/color_lighting_texture.es6":[function(require,module,exports){
+// Let's push this way of doing things to the limit before we refactor.
+
+'use strict';
+
+Object.defineProperty(exports, '__esModule', {
+  value: true
+});
+
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+var _get = function get(_x2, _x3, _x4) { var _again = true; _function: while (_again) { var object = _x2, property = _x3, receiver = _x4; desc = parent = getter = undefined; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x2 = parent; _x3 = property; _x4 = receiver; _again = true; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var _glMatrix = require('gl-matrix');
+
+var _coreColor = require('../core/color');
+
+var _coreEngine = require('../core/engine');
+
+var _coreTexture = require('../core/texture');
+
+var _coreMaterial = require('../core/material');
+
+var vertexSrc = '\n  uniform   mat4 projectionMatrix;\n  uniform   mat4 viewMatrix;\n  uniform   mat4 modelMatrix;\n  uniform   mat4 uNormalMatrix;\n\n  attribute highp vec3 aNormal;\n  attribute highp vec3 aPosition;\n  attribute highp vec2 aTextureCoord;\n\n  varying highp vec3 vLighting;\n  varying highp vec2 vTextureCoord;\n\n  void main() {\n    gl_Position = projectionMatrix * viewMatrix * modelMatrix * vec4(aPosition, 1.0);\n\n    highp vec3 ambientLight = vec3(0.6, 0.6, 0.6);\n    highp vec3 directionalLightColor = vec3(0.5, 0.5, 0.75);\n    highp vec3 directionalVector = vec3(0.85, 0.8, 0.75);\n\n    highp vec4 transformedNormal = uNormalMatrix * vec4(aNormal, 1.0);\n\n    highp float directional = max(dot(transformedNormal.xyz, directionalVector), 0.0);\n\n    vLighting = ambientLight + (directionalLightColor * directional);\n    vTextureCoord = aTextureCoord;\n  }';
+
+var fragmentSrc = '\n  uniform lowp vec4 uColor;\n  varying highp vec3 vLighting;\n  varying highp vec2 vTextureCoord;\n  uniform sampler2D uSampler;\n\n  void main() {\n    highp vec4 t = texture2D(uSampler, vec2(vTextureCoord.s, vTextureCoord.t));\n    gl_FragColor =  vec4(uColor.rgb * vLighting * t.rgb, t.a);\n  }';
+
+var ColorLightingTextureMaterial = (function (_Material) {
+  _inherits(ColorLightingTextureMaterial, _Material);
+
+  function ColorLightingTextureMaterial() {
+    var opts = arguments.length <= 0 || arguments[0] === undefined ? ColorLightingTextureMaterial.defaultOpts : arguments[0];
+
+    _classCallCheck(this, ColorLightingTextureMaterial);
+
+    _get(Object.getPrototypeOf(ColorLightingTextureMaterial.prototype), 'constructor', this).call(this, ColorLightingTextureMaterial, vertexSrc, fragmentSrc);
+
+    this.color = opts.color;
+
+    if (opts.src != null) {
+      this.texture = new _coreTexture.Texture(opts.src);
+    }
+
+    // These need to start being set automagically.
+    this.modelMatrix = this.program.uniform('modelMatrix');
+    this.viewMatrix = this.program.uniform('viewMatrix');
+    this.projectionMatrix = this.program.uniform('projectionMatrix');
+    this.uColor = this.program.uniform('uColor');
+    this.uNormalMatrix = this.program.uniform('uNormalMatrix');
+    this.aPosition = this.program.attr('aPosition');
+    this.aNormal = this.program.attr('aNormal');
+    this.uSampler = this.program.uniform('uSampler');
+    this.aTextureCoord = this.program.attr('aTextureCoord');
+  }
+
+  _createClass(ColorLightingTextureMaterial, [{
+    key: 'render',
+    value: function render(m, v, p) {
+      _get(Object.getPrototypeOf(ColorLightingTextureMaterial.prototype), 'render', this).call(this);
+
+      var normalMatrix = _glMatrix.mat4.create();
+      _glMatrix.mat4.mul(normalMatrix, v, m);
+      _glMatrix.mat4.invert(normalMatrix, normalMatrix);
+      _glMatrix.mat4.transpose(normalMatrix, normalMatrix);
+
+      // Enable attributes
+      _coreEngine.gl.enableVertexAttribArray(this.aPosition);
+      _coreEngine.gl.enableVertexAttribArray(this.aNormal);
+      _coreEngine.gl.enableVertexAttribArray(this.aTextureCoord);
+
+      _coreEngine.gl.bindBuffer(_coreEngine.gl.ARRAY_BUFFER, this.vertexBuffer);
+      _coreEngine.gl.vertexAttribPointer(this.aPosition, _coreEngine.VERTEX_SIZE, _coreEngine.gl.FLOAT, _coreEngine.gl.FALSE, 0, this.target.verticesIndex);
+
+      _coreEngine.gl.bindBuffer(_coreEngine.gl.ARRAY_BUFFER, this.texCoordBuffer);
+      _coreEngine.gl.vertexAttribPointer(this.aTextureCoord, _coreEngine.TEX_COORD_SIZE, _coreEngine.gl.FLOAT, _coreEngine.gl.FALSE, 0, this.target.texCoordsIndex);
+
+      _coreEngine.gl.bindBuffer(_coreEngine.gl.ARRAY_BUFFER, this.normalBuffer);
+      _coreEngine.gl.vertexAttribPointer(this.aNormal, _coreEngine.VERTEX_SIZE, _coreEngine.gl.FLOAT, _coreEngine.gl.FALSE, 0, this.target.normalsIndex);
+
+      // Pass variables into program
+      _coreEngine.gl.uniform4fv(this.uColor, this.color.toVector());
+      _coreEngine.gl.uniformMatrix4fv(this.modelMatrix, _coreEngine.gl.FALSE, new Float32Array(m));
+      _coreEngine.gl.uniformMatrix4fv(this.viewMatrix, _coreEngine.gl.FALSE, new Float32Array(v));
+      _coreEngine.gl.uniformMatrix4fv(this.projectionMatrix, _coreEngine.gl.FALSE, new Float32Array(p));
+      _coreEngine.gl.uniformMatrix4fv(this.uNormalMatrix, _coreEngine.gl.FALSE, new Float32Array(normalMatrix));
+
+      if (this.texture) {
+        this.texture.bind(this.uSampler);
+      }
+
+      // Draw elements
+      _coreEngine.gl.bindBuffer(_coreEngine.gl.ELEMENT_ARRAY_BUFFER, this.indexBuffer);
+      _coreEngine.gl.drawElements(_coreEngine.gl.TRIANGLES, this.target.indices.length, _coreEngine.gl.UNSIGNED_BYTE, this.target.indicesIndex);
+
+      // Disable attributes
+      _coreEngine.gl.disableVertexAttribArray(this.aPosition);
+      _coreEngine.gl.disableVertexAttribArray(this.aTextureCoord);
+      _coreEngine.gl.disableVertexAttribArray(this.aNormal);
+    }
+  }], [{
+    key: 'defaultOpts',
+    get: function get() {
+      return { color: new _coreColor.Color(1.0, 1.0, 1.0, 1.0),
+        src: null };
+    }
+  }]);
+
+  return ColorLightingTextureMaterial;
+})(_coreMaterial.Material);
+
+exports.ColorLightingTextureMaterial = ColorLightingTextureMaterial;
+
+ColorLightingTextureMaterial.program = null;
+
+},{"../core/color":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/core/color.es6","../core/engine":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/core/engine.es6","../core/material":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/core/material.es6","../core/texture":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/core/texture.es6","gl-matrix":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/node_modules/gl-matrix/src/gl-matrix.js"}],"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/material/texture.es6":[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
