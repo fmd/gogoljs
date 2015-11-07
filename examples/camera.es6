@@ -38,7 +38,6 @@ sun.addChild(earthJoint)
 sun.addChild(marsJoint)
 
 s.addChild(sun)
-
 s.bake()
 
 function render() {

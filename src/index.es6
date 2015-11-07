@@ -20,7 +20,18 @@ import { ColorLightingTextureMaterial } from './material/color_lighting_texture'
 import { Cube } from './geometry/cube'
 import { Quad } from './geometry/quad'
 
+// Refactored
+import { Attribute, Uniform } from './program/attribute'
+import { ColorProgram } from './program/color'
+
+// Refactored better
+import { ShaderComponent } from './builder/shader_component'
+import { ShaderInput } from './builder/shader_input'
+import { BasicVertexComponent } from './builder/components/basic_vertex'
+import { BasicFragmentComponent } from './builder/components/basic_fragment'
+
 export {
+
   // Core
   Color,
   Shader,
@@ -43,6 +54,17 @@ export {
   // Geometries
   Quad,
   Cube,
+
+  // Refactor
+  Attribute,
+  Uniform,
+  ColorProgram,
+
+  // New Refactor
+  ShaderComponent,
+  ShaderInput,
+  BasicVertexComponent,
+  BasicFragmentComponent,
 
   // Objects
   gogol,

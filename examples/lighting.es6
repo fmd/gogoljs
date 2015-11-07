@@ -1,6 +1,6 @@
 import { mat4, vec3 } from 'gl-matrix'
 import { gogol, Scene, Cube, Transform, Program, ColorLightingMaterial, Color, PerspectiveCamera } from '../src'
-gogol.init('gogol-example')
+gogol.init('gogol-example', { clearColor: Color.fromHex('232323') })
 
 let s = new Scene({ camera: new PerspectiveCamera() })
 gogol.scene = s

@@ -9,7 +9,7 @@ let vertexSrc = `
   attribute vec4 aPosition;
 
   void main() {
-    gl_Position = projectionMatrix * viewMatrix * modelMatrix  * aPosition;
+    gl_Position = projectionMatrix * viewMatrix * modelMatrix * aPosition;
   }`
 
 let fragmentSrc = `
