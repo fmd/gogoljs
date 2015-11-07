@@ -26,9 +26,10 @@ import { ColorProgram } from './program/color'
 
 // Refactored better
 import { ShaderComponent } from './builder/shader_component'
-import { ShaderInput } from './builder/shader_input'
-import { BasicVertexComponent } from './builder/components/basic_vertex'
-import { BasicFragmentComponent } from './builder/components/basic_fragment'
+import { ShaderVar } from './builder/shader_var'
+import { ProgramBuilder } from './builder/program_builder'
+import { BasicLightingComponent } from './builder/components/basic_lighting'
+import { BasicMaterialComponent } from './builder/components/basic_material'
 
 export {
 
@@ -62,9 +63,10 @@ export {
 
   // New Refactor
   ShaderComponent,
-  ShaderInput,
-  BasicVertexComponent,
-  BasicFragmentComponent,
+  ShaderVar,
+  BasicLightingComponent,
+  BasicMaterialComponent,
+  ProgramBuilder,
 
   // Objects
   gogol,

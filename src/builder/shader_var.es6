@@ -1,6 +1,6 @@
 import { compact } from 'lodash'
 
-export class ShaderInput {
+export class ShaderVar {
   constructor(qualifier, dataType, name, precision = null) {
     this.qualifier = qualifier
     this.precision = precision
@@ -16,37 +16,53 @@ export class ShaderInput {
     return this.fromRaw(this.parts.join(' '))
   }
 
+  get arg() {
+    return `${this.dataType} ${this.name}`
+  }
+
+  get input() {
+    return `in ${this.arg}`
+  }
+
+  get output() {
+    return `out ${this.arg}`
+  }
+
+  get inout() {
+    return `inout ${this.arg}`
+  }
+
   static fromString(s) {
     let parts = s.split(' ')
     if (parts.length == 3) {
-      return new ShaderInput(...parts)
+      return new ShaderVar(...parts)
     }
 
-    return new ShaderInput(parts[0], parts[2], parts[3], parts[1])
+    return new ShaderVar(parts[0], parts[2], parts[3], parts[1])
   }
 
   static get uModelMatrix () {
-    return new ShaderInput('uniform', 'mat4', 'uModelMatrix')
+    return new ShaderVar('uniform', 'mat4', 'uModelMatrix')
   }
 
   static get uViewMatrix () {
-    return new ShaderInput('uniform', 'mat4', 'uViewMatrix')
+    return new ShaderVar('uniform', 'mat4', 'uViewMatrix')
   }
 
   static get uProjectionMatrix () {
-    return new ShaderInput('uniform', 'mat4', 'uProjectionMatrix')
+    return new ShaderVar('uniform', 'mat4', 'uProjectionMatrix')
   }
 
   static get uModelViewMatrix () {
-    return new ShaderInput('uniform', 'mat4', 'uModelViewMatrix')
+    return new ShaderVar('uniform', 'mat4', 'uModelViewMatrix')
   }
 
   static get aVertexPosition () {
-    return new ShaderInput('attribute', 'vec3', 'aVertexPosition', 'highp')
+    return new ShaderVar('attribute', 'vec3', 'aVertexPosition', 'highp')
   }
 
   static get uColor () {
-    return new ShaderInput('uniform', 'vec4', 'uColor', 'lowp')
+    return new ShaderVar('uniform', 'vec4', 'uColor', 'lowp')
   }
 
   fromRaw(raw) {
