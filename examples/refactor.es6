@@ -8,6 +8,8 @@ import { gogol,
 
 gogol.init('gogol-example')
 
+
+
 let sGlobal = (s) => { return ShaderGlobal.fromString(s) }
 let sLocal = (s) => { return ShaderLocal.fromString(s) }
 let p = new ProgramPipeline({ // *** Pipeline Requires ***

@@ -45,44 +45,32 @@ export class ProgramPipeline {
   }
 
   get vertex() {
-    let vertexGlobals = map(this.components, (c) => { return c.vertexComponent.globals })
-    vertexGlobals = uniq(map(flatten(vertexGlobals), (v) => { return v.glsl })).join(`\n`)
-
-    let vertexLocals = map(this.components, (c) => { return c.vertexComponent.locals })
-    vertexLocals = uniq(map(flatten(vertexLocals), (v) => { return v.glsl })).join(`\n  `)
-
-    let calls = map(this.components, (c) => {
-      return c.vertexComponent.methodCall
-    }).join(`\n  `)
-
-    let methods = compact(map(this.components, (c) => { return c.vertexComponent.method })).join(`\n`)
-
-    return compact([
-      this.vertexPrefix,
-      vertexGlobals,
-      methods,
-      this.main(calls, this.conns('vertex'), vertexLocals)
-    ]).join(`\n`)
+    return this._source('vertex')
   }
 
   get fragment() {
-    let fragmentGlobals = map(this.components, (c) => { return c.fragmentComponent.globals })
-    fragmentGlobals = uniq(map(flatten(fragmentGlobals), (v) => { return v.glsl })).join(`\n`)
+    return this._source('fragment')
+  }
 
-    let fragmentLocals = map(this.components, (c) => { return c.fragmentComponent.locals })
-    fragmentLocals = uniq(map(flatten(fragmentLocals), (v) => { return v.glsl })).join(`\n  `)
+  _source(shader) {
+    let cpt = (c, shader) => { return c[`${shader}Component`] }
+
+    let globals;
+    globals = map(this.components, (c) => { return cpt(c, shader).globals })
+    globals = uniq(map(flatten(globals), (v) => { return v.glsl })).join(`\n`)
+
+    let locals;
+    locals = map(this.components, (c) => { return cpt(c, shader).locals })
+    locals = uniq(map(flatten(locals), (v) => { return v.glsl })).join(`\n  `)
 
     let calls = compact(map(this.components, (c) => {
-      return c.fragmentComponent.methodCall
+      return cpt(c, shader).methodCall
     })).join(`\n  `)
 
-    let methods = compact(map(this.components, (c) => { return c.fragmentComponent.method })).join(`\n`)
+    let methods = compact(map(this.components, (c) => { return cpt(c, shader).method })).join(`\n`)
 
-    return compact([
-      this.fragmentPrefix,
-      fragmentGlobals,
-      methods,
-      this.main(calls, this.conns('fragment'), fragmentLocals)
-    ]).join(`\n`)
+    let main = this.main(calls, this.conns(shader), locals)
+
+    return compact([this[`${shader}Prefix`], globals, methods, main]).join(`\n`)
   }
 }
