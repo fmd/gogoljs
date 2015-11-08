@@ -49,7 +49,7 @@ export class ColorMaterial extends Material {
                            this.target.verticesIndex)
 
     // Pass variables into program
-    gl.uniform4fv(this.uColor, this.color.toVector())
+    gl.uniform4fv(this.uColor, this.color.rgba)
     gl.uniformMatrix4fv(this.modelMatrix, gl.FALSE, new Float32Array(m))
     gl.uniformMatrix4fv(this.viewMatrix, gl.FALSE, new Float32Array(v))
     gl.uniformMatrix4fv(this.projectionMatrix, gl.FALSE, new Float32Array(p))

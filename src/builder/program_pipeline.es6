@@ -3,9 +3,11 @@ import { ShaderGlobal } from './shader_global'
 import { ShaderLocal } from './shader_local'
 
 export class ProgramPipeline {
-  constructor(requires, connections) {
+  constructor(globals, locals, connections) {
     this.components = []
-    this.requires = requires
+    this.globals = globals
+    this.locals = locals
+    this.requires = {...globals, ...locals}
     this.connections = connections
   }
 

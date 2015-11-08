@@ -23,7 +23,11 @@ export class Color {
     return new Color(1.0, 1.0, 1.0, 1.0)
   }
 
-  toVector() {
+  get rgba() {
     return new Float32Array([this.r, this.g, this.b, this.a])
+  }
+
+  get rgb() {
+    return new Float32Array([this.r, this.g, this.b])
   }
 }

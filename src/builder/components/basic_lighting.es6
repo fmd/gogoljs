@@ -11,15 +11,17 @@ export class BasicLightingComponent extends ProgramComponent {
 
   buildVertex() {
     let src =  [
-      `  highp vec3 ambientLight = vec3(0.6, 0.6, 0.6);`,
-      `  highp vec3 directionalLightColor = vec3(0.5, 0.5, 0.75);`,
-      `  highp vec3 directionalVector = vec3(0.85, 0.8, 0.75);`,
       `  highp vec4 transformedNormal = uNormalMatrix * vec4(aVertexNormal, 1.0);`,
-      `  highp float directional = max(dot(transformedNormal.xyz, directionalVector), 0.0);`,
-      `  vLighting = ambientLight + (directionalLightColor * directional);`
+      `  highp float directional = max(dot(transformedNormal.xyz, uDirectionalVector), 0.0);`,
+      `  vLighting = uAmbientColor + (uDirectionalColor * directional);`
     ].join(`\n`)
 
-    let inputs = [this.props.uNormalMatrix, this.props.aVertexNormal]
+    let inputs = [this.props.uNormalMatrix,
+                  this.props.aVertexNormal,
+                  this.props.uAmbientColor,
+                  this.props.uDirectionalColor,
+                  this.props.uDirectionalVector]
+
     let outputs = [this.props.vLighting]
 
     this.vertexComponent = new ShaderComponent('basicLighting', src, inputs, outputs)

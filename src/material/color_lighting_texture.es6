@@ -14,29 +14,30 @@ export class ColorLightingTextureMaterial extends Material {
     let sGlobal = (s) => { return ShaderGlobal.fromString(s) }
     let sLocal = (s) => { return ShaderLocal.fromString(s) }
 
-    let p = new ProgramPipeline({ // *** Pipeline Requires ***
+    let p = new ProgramPipeline(
+      {  // --- Globals ---
+        ...ProgramPipeline.matrices,
+        ...ProgramPipeline.attributes,
 
-                                  // --- Globals ---
-                                  // Matrices & Attributes
-                                  ...ProgramPipeline.matrices,
-                                  ...ProgramPipeline.attributes,
+        // Lighting
+        uNormalMatrix:      sGlobal('uniform mat4 uNormalMatrix'),
+        vLighting:          sGlobal('varying highp vec3 vLighting'),
+        uAmbientColor:      sGlobal('uniform highp vec3 uAmbientColor'),
+        uDirectionalColor:  sGlobal('uniform highp vec3 uDirectionalColor'),
+        uDirectionalVector: sGlobal('uniform highp vec3 uDirectionalVector'),
 
-                                  // Lighting
-                                  uNormalMatrix:   sGlobal('uniform mat4 uNormalMatrix'),
-                                  vLighting:       sGlobal('varying highp vec3 vLighting'),
+        // Texture
+        uSampler:           sGlobal('uniform sampler2D uSampler'),
+        vTextureCoord:      sGlobal('varying highp vec2 vTextureCoord'),
+        uColor:             sGlobal('uniform lowp vec4 uColor') },
 
-                                  // Texture
-                                  uSampler:        sGlobal('uniform sampler2D uSampler'),
-                                  vTextureCoord:   sGlobal('varying highp vec2 vTextureCoord'),
-                                  uColor:          sGlobal('uniform lowp vec4 uColor'),
+      { // --- Locals ---
+        iVertexPosition:    sLocal('highp vec4 iVertexPosition'),
+        iFragColor:         sLocal('lowp vec4 iFragColor') },
 
-                                  // --- Locals ---
-                                  iVertexPosition: sLocal('highp vec4 iVertexPosition'),
-                                  iFragColor:      sLocal('lowp vec4 iFragColor') },
-
-                                { // *** Pipeline Connections ***
-                                  vertex:   { gl_Position:  'iVertexPosition' },
-                                  fragment: { gl_FragColor: 'iFragColor' } })
+      { // --- Connections ---
+        vertex:   { gl_Position:  'iVertexPosition' },
+        fragment: { gl_FragColor: 'iFragColor' } })
 
     p.pipe(BasicMaterialComponent)
     p.pipe(BasicLightingComponent)
@@ -59,6 +60,9 @@ export class ColorLightingTextureMaterial extends Material {
     this.aNormal = this.program.attr('aVertexNormal')
     this.uSampler = this.program.uniform('uSampler')
     this.aTextureCoord = this.program.attr('aTextureCoord')
+    this.uAmbientColor = this.program.uniform('uAmbientColor')
+    this.uDirectionalVector = this.program.uniform('uDirectionalVector')
+    this.uDirectionalColor = this.program.uniform('uDirectionalColor')
   }
 
   static get defaultOpts() {
@@ -99,11 +103,15 @@ export class ColorLightingTextureMaterial extends Material {
     gl.vertexAttribPointer(this.aNormal, VERTEX_SIZE, gl.FLOAT, gl.FALSE, 0, this.target.normalsIndex);
 
     // Pass variables into program
-    gl.uniform4fv(this.uColor, this.color.toVector())
+    gl.uniform4fv(this.uColor, this.color.rgba)
     gl.uniformMatrix4fv(this.modelMatrix, gl.FALSE, new Float32Array(m))
     gl.uniformMatrix4fv(this.viewMatrix, gl.FALSE, new Float32Array(v))
     gl.uniformMatrix4fv(this.projectionMatrix, gl.FALSE, new Float32Array(p))
     gl.uniformMatrix4fv(this.uNormalMatrix, gl.FALSE, new Float32Array(normalMatrix))
+
+    gl.uniform3fv(this.uAmbientColor, Color.fromHex('343434').rgb)
+    gl.uniform3fv(this.uDirectionalColor, Color.fromHex('de1212').rgb)
+    gl.uniform3fv(this.uDirectionalVector, new Float32Array([0.85, 0.8, 0.75]))
 
     if (this.texture) {
       this.texture.bind(this.uSampler)
