@@ -21,12 +21,13 @@ import { Cube } from './geometry/cube'
 import { Quad } from './geometry/quad'
 
 // Refactored
-import { ShaderComponent } from './builder/shader_component'
-import { ShaderGlobal } from './builder/shader_global'
-import { ShaderLocal } from './builder/shader_local'
+import { ProgramPipeline } from './builder/program/pipeline'
+import { ProgramComponent } from './builder/program/component'
+import { ShaderComponent } from './builder/shader/component'
+import { ShaderGlobal } from './builder/shader/global'
+import { ShaderLocal } from './builder/shader/local'
 import { BasicLightingComponent } from './builder/components/basic_lighting'
 import { BasicMaterialComponent } from './builder/components/basic_material'
-import { ProgramPipeline } from './builder/program_pipeline'
 
 export {
 

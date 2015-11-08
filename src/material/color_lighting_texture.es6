@@ -3,11 +3,11 @@ import { Color } from '../core/color'
 import { gl, VERTEX_SIZE, TEX_COORD_SIZE } from '../core/engine'
 import { Texture } from '../core/texture'
 import { Material } from '../core/material'
-import { ProgramPipeline } from '../builder/program_pipeline'
+import { ProgramPipeline } from '../builder/program/pipeline'
 import { BasicMaterialComponent } from '../builder/components/basic_material'
 import { BasicLightingComponent } from '../builder/components/basic_lighting'
-import { ShaderGlobal } from '../builder/shader_global'
-import { ShaderLocal } from '../builder/shader_local'
+import { ShaderGlobal } from '../builder/shader/global'
+import { ShaderLocal } from '../builder/shader/local'
 
 export class ColorLightingTextureMaterial extends Material {
   constructor(opts = ColorLightingTextureMaterial.defaultOpts) {

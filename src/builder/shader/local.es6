@@ -1,4 +1,4 @@
-import { ShaderGlobal } from './shader_global'
+import { ShaderGlobal } from './global'
 
 export class ShaderLocal extends ShaderGlobal {
   constructor(dataType, name, precision = null) {

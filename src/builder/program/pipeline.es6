@@ -1,6 +1,6 @@
 import { map, compact, uniq, flatten } from 'lodash'
-import { ShaderGlobal } from './shader_global'
-import { ShaderLocal } from './shader_local'
+import { ShaderGlobal } from '../shader/global'
+import { ShaderLocal } from '../shader/local'
 
 export class ProgramPipeline {
   constructor(globals, locals, connections) {

@@ -1,6 +1,6 @@
-import { ShaderComponent } from '../shader_component'
-import { ProgramComponent } from '../program_component'
-import { ShaderGlobal } from '../shader_global'
+import { ShaderComponent } from '../shader/component'
+import { ProgramComponent } from '../program/component'
+import { ShaderGlobal } from '../shader/global'
 
 export class BasicLightingComponent extends ProgramComponent {
   constructor(requires) {

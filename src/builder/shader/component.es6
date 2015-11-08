@@ -1,5 +1,5 @@
 import { map, intersection, difference, uniq, filter } from 'lodash'
-import { ShaderGlobal } from './shader_global'
+import { ShaderGlobal } from './global'
 
 export class ShaderComponent {
   constructor(name, main, inputs = [], outputs = []) {
