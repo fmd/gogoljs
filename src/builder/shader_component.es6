@@ -1,5 +1,5 @@
 import { map, intersection, difference, uniq } from 'lodash'
-import { ShaderVar } from './shader_var'
+import { ShaderGlobal } from './shader_global'
 
 export class ShaderComponent {
   constructor(name, main, inputs = [], outputs = [], connections = {}) {
@@ -8,12 +8,6 @@ export class ShaderComponent {
     this.inputs = inputs
     this.outputs = outputs
     this.connections = connections
-  }
-
-  static get matrices() {
-    return [ ShaderVar.uProjectionMatrix,
-             ShaderVar.uViewMatrix,
-             ShaderVar.uModelMatrix ]
   }
 
   get vars() {
@@ -29,6 +23,7 @@ export class ShaderComponent {
 
   get callArgs() {
     let inputs = map(difference(this.inputs, this.outputs), (v) => { return v.name })
+
     let outputs = map(difference(this.outputs, this.inputs), (v) => { return v.name })
     let inouts = map(intersection(this.inputs, this.outputs), (v) => { return v.name })
     return [...inputs, ...outputs, ...inouts].join(', ')

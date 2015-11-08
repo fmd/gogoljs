@@ -1,6 +1,6 @@
 import { compact } from 'lodash'
 
-export class ShaderVar {
+export class ShaderGlobal {
   constructor(qualifier, dataType, name, precision = null) {
     this.qualifier = qualifier
     this.precision = precision
@@ -35,34 +35,42 @@ export class ShaderVar {
   static fromString(s) {
     let parts = s.split(' ')
     if (parts.length == 3) {
-      return new ShaderVar(...parts)
+      return new ShaderGlobal(...parts)
     }
 
-    return new ShaderVar(parts[0], parts[2], parts[3], parts[1])
+    return new ShaderGlobal(parts[0], parts[2], parts[3], parts[1])
   }
 
   static get uModelMatrix () {
-    return new ShaderVar('uniform', 'mat4', 'uModelMatrix')
+    return new ShaderGlobal('uniform', 'mat4', 'uModelMatrix')
   }
 
   static get uViewMatrix () {
-    return new ShaderVar('uniform', 'mat4', 'uViewMatrix')
+    return new ShaderGlobal('uniform', 'mat4', 'uViewMatrix')
   }
 
   static get uProjectionMatrix () {
-    return new ShaderVar('uniform', 'mat4', 'uProjectionMatrix')
+    return new ShaderGlobal('uniform', 'mat4', 'uProjectionMatrix')
   }
 
   static get uModelViewMatrix () {
-    return new ShaderVar('uniform', 'mat4', 'uModelViewMatrix')
+    return new ShaderGlobal('uniform', 'mat4', 'uModelViewMatrix')
   }
 
   static get aVertexPosition () {
-    return new ShaderVar('attribute', 'vec3', 'aVertexPosition', 'highp')
+    return new ShaderGlobal('attribute', 'vec3', 'aVertexPosition', 'highp')
+  }
+
+  static get aVertexNormal () {
+    return new ShaderGlobal('attribute', 'vec3', 'aVertexNormal', 'highp')
+  }
+
+  static get aTextureCoord () {
+    return new ShaderGlobal('attribute', 'vec3', 'aTextureCoord', 'highp')
   }
 
   static get uColor () {
-    return new ShaderVar('uniform', 'vec4', 'uColor', 'lowp')
+    return new ShaderGlobal('uniform', 'vec4', 'uColor', 'lowp')
   }
 
   fromRaw(raw) {

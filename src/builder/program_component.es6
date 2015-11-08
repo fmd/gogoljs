@@ -1,5 +1,6 @@
 export class ProgramComponent {
-  constructor() {
+  constructor(requires) {
+    this.props = requires
     this.vertexComponent = null
     this.fragmentComponent = null
   }

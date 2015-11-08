@@ -1,46 +1,47 @@
 import { ShaderComponent } from '../shader_component'
 import { ProgramComponent } from '../program_component'
-import { ShaderVar } from '../shader_var'
+import { ShaderGlobal } from '../shader_global'
 
 export class BasicMaterialComponent extends ProgramComponent {
-  constructor() {
-    super()
+  constructor(requires) {
+    super(requires)
 
     this.buildVertex()
     this.buildFragment()
   }
 
   buildVertex() {
-    let at = ShaderVar.fromString('attribute highp vec2 aTextureCoord')
-    let vt = ShaderVar.fromString('varying highp vec2 vTextureCoord')
+    console.log(this.props)
+    let inputs = [this.props.uProjectionMatrix,
+                  this.props.uViewMatrix,
+                  this.props.uModelMatrix,
+                  this.props.aVertexPosition,
+                  this.props.aTextureCoord]
 
-    let av = ShaderVar.fromString('attribute highp vec3 aVertexPosition')
-    let vv = ShaderVar.fromString('varying highp vec3 vVertexPosition')
+    let outputs = [this.props.iVertexPosition,
+                   this.props.vTextureCoord]
 
-    let inputs = [...ShaderComponent.matrices, av, at]
-    let outputs = [av, vv]
+    let src = [
+      `  mat4 mvp = uProjectionMatrix * uViewMatrix * uModelMatrix;`,
+      `  iVertexPosition = mvp * vec4(aVertexPosition, 1.0);`,
+      `  vTextureCoord = aTextureCoord;`].join(`\n`)
 
-    let src = `  vVertexPosition = uProjectionMatrix * uViewMatrix * uModelMatrix * aVertexPosition;`
-    let conns = { gl_Position: `vec4(${vv.name}, 1.0)` }
-
-    this.vertexComponent = new ShaderComponent('vertPos', src, inputs, outputs, conns)
+    this.vertexComponent = new ShaderComponent('basicMaterial', src, inputs, outputs)
   }
 
   buildFragment() {
-    let uc = ShaderVar.fromString('uniform lowp vec4 uColor')
-    let vc = ShaderVar.fromString('varying lowp vec4 vFragColor')
-    let vt = ShaderVar.fromString('varying highp vec2 vTextureCoord')
-    let us = ShaderVar.fromString('uniform sampler2D uSampler')
+    let inputs = [this.props.uColor,
+                  this.props.iFragColor,
+                  this.props.vTextureCoord,
+                  this.props.uSampler]
 
-    let inputs = [uc, vc, vt]
-    let outputs = [vc]
-    let conns = { gl_FragColor: vc.name }
+    let outputs = [this.props.iFragColor]
 
     let src= [
       `  highp vec4 t = texture2D(uSampler, vec2(vTextureCoord.s, vTextureCoord.t));`,
-      `  vFragColor = vec4(uColor.rgb * t.rgb, t.a);`
+      `  iFragColor = vec4(uColor.rgb * t.rgb, t.a);`
     ].join(`\n`)
 
-    this.fragmentComponent = new ShaderComponent('basicMaterial', src, inputs, outputs, conns)
+    this.fragmentComponent = new ShaderComponent('basicMaterial', src, inputs, outputs)
   }
 }

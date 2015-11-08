@@ -1,17 +1,16 @@
 import { ShaderComponent } from '../shader_component'
 import { ProgramComponent } from '../program_component'
-import { ShaderVar } from '../shader_var'
+import { ShaderGlobal } from '../shader_global'
 
 export class BasicLightingComponent extends ProgramComponent {
-  constructor() {
-    super()
+  constructor(requires) {
+    super(requires)
+    this.buildVertex()
+    this.buildFragment()
+  }
 
-    let nm = ShaderVar.fromString('uniform mat4 uNormalMatrix')
-    let an = ShaderVar.fromString('attribute highp vec3 aVertexNormal')
-    let vl = ShaderVar.fromString('varying highp vec3 vLighting')
-    let vc = ShaderVar.fromString('varying lowp vec4 vFragColor')
-
-    let vertex =  [
+  buildVertex() {
+    let src =  [
       `  highp vec3 ambientLight = vec3(0.6, 0.6, 0.6);`,
       `  highp vec3 directionalLightColor = vec3(0.5, 0.5, 0.75);`,
       `  highp vec3 directionalVector = vec3(0.85, 0.8, 0.75);`,
@@ -20,9 +19,17 @@ export class BasicLightingComponent extends ProgramComponent {
       `  vLighting = ambientLight + (directionalLightColor * directional);`
     ].join(`\n`)
 
-    let fragment = `  vFragColor = vFragColor * vLighting;`
+    let inputs = [this.props.uNormalMatrix, this.props.aVertexNormal]
+    let outputs = [this.props.vLighting]
 
-    this.vertexComponent = new ShaderComponent('basicLight', vertex, [nm, an], [vl])
-    this.fragmentComponent = new ShaderComponent('basicLight', fragment, [vl, vc], [vc])
+    this.vertexComponent = new ShaderComponent('basicLighting', src, inputs, outputs)
+  }
+
+  buildFragment(vLighting, iFragColor) {
+    let src = `  vFragColor = vFragColor * vec4(vLighting, 1.0);`
+    let inputs = [this.props.vLighting, this.props.iFragColor]
+    let outputs = [this.props.iFragColor]
+
+    this.fragmentComponent = new ShaderComponent('basicLighting', src, inputs, outputs)
   }
 }

@@ -1,53 +1,38 @@
-// Let's push this way of doing things to the limit before we refactor.
-
 import { vec3, mat4 } from 'gl-matrix'
 import { Color } from '../core/color'
 import { gl, VERTEX_SIZE, TEX_COORD_SIZE } from '../core/engine'
 import { Texture } from '../core/texture'
 import { Material } from '../core/material'
+import { ProgramPipeline } from '../builder/program_pipeline'
+import { BasicMaterialComponent } from '../builder/components/basic_material'
+import { BasicLightingComponent } from '../builder/components/basic_lighting'
 
-let vertexSrc = `
-  uniform   mat4 projectionMatrix;
-  uniform   mat4 viewMatrix;
-  uniform   mat4 modelMatrix;
-  uniform   mat4 uNormalMatrix;
-
-  attribute highp vec3 aNormal;
-  attribute highp vec3 aPosition;
-  attribute highp vec2 aTextureCoord;
-
-  varying highp vec3 vLighting;
-  varying highp vec2 vTextureCoord;
-
-  void main() {
-    gl_Position = projectionMatrix * viewMatrix * modelMatrix * vec4(aPosition, 1.0);
-
-    highp vec3 ambientLight = vec3(0.6, 0.6, 0.6);
-    highp vec3 directionalLightColor = vec3(0.5, 0.5, 0.75);
-    highp vec3 directionalVector = vec3(0.85, 0.8, 0.75);
-
-    highp vec4 transformedNormal = uNormalMatrix * vec4(aNormal, 1.0);
-
-    highp float directional = max(dot(transformedNormal.xyz, directionalVector), 0.0);
-
-    vLighting = ambientLight + (directionalLightColor * directional);
-    vTextureCoord = aTextureCoord;
-  }`
-
-let fragmentSrc = `
-  uniform lowp vec4 uColor;
-  varying highp vec3 vLighting;
-  varying highp vec2 vTextureCoord;
-  uniform sampler2D uSampler;
-
-  void main() {
-    highp vec4 t = texture2D(uSampler, vec2(vTextureCoord.s, vTextureCoord.t));
-    gl_FragColor =  vec4(uColor.rgb * vLighting * t.rgb, t.a);
-  }`
-
-  export class ColorLightingTextureMaterial extends Material {
+export class ColorLightingTextureMaterial extends Material {
   constructor(opts = ColorLightingTextureMaterial.defaultOpts) {
-    super(ColorLightingTextureMaterial, vertexSrc, fragmentSrc)
+    let sGlobal = (s) => { return ShaderGlobal.fromString(s) }
+    let sLocal = (s) => { return ShaderLocal.fromString(s) }
+
+    let p = new ProgramPipeline({ ...ProgramPipeline.matrices,
+                                  ...ProgramPipeline.attributes,
+
+                                  // --- Globals ---
+                                  // Lighting
+                                  uNormalMatrix:   sGlobal('uniform mat4 uNormalMatrix'),
+                                  vLighting:       sGlobal('varying highp vec3 vLighting'),
+
+                                  // Texture
+                                  uSampler:        sGlobal('uniform sampler2D uSampler'),
+                                  vTextureCoord:   sGlobal('varying highp vec2 vTextureCoord'),
+                                  uColor:          sGlobal('uniform lowp vec4 uColor'),
+
+                                  // --- Locals ---
+                                  iVertexPosition: sLocal('highp vec4 iVertexPosition'),
+                                  iFragColor:      sLocal('lowp vec4 iFragColor') })
+
+    p.connect(BasicMaterialComponent)
+    p.connect(BasicLightingComponent)
+
+    super(ColorLightingTextureMaterial, pipeline.vertex, pipeline.fragment)
 
     this.color = opts.color
 

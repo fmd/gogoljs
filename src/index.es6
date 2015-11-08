@@ -20,13 +20,13 @@ import { ColorLightingTextureMaterial } from './material/color_lighting_texture'
 import { Cube } from './geometry/cube'
 import { Quad } from './geometry/quad'
 
-
 // Refactored
 import { ShaderComponent } from './builder/shader_component'
-import { ShaderVar } from './builder/shader_var'
-import { ProgramBuilder } from './builder/program_builder'
+import { ShaderGlobal } from './builder/shader_global'
+import { ShaderLocal } from './builder/shader_local'
 import { BasicLightingComponent } from './builder/components/basic_lighting'
 import { BasicMaterialComponent } from './builder/components/basic_material'
+import { ProgramPipeline } from './builder/program_pipeline'
 
 export {
 
@@ -55,10 +55,11 @@ export {
 
   // New Refactor
   ShaderComponent,
-  ShaderVar,
+  ShaderGlobal,
+  ShaderLocal,
   BasicLightingComponent,
   BasicMaterialComponent,
-  ProgramBuilder,
+  ProgramPipeline,
 
   // Objects
   gogol,
