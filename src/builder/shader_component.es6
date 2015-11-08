@@ -1,17 +1,24 @@
-import { map, intersection, difference, uniq } from 'lodash'
+import { map, intersection, difference, uniq, filter } from 'lodash'
 import { ShaderGlobal } from './shader_global'
 
 export class ShaderComponent {
-  constructor(name, main, inputs = [], outputs = [], connections = {}) {
+  constructor(name, main, inputs = [], outputs = []) {
     this.name = name
     this.main = main
     this.inputs = inputs
     this.outputs = outputs
-    this.connections = connections
   }
 
-  get vars() {
-    return uniq([...this.inputs, ...this.outputs])
+  get locals() {
+    return filter(uniq([...this.inputs, ...this.outputs]), (v) => {
+      return v.constructor.name == 'ShaderLocal'
+    })
+  }
+
+  get globals() {
+    return filter(uniq([...this.inputs, ...this.outputs]), (v) => {
+      return v.constructor.name == 'ShaderGlobal'
+    })
   }
 
   get args() {

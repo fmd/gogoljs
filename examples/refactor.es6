@@ -8,29 +8,15 @@ import { gogol,
 
 gogol.init('gogol-example')
 
-// let c = new BasicMaterialComponent()
-// let l = new BasicLightingComponent()
-// let s = new ProgramBuilder()
-
-// s.add(c)
-// s.add(l)
-
-// console.log('--- Vertex ---')
-// console.log(s.vertexComponent)
-// console.log('--- Fragment ---')
-// console.log(s.fragmentComponent)
-
-// let nm =
-// let an =
-// let vl =
-// let vc = sGlobal('varying lowp vec4 vFragColor')
-
 let sGlobal = (s) => { return ShaderGlobal.fromString(s) }
 let sLocal = (s) => { return ShaderLocal.fromString(s) }
-let p = new ProgramPipeline({ ...ProgramPipeline.matrices,
-                              ...ProgramPipeline.attributes,
+let p = new ProgramPipeline({ // *** Pipeline Requires ***
 
                               // --- Globals ---
+                              // Matrices & Attributes
+                              ...ProgramPipeline.matrices,
+                              ...ProgramPipeline.attributes,
+
                               // Lighting
                               uNormalMatrix:   sGlobal('uniform mat4 uNormalMatrix'),
                               vLighting:       sGlobal('varying highp vec3 vLighting'),
@@ -42,10 +28,14 @@ let p = new ProgramPipeline({ ...ProgramPipeline.matrices,
 
                               // --- Locals ---
                               iVertexPosition: sLocal('highp vec4 iVertexPosition'),
-                              iFragColor:      sLocal('lowp vec4 iFragColor') })
+                              iFragColor:      sLocal('lowp vec4 iFragColor') },
 
-p.connect(BasicMaterialComponent)
-p.connect(BasicLightingComponent)
+                            { // *** Pipeline Connections ***
+                              vertex:   { gl_Position:  'iVertexPosition' },
+                              fragment: { gl_FragColor: 'iFragColor' } })
+
+p.pipe(BasicMaterialComponent)
+p.pipe(BasicLightingComponent)
 
 console.log('-- Vertex --')
 console.log('------------')

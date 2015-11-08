@@ -26,7 +26,7 @@ export class BasicLightingComponent extends ProgramComponent {
   }
 
   buildFragment(vLighting, iFragColor) {
-    let src = `  vFragColor = vFragColor * vec4(vLighting, 1.0);`
+    let src = `  iFragColor = iFragColor * vec4(vLighting, 1.0);`
     let inputs = [this.props.vLighting, this.props.iFragColor]
     let outputs = [this.props.iFragColor]
 

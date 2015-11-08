@@ -11,7 +11,6 @@ export class BasicMaterialComponent extends ProgramComponent {
   }
 
   buildVertex() {
-    console.log(this.props)
     let inputs = [this.props.uProjectionMatrix,
                   this.props.uViewMatrix,
                   this.props.uModelMatrix,

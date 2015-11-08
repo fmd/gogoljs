@@ -1,16 +1,16 @@
-import { map, compact } from 'lodash'
+import { map, compact, uniq, flatten } from 'lodash'
 import { ShaderGlobal } from './shader_global'
 import { ShaderLocal } from './shader_local'
 
 export class ProgramPipeline {
-  constructor(requires) {
-    this.requires = requires
+  constructor(requires, connections) {
     this.components = []
+    this.requires = requires
+    this.connections = connections
   }
 
-  connect(componentClass) {
+  pipe(componentClass) {
     this.components.push(new componentClass(this.requires))
-    console.log(this.components)
   }
 
   static get matrices() {
@@ -26,25 +26,61 @@ export class ProgramPipeline {
              aTextureCoord:   ShaderGlobal.aTextureCoord }
   }
 
-  main(calls) {
-    return [`void main() {`, `  ${calls}`, `}`].join(`\n`)
+  main(calls, conns, locals) {
+    return [`void main() {`, `  ${locals}`, `  ${calls}`, `  ${conns}`,  `}`].join(`\n`)
+  }
+
+  conns(shader) {
+    return map(this.connections[shader], (i, o) => { return `${o} = ${i};` }).join(`\n  `)
+  }
+
+  get vertexPrefix() {
+    return ``
+  }
+
+  get fragmentPrefix() {
+    return `precision mediump float;`
   }
 
   get vertex() {
+    let vertexGlobals = map(this.components, (c) => { return c.vertexComponent.globals })
+    vertexGlobals = uniq(map(flatten(vertexGlobals), (v) => { return v.glsl })).join(`\n`)
+
+    let vertexLocals = map(this.components, (c) => { return c.vertexComponent.locals })
+    vertexLocals = uniq(map(flatten(vertexLocals), (v) => { return v.glsl })).join(`\n  `)
+
     let calls = map(this.components, (c) => {
       return c.vertexComponent.methodCall
     }).join(`\n  `)
 
     let methods = compact(map(this.components, (c) => { return c.vertexComponent.method })).join(`\n`)
-    return `${methods}\n${this.main(calls)}`
+
+    return compact([
+      this.vertexPrefix,
+      vertexGlobals,
+      methods,
+      this.main(calls, this.conns('vertex'), vertexLocals)
+    ]).join(`\n`)
   }
 
   get fragment() {
+    let fragmentGlobals = map(this.components, (c) => { return c.fragmentComponent.globals })
+    fragmentGlobals = uniq(map(flatten(fragmentGlobals), (v) => { return v.glsl })).join(`\n`)
+
+    let fragmentLocals = map(this.components, (c) => { return c.fragmentComponent.locals })
+    fragmentLocals = uniq(map(flatten(fragmentLocals), (v) => { return v.glsl })).join(`\n  `)
+
     let calls = compact(map(this.components, (c) => {
       return c.fragmentComponent.methodCall
     })).join(`\n  `)
 
     let methods = compact(map(this.components, (c) => { return c.fragmentComponent.method })).join(`\n`)
-    return `${methods}\n${this.main(calls)}`
+
+    return compact([
+      this.fragmentPrefix,
+      fragmentGlobals,
+      methods,
+      this.main(calls, this.conns('fragment'), fragmentLocals)
+    ]).join(`\n`)
   }
 }

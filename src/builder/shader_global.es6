@@ -66,7 +66,7 @@ export class ShaderGlobal {
   }
 
   static get aTextureCoord () {
-    return new ShaderGlobal('attribute', 'vec3', 'aTextureCoord', 'highp')
+    return new ShaderGlobal('attribute', 'vec2', 'aTextureCoord', 'highp')
   }
 
   static get uColor () {
@@ -74,6 +74,6 @@ export class ShaderGlobal {
   }
 
   fromRaw(raw) {
-    return `${raw};\n`
+    return `${raw};`
   }
 }

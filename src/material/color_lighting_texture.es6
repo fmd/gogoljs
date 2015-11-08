@@ -6,16 +6,21 @@ import { Material } from '../core/material'
 import { ProgramPipeline } from '../builder/program_pipeline'
 import { BasicMaterialComponent } from '../builder/components/basic_material'
 import { BasicLightingComponent } from '../builder/components/basic_lighting'
+import { ShaderGlobal } from '../builder/shader_global'
+import { ShaderLocal } from '../builder/shader_local'
 
 export class ColorLightingTextureMaterial extends Material {
   constructor(opts = ColorLightingTextureMaterial.defaultOpts) {
     let sGlobal = (s) => { return ShaderGlobal.fromString(s) }
     let sLocal = (s) => { return ShaderLocal.fromString(s) }
 
-    let p = new ProgramPipeline({ ...ProgramPipeline.matrices,
-                                  ...ProgramPipeline.attributes,
+    let p = new ProgramPipeline({ // *** Pipeline Requires ***
 
                                   // --- Globals ---
+                                  // Matrices & Attributes
+                                  ...ProgramPipeline.matrices,
+                                  ...ProgramPipeline.attributes,
+
                                   // Lighting
                                   uNormalMatrix:   sGlobal('uniform mat4 uNormalMatrix'),
                                   vLighting:       sGlobal('varying highp vec3 vLighting'),
@@ -27,12 +32,16 @@ export class ColorLightingTextureMaterial extends Material {
 
                                   // --- Locals ---
                                   iVertexPosition: sLocal('highp vec4 iVertexPosition'),
-                                  iFragColor:      sLocal('lowp vec4 iFragColor') })
+                                  iFragColor:      sLocal('lowp vec4 iFragColor') },
 
-    p.connect(BasicMaterialComponent)
-    p.connect(BasicLightingComponent)
+                                { // *** Pipeline Connections ***
+                                  vertex:   { gl_Position:  'iVertexPosition' },
+                                  fragment: { gl_FragColor: 'iFragColor' } })
 
-    super(ColorLightingTextureMaterial, pipeline.vertex, pipeline.fragment)
+    p.pipe(BasicMaterialComponent)
+    p.pipe(BasicLightingComponent)
+
+    super(ColorLightingTextureMaterial, p.vertex, p.fragment)
 
     this.color = opts.color
 
@@ -41,13 +50,13 @@ export class ColorLightingTextureMaterial extends Material {
     }
 
     // These need to start being set automagically.
-    this.modelMatrix = this.program.uniform('modelMatrix')
-    this.viewMatrix = this.program.uniform('viewMatrix')
-    this.projectionMatrix = this.program.uniform('projectionMatrix')
+    this.modelMatrix = this.program.uniform('uModelMatrix')
+    this.viewMatrix = this.program.uniform('uViewMatrix')
+    this.projectionMatrix = this.program.uniform('uProjectionMatrix')
     this.uColor = this.program.uniform('uColor')
     this.uNormalMatrix = this.program.uniform('uNormalMatrix')
-    this.aPosition = this.program.attr('aPosition')
-    this.aNormal = this.program.attr('aNormal')
+    this.aPosition = this.program.attr('aVertexPosition')
+    this.aNormal = this.program.attr('aVertexNormal')
     this.uSampler = this.program.uniform('uSampler')
     this.aTextureCoord = this.program.attr('aTextureCoord')
   }

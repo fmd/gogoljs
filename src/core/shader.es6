@@ -18,6 +18,7 @@ export class Shader {
     gl.shaderSource(this.shader, str)
     gl.compileShader(this.shader)
 
+    this.source = str
     this.checkErrors()
 
     return this
@@ -26,6 +27,7 @@ export class Shader {
   checkErrors() {
     var success = gl.getShaderParameter(this.shader, gl.COMPILE_STATUS)
     if (!success) {
+      console.log(this.source)
       throw "Could not compile shader:" + gl.getShaderInfoLog(this.shader);
     }
   }
