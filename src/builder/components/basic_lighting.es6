@@ -11,14 +11,16 @@ export class BasicLightingComponent extends ProgramComponent {
     let vl = ShaderVar.fromString('varying highp vec3 vLighting')
     let vc = ShaderVar.fromString('varying lowp vec4 vFragColor')
 
-    let vertex =  `highp vec3 ambientLight = vec3(0.6, 0.6, 0.6);
-                   highp vec3 directionalLightColor = vec3(0.5, 0.5, 0.75);
-                   highp vec3 directionalVector = vec3(0.85, 0.8, 0.75);
-                   highp vec4 transformedNormal = uNormalMatrix * vec4(aVertexNormal, 1.0);
-                   highp float directional = max(dot(transformedNormal.xyz, directionalVector), 0.0);
-                   vLighting = ambientLight + (directionalLightColor * directional);`
+    let vertex =  [
+      `  highp vec3 ambientLight = vec3(0.6, 0.6, 0.6);`,
+      `  highp vec3 directionalLightColor = vec3(0.5, 0.5, 0.75);`,
+      `  highp vec3 directionalVector = vec3(0.85, 0.8, 0.75);`,
+      `  highp vec4 transformedNormal = uNormalMatrix * vec4(aVertexNormal, 1.0);`,
+      `  highp float directional = max(dot(transformedNormal.xyz, directionalVector), 0.0);`,
+      `  vLighting = ambientLight + (directionalLightColor * directional);`
+    ].join(`\n`)
 
-    let fragment = `vFragColor = vFragColor * vLighting;`
+    let fragment = `  vFragColor = vFragColor * vLighting;`
 
     this.vertexComponent = new ShaderComponent('basicLight', vertex, [nm, an], [vl])
     this.fragmentComponent = new ShaderComponent('basicLight', fragment, [vl, vc], [vc])

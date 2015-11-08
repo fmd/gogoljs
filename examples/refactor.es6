@@ -12,6 +12,7 @@ let s = new ProgramBuilder()
 
 s.add(c)
 s.add(l)
+
 console.log('--- Vertex ---')
 console.log(s.vertexComponent)
 console.log('--- Fragment ---')

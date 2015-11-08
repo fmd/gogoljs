@@ -20,11 +20,8 @@ import { ColorLightingTextureMaterial } from './material/color_lighting_texture'
 import { Cube } from './geometry/cube'
 import { Quad } from './geometry/quad'
 
-// Refactored
-import { Attribute, Uniform } from './program/attribute'
-import { ColorProgram } from './program/color'
 
-// Refactored better
+// Refactored
 import { ShaderComponent } from './builder/shader_component'
 import { ShaderVar } from './builder/shader_var'
 import { ProgramBuilder } from './builder/program_builder'
@@ -55,11 +52,6 @@ export {
   // Geometries
   Quad,
   Cube,
-
-  // Refactor
-  Attribute,
-  Uniform,
-  ColorProgram,
 
   // New Refactor
   ShaderComponent,
