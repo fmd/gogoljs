@@ -6,10 +6,10 @@ let vertexSrc = `
   uniform   mat4 modelMatrix;
   uniform   mat4 viewMatrix;
   uniform   mat4 projectionMatrix;
-  attribute vec4 aPosition;
+  attribute vec3 aPosition;
 
   void main() {
-    gl_Position = projectionMatrix * viewMatrix * modelMatrix * aPosition;
+    gl_Position = projectionMatrix * viewMatrix * modelMatrix * vec4(aPosition, 1.0);
   }`
 
 let fragmentSrc = `
@@ -46,7 +46,7 @@ export class ColorMaterial extends Material {
                            gl.FLOAT,
                            gl.FALSE,
                            0,
-                           this.target.verticesIndex)
+                           0)
 
     // Pass variables into program
     gl.uniform4fv(this.uColor, this.color.rgba)
@@ -55,11 +55,17 @@ export class ColorMaterial extends Material {
     gl.uniformMatrix4fv(this.projectionMatrix, gl.FALSE, new Float32Array(p))
 
     // Draw elements
-    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.indexBuffer)
-    gl.drawElements(gl.TRIANGLES,
-                    this.target.indices.length,
-                    gl.UNSIGNED_BYTE,
-                    this.target.indicesIndex)
+    if (this.target.indices.length > 0) {
+      gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.indexBuffer)
+      gl.drawElements(gl.TRIANGLES,
+                      this.target.indices.length,
+                      gl.UNSIGNED_BYTE,
+                      this.target.indicesIndex)
+    } else {
+      gl.drawArrays(gl.TRIANGLES,
+                    0,
+                    this.target.vertices.length / VERTEX_SIZE)
+    }
 
     // Disable attributes
     gl.disableVertexAttribArray(this.aPosition)

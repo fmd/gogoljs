@@ -19,6 +19,9 @@ import { ColorLightingTextureMaterial } from './material/color_lighting_texture'
 // Geometries
 import { Cube } from './geometry/cube'
 import { Quad } from './geometry/quad'
+import { Conway } from './geometry/conway'
+import { Torus } from './geometry/torus'
+import { Sphere } from './geometry/sphere'
 
 // Refactored
 import { ProgramPipeline } from './builder/program/pipeline'
@@ -53,6 +56,9 @@ export {
   // Geometries
   Quad,
   Cube,
+  Conway,
+  Torus,
+  Sphere,
 
   // New Refactor
   ShaderComponent,

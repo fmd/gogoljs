@@ -1,17 +1,12 @@
-import { gogol,
-         BasicMaterialComponent,
-         BasicLightingComponent,
-         ProgramBuilder,
+import { ProgramBuilder,
          ProgramPipeline,
          ShaderGlobal,
          ShaderLocal } from '../src'
 
-gogol.init('gogol-example')
-
-
 
 let sGlobal = (s) => { return ShaderGlobal.fromString(s) }
 let sLocal = (s) => { return ShaderLocal.fromString(s) }
+
 let p = new ProgramPipeline({ // *** Pipeline Requires ***
 
                               // --- Globals ---
@@ -38,11 +33,3 @@ let p = new ProgramPipeline({ // *** Pipeline Requires ***
 
 p.pipe(BasicMaterialComponent)
 p.pipe(BasicLightingComponent)
-
-console.log('-- Vertex --')
-console.log('------------')
-console.log(p.vertex)
-
-console.log('-- Fragment --')
-console.log('--------------')
-console.log(p.fragment)

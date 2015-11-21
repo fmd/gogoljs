@@ -4,8 +4,10 @@
   "description": "The fastest game you ever made.",
   "main": "main.js",
   "dependencies": {
+    "gl-geometry": "^1.1.1",
     "gl-matrix": "^2.3.1",
-    "lodash": "^3.10.1"
+    "lodash": "^3.10.1",
+    "torus-mesh": "^1.0.0"
   },
   "devDependencies": {
     "babelify": "^6.3.0",

@@ -20,71 +20,9 @@ npm install -g gogol
 * Split vertex attributes out into more sensible dynamic system that materials can use and render.
 * Build a spritesheet editor and a tilemap editor.
 
-possible:
-
-program
-  lights
-  fog
-
-material
-  texture optional
-  extra program functions
-  required attributes
-  geometry
-
-geometry
-  material
-  attributes
-
-cube < geometry
- default material = colors
- vertices <- attribute
- colors <- attribute
-
-s = scene
-g = cube
-
-s.add(g)
+```
+// Now that the program pipeline refactor is working, it's time to figure out how materials should work.
+// Materials should be lines, points, whatever, etc.
 
 
-resource
-
-
-// program/attribute.es6
-export class Attribute {
-
-}
-
-// program/program.es6
-export class Program {
-  constructor(vertex, fragment) {
-    this.vertex = vertex
-    this.fragment = fragment
-    this.attributes = this.vertex.attributes + this.fragment.attributes
-  }
-}
-
-// program/shader.es6
-export class Shader {
-  constructor() {
-    this.attributes = []
-  }
-}
-
-export class VertexShader {
-  constructor() {
-    this.attributes = []
-  }
-}
-
-export class FragmentShader {
-  constructor() {
-    this.attributes = []
-  }
-}
-
-export class Resource {
-  constructor() {
-
-  }
-}
+```

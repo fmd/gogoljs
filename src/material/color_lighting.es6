@@ -16,8 +16,8 @@ let vertexSrc = `
   void main() {
     gl_Position = projectionMatrix * viewMatrix * modelMatrix * vec4(aPosition, 1.0);
 
-    highp vec3 ambientLight = vec3(0.6, 0.6, 0.6);
-    highp vec3 directionalLightColor = vec3(0.5, 0.5, 0.75);
+    highp vec3 ambientLight = vec3(0.4, 0.4, 0.4);
+    highp vec3 directionalLightColor = vec3(0.6, 0.3, 0.3);
     highp vec3 directionalVector = vec3(0.85, 0.8, 0.75);
 
     highp vec4 transformedNormal = uNormalMatrix * vec4(aNormal, 1.0);

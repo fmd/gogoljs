@@ -15,7 +15,7 @@ export class ColorLightingTextureMaterial extends Material {
     let sLocal = (s) => { return ShaderLocal.fromString(s) }
 
     let p = new ProgramPipeline(
-      {  // --- Globals ---
+      { // --- Globals ---
         ...ProgramPipeline.matrices,
         ...ProgramPipeline.attributes,
 

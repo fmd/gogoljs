@@ -1,5 +1,6 @@
 import { mat4, vec3 } from 'gl-matrix'
 import { gogol, Scene, Cube, Transform, Program, ColorLightingMaterial, Color, PerspectiveCamera } from '../src'
+
 gogol.init('gogol-example', { clearColor: Color.fromHex('232323') })
 
 let s = new Scene({ camera: new PerspectiveCamera() })
@@ -56,5 +57,12 @@ function render() {
 
   window.setTimeout(render, 1000 / 60)
 }
+
+global.sun = sun
+global.earth = earth
+global.moon = moon
+global.mars = mars
+global.scene = s
+global.Color = Color
 
 render()
