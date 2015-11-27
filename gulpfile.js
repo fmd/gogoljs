@@ -66,7 +66,7 @@ function makeWatcher(src, dst) {
 gulp.task('watch', function (done) {
 
   // Find all source files in the `examples/` directory.
-  var files = glob.sync('examples/**/geometry.es6');
+  var files = glob.sync('examples/**/*.es6');
 
   // filesWithWatchers will be an array of simple objects that each contain a
   // filename and a boolean that determines whether the file is currenty being watched.
