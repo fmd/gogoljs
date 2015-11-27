@@ -10,7 +10,7 @@ let vertices = function(width, height) {
 }
 
 let indices = function() {
-  return [0, 1, 2, 3, 0, 2, 3]
+  return [0, 1, 2, 0, 2, 3]
 }
 
 let texCoords = function() {

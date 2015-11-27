@@ -10,12 +10,12 @@ export class Sphere extends Geometry {
     opts = {...Sphere.defaultOpts, ...opts}
     super()
 
-    let mesh = sphere(1, { segments: 8 })
+    let mesh = sphere(1, { segments: 16 })
 
     this.vertices = flatten(mesh.positions, true)
     this.texCoords = flatten(mesh.uvs, true)
     this.indices = flatten(mesh.cells, true)
-    this.normals = flatten(normals.vertexNormals(mesh.cells, mesh.positions))
+    this.normals = flatten(mesh.normals, true)
 
     this.useMaterial(opts.material)
   }

@@ -1,6 +1,7 @@
 import { Color } from './color'
 
 export const TEX_COORD_SIZE = 2
+export const SHORT_SIZE = 2
 export const VERTEX_SIZE = 3
 export const FLOAT_SIZE = 4
 

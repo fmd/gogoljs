@@ -1,6 +1,6 @@
 import { vec3, mat4 } from 'gl-matrix'
 import { Color } from '../core/color'
-import { gl, VERTEX_SIZE } from '../core/engine'
+import { gl, VERTEX_SIZE, SHORT_SIZE } from '../core/engine'
 import { Material } from '../core/material'
 
 let vertexSrc = `
@@ -84,12 +84,16 @@ let fragmentSrc = `
     gl.uniformMatrix4fv(this.projectionMatrix, gl.FALSE, new Float32Array(p))
     gl.uniformMatrix4fv(this.uNormalMatrix, gl.FALSE, new Float32Array(normalMatrix))
 
+    console.log('ehll')
+    console.log(this.target.indicesIndex)
+    console.log(this.target.indices.length)
+
     // Draw elements
     gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.indexBuffer)
     gl.drawElements(gl.TRIANGLES,
                     this.target.indices.length,
-                    gl.UNSIGNED_BYTE,
-                    this.target.indicesIndex)
+                    gl.UNSIGNED_SHORT,
+                    this.target.indicesIndex * SHORT_SIZE)
 
     // Disable attributes
     gl.disableVertexAttribArray(this.aPosition)

@@ -10,9 +10,9 @@ export class Torus extends Geometry {
     opts = {...Torus.defaultOpts, ...opts}
     super()
 
-    let mesh = torus({ majorSegments: 8, minorSegments: 16 })
+    let mesh = torus({ majorSegments: 32, minorSegments: 64 })
 
-    console.log('asdasd')
+    console.log(flatten(mesh.positions).length)
 
     this.vertices = flatten(mesh.positions)
     this.normals = flatten(mesh.normals)

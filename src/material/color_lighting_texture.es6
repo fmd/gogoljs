@@ -1,6 +1,6 @@
 import { vec3, mat4 } from 'gl-matrix'
 import { Color } from '../core/color'
-import { gl, VERTEX_SIZE, TEX_COORD_SIZE } from '../core/engine'
+import { gl, VERTEX_SIZE, TEX_COORD_SIZE, SHORT_SIZE } from '../core/engine'
 import { Texture } from '../core/texture'
 import { Material } from '../core/material'
 import { ProgramPipeline } from '../builder/program/pipeline'
@@ -121,8 +121,8 @@ export class ColorLightingTextureMaterial extends Material {
     gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.indexBuffer)
     gl.drawElements(gl.TRIANGLES,
                     this.target.indices.length,
-                    gl.UNSIGNED_BYTE,
-                    this.target.indicesIndex)
+                    gl.UNSIGNED_SHORT,
+                    this.target.indicesIndex * SHORT_SIZE)
 
     // Disable attributes
     gl.disableVertexAttribArray(this.aPosition)

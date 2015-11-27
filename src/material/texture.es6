@@ -1,6 +1,6 @@
 import { Color } from '../core/color'
 import { Texture } from '../core/texture'
-import { gl, VERTEX_SIZE, TEX_COORD_SIZE } from '../core/engine'
+import { gl, VERTEX_SIZE, TEX_COORD_SIZE, SHORT_SIZE } from '../core/engine'
 import { Material } from '../core/material'
 
 let vertexSrc = `
@@ -82,8 +82,8 @@ export class TextureMaterial extends Material {
     gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.indexBuffer)
     gl.drawElements(gl.TRIANGLES,
                     this.target.indices.length,
-                    gl.UNSIGNED_BYTE,
-                    this.target.indicesIndex)
+                    gl.UNSIGNED_SHORT,
+                    this.target.indicesIndex * SHORT_SIZE)
 
     // Disable attributes
     gl.disableVertexAttribArray(this.aTextureCoord)
