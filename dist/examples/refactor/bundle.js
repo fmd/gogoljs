@@ -1,67 +1,42 @@
-(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/examples/fullscreen.es6":[function(require,module,exports){
+(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/examples/refactor.es6":[function(require,module,exports){
 'use strict';
 
-var _glMatrix = require('gl-matrix');
+var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
 var _src = require('../src');
 
-_src.gogol.init('gogol-example', { fullscreen: true });
+var sGlobal = function sGlobal(s) {
+                              return _src.ShaderGlobal.fromString(s);
+};
+var sLocal = function sLocal(s) {
+                              return _src.ShaderLocal.fromString(s);
+};
 
-var s = new _src.Scene({ camera: new _src.PerspectiveCamera() });
-_src.gogol.scene = s;
+var p = new _src.ProgramPipeline(_extends({}, _src.ProgramPipeline.matrices, _src.ProgramPipeline.attributes, {
 
-s.camera.translate(0.0, 0.0, 100.0);
+                              // Lighting
+                              uNormalMatrix: sGlobal('uniform mat4 uNormalMatrix'),
+                              vLighting: sGlobal('varying highp vec3 vLighting'),
 
-var sun = new _src.Cube({ width: 5.0, height: 5.0, depth: 5.0 });
-sun.material.color = _src.Color.fromHex('#f39c12');
+                              // Texture
+                              uSampler: sGlobal('uniform sampler2D uSampler'),
+                              vTextureCoord: sGlobal('varying highp vec2 vTextureCoord'),
+                              uColor: sGlobal('uniform lowp vec4 uColor'),
 
-var marsJoint = new _src.Transform();
-var mars = new _src.Cube({ width: 2.0, height: 2.0, depth: 2.0 });
-mars.material.color = _src.Color.fromHex('#c0392b');
+                              // --- Locals ---
+                              iVertexPosition: sLocal('highp vec4 iVertexPosition'),
+                              iFragColor: sLocal('lowp vec4 iFragColor') }), { // *** Pipeline Connections ***
+                              vertex: { gl_Position: 'iVertexPosition' },
+                              fragment: { gl_FragColor: 'iFragColor' } });
 
-var earthJoint = new _src.Transform();
-var earth = new _src.Cube({ width: 2.5, height: 2.5, depth: 2.5 });
-earth.material.color = _src.Color.fromHex('#16a085');
+p.pipe(BasicMaterialComponent);
+p.pipe(BasicLightingComponent);
+// *** Pipeline Requires ***
 
-var moonJoint = new _src.Transform();
-var moon = new _src.Cube({ width: 1.0, height: 1.0, depth: 1.0 });
-moon.material.color = _src.Color.fromHex('#95a5a6');
+// --- Globals ---
+// Matrices & Attributes
 
-earthJoint.addChild(earth);
-earth.translate(20.0, 0, 0);
-
-marsJoint.addChild(mars);
-mars.translate(0, 10.0, 0);
-
-moonJoint.addChild(moon);
-moon.translate(8.0, 0, 0);
-
-earth.addChild(moonJoint);
-
-sun.addChild(earthJoint);
-sun.addChild(marsJoint);
-
-s.addChild(sun);
-
-s.bake();
-
-function render() {
-  _src.gogol.processOneFrame();
-
-  sun.rotate(0.25);
-
-  earthJoint.rotate(1.0, _glMatrix.vec3.fromValues(0, 1, 0));
-  marsJoint.rotate(1.2, _glMatrix.vec3.fromValues(0, 0, 1));
-  moonJoint.rotate(2.1, _glMatrix.vec3.fromValues(0, 1, 0));
-
-  earth.rotate(0.8, _glMatrix.vec3.fromValues(0, 1, 0));
-
-  window.setTimeout(render, 1000 / 60);
-}
-
-render();
-
-},{"../src":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/index.es6","gl-matrix":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/node_modules/gl-matrix/src/gl-matrix.js"}],"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/node_modules/conway-hart/index.js":[function(require,module,exports){
+},{"../src":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/index.es6"}],"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/node_modules/conway-hart/index.js":[function(require,module,exports){
 "use strict";
 
 //Import operators
@@ -20955,7 +20930,7 @@ exports.TextureMaterial = TextureMaterial;
 
 TextureMaterial.program = null;
 
-},{"../core/color":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/core/color.es6","../core/engine":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/core/engine.es6","../core/material":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/core/material.es6","../core/texture":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/core/texture.es6"}]},{},["/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/examples/fullscreen.es6"])
+},{"../core/color":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/core/color.es6","../core/engine":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/core/engine.es6","../core/material":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/core/material.es6","../core/texture":"/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/src/core/texture.es6"}]},{},["/Users/fareeddudhia/vagrant-dev/www/projects/js/gogoljs/examples/refactor.es6"])
 
 
 //# sourceMappingURL=bundle.js.map
