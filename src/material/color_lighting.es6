@@ -84,16 +84,19 @@ let fragmentSrc = `
     gl.uniformMatrix4fv(this.projectionMatrix, gl.FALSE, new Float32Array(p))
     gl.uniformMatrix4fv(this.uNormalMatrix, gl.FALSE, new Float32Array(normalMatrix))
 
-    console.log('ehll')
-    console.log(this.target.indicesIndex)
-    console.log(this.target.indices.length)
-
     // Draw elements
-    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.indexBuffer)
-    gl.drawElements(gl.TRIANGLES,
-                    this.target.indices.length,
-                    gl.UNSIGNED_SHORT,
-                    this.target.indicesIndex * SHORT_SIZE)
+    if (this.target.indices) {
+      gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.indexBuffer)
+      gl.drawElements(gl.TRIANGLES,
+                      this.target.indices.length,
+                      gl.UNSIGNED_SHORT,
+                      this.target.indicesIndex * SHORT_SIZE)
+    } else  {
+      gl.drawArrays(gl.TRIANGLES,
+                    this.target.verticesIndex,
+                    this.target.vertices.length / VERTEX_SIZE)
+    }
+
 
     // Disable attributes
     gl.disableVertexAttribArray(this.aPosition)

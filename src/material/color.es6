@@ -46,7 +46,7 @@ export class ColorMaterial extends Material {
                            gl.FLOAT,
                            gl.FALSE,
                            0,
-                           0)
+                           this.target.verticesIndex)
 
     // Pass variables into program
     gl.uniform4fv(this.uColor, this.color.rgba)
@@ -63,7 +63,7 @@ export class ColorMaterial extends Material {
                       this.target.indicesIndex * SHORT_SIZE)
     } else {
       gl.drawArrays(gl.TRIANGLES,
-                    0,
+                    this.target.verticesIndex,
                     this.target.vertices.length / VERTEX_SIZE)
     }
 

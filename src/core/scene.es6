@@ -37,7 +37,7 @@ export class Scene extends Component {
     this._normalBuffer = gl.createBuffer()
 
     for (let child of this.children.flatten()) {
-      if (child.vertices && child.indices) {
+      if (child.vertices) {
         child.material.texCoordBuffer = this._texCoordBuffer
         child.material.vertexBuffer = this._vertexBuffer
         child.material.indexBuffer = this._indexBuffer
@@ -76,7 +76,9 @@ export class Scene extends Component {
   }
 
   destroy() {
-    gl.deleteBuffer(this._vertexBuffer)
     gl.deleteBuffer(this._indexBuffer)
+    gl.deleteBuffer(this._vertexBuffer)
+    gl.deleteBuffer(this._normalBuffer)
+    gl.deleteBuffer(this._texCoordBuffer)
   }
 }
