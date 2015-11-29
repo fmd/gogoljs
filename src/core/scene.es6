@@ -11,6 +11,7 @@ export class Scene extends Component {
 
     this._texCoordBuffer = null
     this._vertexBuffer = null
+    this._colorBuffer = null
     this._indexBuffer = null
     this._normalBuffer = null
 
@@ -28,11 +29,13 @@ export class Scene extends Component {
 
     let texCoords = []
     let vertices = []
+    let colors = []
     let indices = []
     let normals = []
 
     this._texCoordBuffer = gl.createBuffer()
     this._vertexBuffer = gl.createBuffer()
+    this._colorBuffer = gl.createBuffer()
     this._indexBuffer = gl.createBuffer()
     this._normalBuffer = gl.createBuffer()
 
@@ -40,10 +43,11 @@ export class Scene extends Component {
       if (child.vertices) {
         child.material.texCoordBuffer = this._texCoordBuffer
         child.material.vertexBuffer = this._vertexBuffer
+        child.material.colorBuffer = this._colorBuffer
         child.material.indexBuffer = this._indexBuffer
         child.material.normalBuffer = this._normalBuffer
 
-        child.bake(vertices, indices, texCoords, normals)
+        child.bake(vertices, indices, texCoords, normals, colors)
       }
     }
 
@@ -55,6 +59,9 @@ export class Scene extends Component {
 
     gl.bindBuffer(gl.ARRAY_BUFFER, this._vertexBuffer)
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW)
+
+    gl.bindBuffer(gl.ARRAY_BUFFER, this._colorBuffer)
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(colors), gl.STATIC_DRAW)
 
     gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this._indexBuffer)
     gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(indices), gl.STATIC_DRAW)
@@ -79,6 +86,7 @@ export class Scene extends Component {
     gl.deleteBuffer(this._indexBuffer)
     gl.deleteBuffer(this._vertexBuffer)
     gl.deleteBuffer(this._normalBuffer)
+    gl.deleteBuffer(this._colorBuffer)
     gl.deleteBuffer(this._texCoordBuffer)
   }
 }

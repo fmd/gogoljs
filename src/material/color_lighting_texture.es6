@@ -29,7 +29,10 @@ export class ColorLightingTextureMaterial extends Material {
         // Texture
         uSampler:           sGlobal('uniform sampler2D uSampler'),
         vTextureCoord:      sGlobal('varying highp vec2 vTextureCoord'),
-        uColor:             sGlobal('uniform lowp vec4 uColor') },
+
+        // Color
+        aVertexColor:       sGlobal('attribute highp vec4 aVertexColor'),
+        vVertexColor:       sGlobal('varying highp vec4 vVertexColor') },
 
       { // --- Locals ---
         iVertexPosition:    sLocal('highp vec4 iVertexPosition'),
@@ -54,8 +57,8 @@ export class ColorLightingTextureMaterial extends Material {
     this.modelMatrix = this.program.uniform('uModelMatrix')
     this.viewMatrix = this.program.uniform('uViewMatrix')
     this.projectionMatrix = this.program.uniform('uProjectionMatrix')
-    this.uColor = this.program.uniform('uColor')
     this.uNormalMatrix = this.program.uniform('uNormalMatrix')
+    this.aColor = this.program.attr('aVertexColor')
     this.aPosition = this.program.attr('aVertexPosition')
     this.aNormal = this.program.attr('aVertexNormal')
     this.uSampler = this.program.uniform('uSampler')
@@ -66,8 +69,7 @@ export class ColorLightingTextureMaterial extends Material {
   }
 
   static get defaultOpts() {
-    return { color: new Color(1.0, 1.0, 1.0, 1.0),
-             src: null }
+    return { src: null }
   }
 
   render(m, v, p) {
@@ -82,6 +84,7 @@ export class ColorLightingTextureMaterial extends Material {
     gl.enableVertexAttribArray(this.aPosition)
     gl.enableVertexAttribArray(this.aNormal)
     gl.enableVertexAttribArray(this.aTextureCoord)
+    gl.enableVertexAttribArray(this.aColor)
 
     gl.bindBuffer(gl.ARRAY_BUFFER, this.vertexBuffer)
     gl.vertexAttribPointer(this.aPosition,
@@ -90,6 +93,14 @@ export class ColorLightingTextureMaterial extends Material {
                            gl.FALSE,
                            0,
                            this.target.verticesIndex)
+
+    gl.bindBuffer(gl.ARRAY_BUFFER, this.colorBuffer)
+    gl.vertexAttribPointer(this.aColor,
+                           VERTEX_SIZE,
+                           gl.FLOAT,
+                           gl.FALSE,
+                           0,
+                           this.target.colorsIndex)
 
     gl.bindBuffer(gl.ARRAY_BUFFER, this.texCoordBuffer)
     gl.vertexAttribPointer(this.aTextureCoord,
@@ -103,7 +114,6 @@ export class ColorLightingTextureMaterial extends Material {
     gl.vertexAttribPointer(this.aNormal, VERTEX_SIZE, gl.FLOAT, gl.FALSE, 0, this.target.normalsIndex);
 
     // Pass variables into program
-    gl.uniform4fv(this.uColor, this.color.rgba)
     gl.uniformMatrix4fv(this.modelMatrix, gl.FALSE, new Float32Array(m))
     gl.uniformMatrix4fv(this.viewMatrix, gl.FALSE, new Float32Array(v))
     gl.uniformMatrix4fv(this.projectionMatrix, gl.FALSE, new Float32Array(p))
@@ -118,16 +128,20 @@ export class ColorLightingTextureMaterial extends Material {
     }
 
     // Draw elements
-    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.indexBuffer)
-    gl.drawElements(gl.TRIANGLES,
-                    this.target.indices.length,
-                    gl.UNSIGNED_SHORT,
-                    this.target.indicesIndex * SHORT_SIZE)
+    if (this.target.indices) {
+      gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.indexBuffer)
+      gl.drawElements(gl.TRIANGLES,
+                      this.target.indices.length,
+                      gl.UNSIGNED_SHORT,
+                      this.target.indicesIndex * SHORT_SIZE)
+    } else  {
+      gl.drawArrays(gl.TRIANGLES, 0, this.target.vertices.length / VERTEX_SIZE)
+    }
 
     // Disable attributes
-    gl.disableVertexAttribArray(this.aPosition)
-    gl.disableVertexAttribArray(this.aTextureCoord)
-    gl.disableVertexAttribArray(this.aNormal)
+    // gl.disableVertexAttribArray(this.aPosition)
+    // gl.disableVertexAttribArray(this.aTextureCoord)
+    // gl.disableVertexAttribArray(this.aNormal)
   }
 }
 

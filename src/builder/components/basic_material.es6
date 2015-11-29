@@ -15,21 +15,24 @@ export class BasicMaterialComponent extends ProgramComponent {
                   this.props.uViewMatrix,
                   this.props.uModelMatrix,
                   this.props.aVertexPosition,
+                  this.props.aVertexColor,
                   this.props.aTextureCoord]
 
     let outputs = [this.props.iVertexPosition,
+                   this.props.vVertexColor,
                    this.props.vTextureCoord]
 
     let src = [
       `  mat4 mvp = uProjectionMatrix * uViewMatrix * uModelMatrix;`,
       `  iVertexPosition = mvp * vec4(aVertexPosition, 1.0);`,
-      `  vTextureCoord = aTextureCoord;`].join(`\n`)
+      `  vTextureCoord = aTextureCoord;`,
+      `  vVertexColor = aVertexColor;`].join(`\n`)
 
     this.vertexComponent = new ShaderComponent('basicMaterial', src, inputs, outputs)
   }
 
   buildFragment() {
-    let inputs = [this.props.uColor,
+    let inputs = [this.props.vVertexColor,
                   this.props.iFragColor,
                   this.props.vTextureCoord,
                   this.props.uSampler]
@@ -38,7 +41,7 @@ export class BasicMaterialComponent extends ProgramComponent {
 
     let src= [
       `  highp vec4 t = texture2D(uSampler, vec2(vTextureCoord.s, vTextureCoord.t));`,
-      `  iFragColor = vec4(uColor.rgb * t.rgb, t.a);`
+      `  iFragColor = vec4(vVertexColor.rgb, vVertexColor.a);`
     ].join(`\n`)
 
     this.fragmentComponent = new ShaderComponent('basicMaterial', src, inputs, outputs)

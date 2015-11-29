@@ -20,8 +20,7 @@ export class DefaultPipeline extends ProgramPipeline {
 
                        // Texture
                        uSampler:           sGlobal('uniform sampler2D uSampler'),
-                       vTextureCoord:      sGlobal('varying highp vec2 vTextureCoord'),
-                       uColor:             sGlobal('uniform lowp vec4 uColor') }
+                       vTextureCoord:      sGlobal('varying highp vec2 vTextureCoord') }
 
       let locals = { // --- Locals ---
                      iVertexPosition:    sLocal('highp vec4 iVertexPosition'),

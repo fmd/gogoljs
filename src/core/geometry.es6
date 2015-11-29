@@ -1,5 +1,5 @@
 import normals from 'normals'
-import { mat4 } from 'gl-matrix'
+import { mat4, vec3 } from 'gl-matrix'
 import { reduce, find, flatten, map } from 'lodash'
 import { gl, VERTEX_SIZE, FLOAT_SIZE } from './engine'
 import { Transform } from './transform'
@@ -30,7 +30,7 @@ export class Geometry extends Transform {
     return this._material
   }
 
-  bake(vertices, indices, texCoords, normals) {
+  bake(vertices, indices, texCoords, normals, colors) {
     this.verticesIndex = vertices.length * FLOAT_SIZE
     vertices.push.apply(vertices, this.vertices)
 
@@ -42,6 +42,11 @@ export class Geometry extends Transform {
     if (this.texCoords) {
       this.texCoordsIndex = texCoords.length * FLOAT_SIZE
       texCoords.push.apply(texCoords, this.texCoords)
+    }
+
+    if (this.colors) {
+      this.colorsIndex = colors.length * FLOAT_SIZE
+      colors.push.apply(colors, this.colors)
     }
 
     if (this.normals) {
@@ -56,15 +61,15 @@ export class Geometry extends Transform {
 
   static calculateVertices(positions, cells, shading = SMOOTH_SHADING) {
     if (!cells.length > 0) {
-      return flatten(positions, true)
+      return positions
     }
 
     if (shading == SMOOTH_SHADING) {
-      return flatten(positions, true)
+      return positions
     }
 
     if (shading == FLAT_SHADING) {
-      return flatten(Geometry.unindexify(positions, cells), true)
+      return Geometry.unindexify(positions, cells)
     }
 
     return []
@@ -72,37 +77,73 @@ export class Geometry extends Transform {
 
   static calculateNormals(positions, cells, shading = SMOOTH_SHADING) {
     if (shading == SMOOTH_SHADING) {
-      return flatten(normals.vertexNormals(cells, positions), true)
+      return normals.vertexNormals(Geometry.unindexCells(cells), positions)
     }
 
     if (shading == FLAT_SHADING) {
-      console.log(cells.length)
-      return flatten(map(normals.faceNormals(cells, positions), (n, i) => {
-        let res = []
-        for (let it = 2; it < cells[i].length; ++it) {
-          res.push(n)
-          res.push(n)
-          res.push(n)
-        }
-        return res
-      }), true)
+      return Geometry.expandNormals(cells, normals.vertexNormals(Geometry.unindexCells(cells), positions))
     }
 
     return []
   }
 
-  static unindexify(vertices, indices) {
+  static averageNormals(cell, normals) {
+    let n = map(reduce(map(cell, (c) => normals[c]),
+                       (total, n) => [total[0] + n[0],
+                                      total[1] + n[1],
+                                      total[2] + n[2]]),
+                (n) => n / cell.length)
+
+    return n
+  }
+
+  static expandNormals(cells, normals) {
+    let expanded = []
+
+    for (let i = 0; i < cells.length; i++) {
+      let repeat = (cells[i].length - 2) * 3
+      let face = []
+
+      for (let j = 0; j < repeat; j++) {
+        face.push(Geometry.averageNormals(cells[i], normals))
+      }
+
+      expanded.push(face)
+    }
+
+    return expanded
+  }
+
+  static unindexCells(cells) {
     let unindexed = []
 
-    for (let index of indices) {
-      for (let j = 2; j < index.length; ++j) {
-        unindexed.push(vertices[index[0]])
-        unindexed.push(vertices[index[j-1]])
-        unindexed.push(vertices[index[j]])
+    for (let cell of cells) {
+      for (let j = 2; j < cell.length; ++j) {
+        let c = []
+        c.push(cell[0])
+        c.push(cell[j-1])
+        c.push(cell[j])
+        unindexed.push(c)
       }
     }
 
-    return flatten(unindexed, true)
+    return unindexed
+  }
+
+  static unindexify(vertices, cells) {
+    let unindexed = []
+
+    for (let cell of cells) {
+      for (let j = 2; j < cell.length; ++j) {
+        let tri = []
+        tri.push(vertices[cell[0]])
+        tri.push(vertices[cell[j-1]])
+        tri.push(vertices[cell[j]])
+        unindexed.push(tri)
+      }
+    }
+
+    return unindexed
   }
 
 
