@@ -18,15 +18,29 @@ export class Conway extends Geometry {
 
     this.normals = Geometry.calculateNormals(mesh.positions, mesh.cells, opts.shading)
     this.vertices = Geometry.calculateVertices(mesh.positions, mesh.cells, opts.shading)
-    this.colors = map(flatten(this.vertices), (v) => [v[0], v[1], v[2], 1.0])
     this.texCoords = map(flatten(this.vertices), (v) => [0,0])
+
+    this.colors = map(mesh.cells, (cell, i) => {
+      let repeat = (cell.length - 2) * 3
+      let colors = []
+
+      let color = opts.palette[i % opts.palette.length].rgba
+
+      if (opts.palette.length > (cell.length - 3)) {
+        color = opts.palette[cell.length - 3].rgba
+      }
+
+      for (let i = 0; i < repeat; i++) {
+        colors.push(color)
+      }
+
+      return colors
+    })
 
     this.vertices = flatten(this.vertices, true)
     this.normals = flatten(this.normals, true)
     this.colors = flatten(this.colors, true)
     this.texCoords = flatten(this.texCoords, true)
-
-    console.log(this.vertices.length, this.normals.length, this.colors.length, this.texCoords.length)
 
     if (opts.shading == Geometry.SMOOTH_SHADING) {
       this.indices = flatten(Geometry.unindexCells(mesh.cells), true)
@@ -38,6 +52,7 @@ export class Conway extends Geometry {
   static get defaultOpts() {
     return { material: new ColorMaterial({ color: Color.fromHex('#f39c12') }),
              conway: 'O',
+             palette: [Color.fromHex('#ffffff')],
              shading: Geometry.FLAT_SHADING }
   }
 }

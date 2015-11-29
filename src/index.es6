@@ -1,6 +1,7 @@
 // Core
 import { Engine, gogol, gl } from './core/engine'
 import { Color } from './core/color'
+import { Palette } from './core/palette'
 import { Shader } from './core/shader'
 import { Program } from './core/program'
 import { Component } from './core/component'
@@ -36,6 +37,7 @@ export {
 
   // Core
   Color,
+  Palette,
   Shader,
   Program,
   Transform,

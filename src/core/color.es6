@@ -15,6 +15,13 @@ export class Color {
     return new Color(r, g, b, a)
   }
 
+  static get random() {
+    let min = 0
+    let max = 255
+    let r = () => (Math.random() * (max - min) + min) / 255.0
+    return new Color(r(), r(), r(), 1.0)
+  }
+
   static get black() {
     return new Color(0.0, 0.0, 0.0, 1.0)
   }
@@ -24,10 +31,10 @@ export class Color {
   }
 
   get rgba() {
-    return new Float32Array([this.r, this.g, this.b, this.a])
+    return [this.r, this.g, this.b, this.a]
   }
 
   get rgb() {
-    return new Float32Array([this.r, this.g, this.b])
+    return [this.r, this.g, this.b]
   }
 }

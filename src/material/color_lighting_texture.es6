@@ -1,6 +1,6 @@
 import { vec3, mat4 } from 'gl-matrix'
 import { Color } from '../core/color'
-import { gl, VERTEX_SIZE, TEX_COORD_SIZE, SHORT_SIZE } from '../core/engine'
+import { gl, VERTEX_SIZE, TEX_COORD_SIZE, SHORT_SIZE, RGBA_SIZE } from '../core/engine'
 import { Texture } from '../core/texture'
 import { Material } from '../core/material'
 import { ProgramPipeline } from '../builder/program/pipeline'
@@ -96,7 +96,7 @@ export class ColorLightingTextureMaterial extends Material {
 
     gl.bindBuffer(gl.ARRAY_BUFFER, this.colorBuffer)
     gl.vertexAttribPointer(this.aColor,
-                           VERTEX_SIZE,
+                           RGBA_SIZE,
                            gl.FLOAT,
                            gl.FALSE,
                            0,
@@ -119,8 +119,8 @@ export class ColorLightingTextureMaterial extends Material {
     gl.uniformMatrix4fv(this.projectionMatrix, gl.FALSE, new Float32Array(p))
     gl.uniformMatrix4fv(this.uNormalMatrix, gl.FALSE, new Float32Array(normalMatrix))
 
-    gl.uniform3fv(this.uAmbientColor, Color.fromHex('343434').rgb)
-    gl.uniform3fv(this.uDirectionalColor, Color.fromHex('de1212').rgb)
+    gl.uniform3fv(this.uAmbientColor, Color.fromHex('454545').rgb)
+    gl.uniform3fv(this.uDirectionalColor, Color.fromHex('9a9a9a').rgb)
     gl.uniform3fv(this.uDirectionalVector, new Float32Array([0.85, 0.8, 0.75]))
 
     if (this.texture) {
