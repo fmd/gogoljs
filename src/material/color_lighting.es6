@@ -1,6 +1,6 @@
 import { vec3, mat4 } from 'gl-matrix'
 import { Color } from '../core/color'
-import { gl, VERTEX_SIZE, SHORT_SIZE } from '../core/engine'
+import { gl, VERTEX_SIZE, SHORT_SIZE, FLOAT_SIZE } from '../core/engine'
 import { Material } from '../core/material'
 
 let vertexSrc = `
@@ -92,9 +92,7 @@ let fragmentSrc = `
                       gl.UNSIGNED_SHORT,
                       this.target.indicesIndex * SHORT_SIZE)
     } else  {
-      gl.drawArrays(gl.TRIANGLES,
-                    this.target.verticesIndex,
-                    this.target.vertices.length / VERTEX_SIZE)
+      gl.drawArrays(gl.TRIANGLES, 0, this.target.vertices.length / VERTEX_SIZE)
     }
 
 

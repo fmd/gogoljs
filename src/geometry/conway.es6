@@ -6,7 +6,6 @@ import { flatten, uniq } from 'lodash'
 import { Geometry } from '../core/geometry'
 import { ColorMaterial } from '../material/color'
 
-
 export class Conway extends Geometry {
   constructor(opts = {}) {
     opts = { ...Conway.defaultOpts, ...opts }
@@ -16,12 +15,16 @@ export class Conway extends Geometry {
 
     this.indices = null
     this.texCoords = null
+
     this.normals = Geometry.calculateNormals(mesh.positions, mesh.cells, opts.shading)
     this.vertices = Geometry.calculateVertices(mesh.positions, mesh.cells, opts.shading)
 
     if (opts.shading == Geometry.SMOOTH_SHADING) {
       this.indices = flatten(mesh.cells, true)
     }
+
+    console.log(this.normals.length)
+    console.log(this.vertices.length)
 
     this.useMaterial(opts.material)
   }

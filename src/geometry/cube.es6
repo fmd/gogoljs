@@ -128,8 +128,6 @@ export class Cube extends Geometry {
     this.normals = normals()
     this.texCoords = texCoords()
     this.useMaterial(opts.material)
-
-    console.log(this.vertices)
   }
 
   static get defaultOpts() {

@@ -76,8 +76,15 @@ export class Geometry extends Transform {
     }
 
     if (shading == FLAT_SHADING) {
-      return flatten(map(normals.faceNormals(cells, positions), (n) => {
-        return [n, n, n]
+      console.log(cells.length)
+      return flatten(map(normals.faceNormals(cells, positions), (n, i) => {
+        let res = []
+        for (let it = 2; it < cells[i].length; ++it) {
+          res.push(n)
+          res.push(n)
+          res.push(n)
+        }
+        return res
       }), true)
     }
 
@@ -87,12 +94,17 @@ export class Geometry extends Transform {
   static unindexify(vertices, indices) {
     let unindexed = []
 
-    for (let i of indices) {
-      unindexed.push([vertices[i[0]], vertices[i[1]], vertices[i[2]]])
+    for (let index of indices) {
+      for (let j = 2; j < index.length; ++j) {
+        unindexed.push(vertices[index[0]])
+        unindexed.push(vertices[index[j-1]])
+        unindexed.push(vertices[index[j]])
+      }
     }
 
-    return unindexed
+    return flatten(unindexed, true)
   }
+
 
   static indexify(vertices) {
     return reduce(vertices, (indexed, v) => {

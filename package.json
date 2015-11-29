@@ -7,7 +7,8 @@
     "gl-geometry": "^1.1.1",
     "gl-matrix": "^2.3.1",
     "lodash": "^3.10.1",
-    "torus-mesh": "^1.0.0"
+    "torus-mesh": "^1.0.0",
+    "triangulate-polyline": "^1.0.3"
   },
   "devDependencies": {
     "babelify": "^6.3.0",
