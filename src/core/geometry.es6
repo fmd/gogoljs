@@ -1,5 +1,5 @@
 import normals from 'normals'
-  import { mat4, vec3 } from 'gl-matrix'
+import { mat4, vec3 } from 'gl-matrix'
 import { reduce, find, flatten, map } from 'lodash'
 import { gl, VERTEX_SIZE, FLOAT_SIZE } from './engine'
 import { Transform } from './transform'
