@@ -36,7 +36,7 @@ Figure out if / why it's slower
 
 * Come up with several default pipelines
 
-AAA, 3DRetro, 3DRetro, etc.
+AAA, 3DRetro, 2DRetro, etc.
 
 * Add normal maps
 
