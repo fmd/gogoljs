@@ -1,4 +1,5 @@
 import normals from 'normals'
+import faceNormals from 'face-normals'
 import { mat4, vec3 } from 'gl-matrix'
 import { reduce, find, flatten, map } from 'lodash'
 import { gl, VERTEX_SIZE, FLOAT_SIZE } from './engine'
@@ -76,6 +77,10 @@ export class Geometry extends Transform {
   }
 
   static calculateNormals(positions, cells, shading = SMOOTH_SHADING) {
+    if (!cells.length > 0) {
+      return faceNormals(Geometry.unindexCells(cells), positions)
+    }
+
     if (shading == SMOOTH_SHADING) {
       return normals.vertexNormals(Geometry.unindexCells(cells), positions)
     }
