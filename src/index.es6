@@ -1,5 +1,6 @@
 // Core
 import { Engine, gogol, gl } from './core/engine'
+import { Axis } from './core/axis'
 import { Color } from './core/color'
 import { Palette } from './core/palette'
 import { Shader } from './core/shader'
@@ -36,6 +37,7 @@ import { BasicMaterialComponent } from './builder/components/basic_material'
 export {
 
   // Core
+  Axis,
   Color,
   Palette,
   Shader,
