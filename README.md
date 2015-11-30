@@ -59,6 +59,8 @@ i.e. you should be able to define attributes in a geometry that get picked up by
 
 * DRY up a lot of these unused files.
 
+* refactor core/geometry statics out into util functions and clean the way these are used right up.
+
 * Do something with ShaderComponents.
 
 * Allow multiple `Engine`s.
