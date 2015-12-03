@@ -1,27 +1,25 @@
-import { Program } from './program'
 import { VertexShader, FragmentShader } from './shader'
 
 export class Material {
-  constructor(materialClass, vertexSrc, fragmentSrc) {
-    if (materialClass.program == null) {
-      materialClass.program = this._makeProgram(vertexSrc, fragmentSrc)
+  constructor(materialClass, pipeline) {
+    if (materialClass.pipeline == null) {
+      materialClass.pipeline = this._makeProgram()
     }
 
-    this.program = materialClass.program
+    this.pipeline = materialClass.pipeline
+    this.pipeline = pipeline
     this.target = null
   }
 
-  _makeProgram(vertexSrc, fragmentSrc) {
-    this.vertexShader = new VertexShader().compileFromString(vertexSrc)
-    this.fragmentShader = new FragmentShader().compileFromString(fragmentSrc)
-    this.program = new Program(this.vertexShader, this.fragmentShader)
-    return this.program
+  _makeProgram() {
+    this.pipeline.compile()
+    return this.pipeline
   }
 
   render() {
-    if (Material.currentProgram != this.program) {
-      Material.currentProgram = this.program
-      this.program.activate()
+    if (Material.currentProgram != this.pipeline) {
+      Material.currentProgram = this.pipeline
+      this.pipeline.activate()
     }
   }
 }

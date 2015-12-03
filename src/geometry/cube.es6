@@ -1,5 +1,6 @@
 import { Color } from '../core/color'
-import { ColorMaterial } from '../material/color'
+import { flatten, map } from 'lodash'
+import { ColorLightingTextureMaterial } from '../material/color_lighting_texture'
 import { Geometry } from '../core/geometry'
 
 let vertices = function(width, height, depth) {
@@ -127,6 +128,8 @@ export class Cube extends Geometry {
     this.indices = indices()
     this.normals = normals()
     this.texCoords = texCoords()
+    this.colors = flatten(map(new Array(24), (b) => opts.color.rgba), true)
+    console.log(this.colors.length, this.vertices.length)
     this.useMaterial(opts.material)
   }
 
@@ -134,6 +137,7 @@ export class Cube extends Geometry {
     return { width: 5.0,
              height: 5.0,
              depth: 5.0,
-             material: new ColorMaterial() }
+             color: Color.fromHex('#ffffff'),
+             material: new ColorLightingTextureMaterial() }
   }
 }

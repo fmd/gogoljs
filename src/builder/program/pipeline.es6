@@ -1,3 +1,5 @@
+import { gl } from './engine'
+import { VertexShader, FragmentShader } from './shader'
 import { map, compact, uniq, flatten } from 'lodash'
 import { ShaderGlobal } from '../shader/global'
 import { ShaderLocal } from '../shader/local'
@@ -44,12 +46,43 @@ export class ProgramPipeline {
     return `precision mediump float;`
   }
 
-  get vertex() {
-    return this._source('vertex')
+  compile() {
+    let vertexShader = new VertexShader().compileFromString(this._source('vertex'))
+    let fragmentShader = new FragmentShader().compileFromString(this._source('fragment'))
+    let program = gl.createProgram()
+
+    gl.attachShader(program, vertexShader.shader)
+    gl.attachShader(program, fragmentShader.shader)
+    gl.linkProgram(program)
+
+    this.vertexShader = vertexShader
+    this.fragmentShader = fragmentShader
+    this.program = program
+    this._checkErrors()
+
+    return this
   }
 
-  get fragment() {
-    return this._source('fragment')
+  activate() {
+    gl.useProgram(this.program)
+  }
+
+  uniform(str) {
+    return gl.getUniformLocation(this.program, str)
+  }
+
+  attr(str) {
+    return gl.getAttribLocation(this.program, str)
+  }
+
+  _checkErrors() {
+    let success = gl.getProgramParameter(this.program, gl.LINK_STATUS)
+
+    if (!success) {
+      let v = gl.getShaderInfoLog(this.vertexShader.shader)
+      let f = gl.getShaderInfoLog(this.fragmentShader.shader)
+      throw `Could not compile program: ${v} - ${f}`
+    }
   }
 
   _source(shader) {

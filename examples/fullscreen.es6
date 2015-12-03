@@ -7,20 +7,16 @@ gogol.scene = s
 
 s.camera.translate(0.0, 0.0, 100.0)
 
-let sun = new Cube({ width: 5.0, height: 5.0, depth: 5.0 })
-sun.material.color = Color.fromHex('#f39c12')
+let sun = new Cube({ width: 5.0, height: 5.0, depth: 5.0, color: Color.fromHex('#f39c12') })
 
 let marsJoint = new Transform()
-let mars = new Cube({ width: 2.0, height: 2.0, depth: 2.0 })
-mars.material.color = Color.fromHex('#c0392b')
+let mars = new Cube({ width: 2.0, height: 2.0, depth: 2.0, color: Color.fromHex('#c0392b') })
 
 let earthJoint = new Transform()
-let earth = new Cube({ width: 2.5, height: 2.5, depth: 2.5 })
-earth.material.color = Color.fromHex('#16a085')
+let earth = new Cube({ width: 2.5, height: 2.5, depth: 2.5, color: Color.fromHex('#16a085') })
 
 let moonJoint = new Transform()
-let moon = new Cube({ width: 1.0, height: 1.0, depth: 1.0 })
-moon.material.color = Color.fromHex('#95a5a6')
+let moon = new Cube({ width: 1.0, height: 1.0, depth: 1.0, color: Color.fromHex('#95a5a6') })
 
 earthJoint.addChild(earth)
 earth.translate(20.0, 0, 0)

@@ -1,16 +1,8 @@
 import { gl } from './engine'
 
-export class Shader {
+export class ShaderProgram {
   constructor(type) {
     this.shader = gl.createShader(type);
-    return this
-  }
-
-  compileFromUrl(url) {
-    return this
-  }
-
-  compileFromElement(id) {
     return this
   }
 
@@ -33,14 +25,14 @@ export class Shader {
   }
 }
 
-export class VertexShader extends Shader {
+export class VertexShader extends ShaderProgram {
   constructor() {
     super(gl.VERTEX_SHADER)
     return this
   }
 }
 
-export class FragmentShader extends Shader {
+export class FragmentShader extends ShaderProgram {
   constructor() {
     super(gl.FRAGMENT_SHADER)
     return this
