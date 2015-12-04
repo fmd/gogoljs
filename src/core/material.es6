@@ -1,27 +1,19 @@
-import { VertexShader, FragmentShader } from './shader'
-
 export class Material {
   constructor(materialClass, pipeline) {
     if (materialClass.pipeline == null) {
-      materialClass.pipeline = this._makeProgram()
+      materialClass.pipeline = pipeline.compile()
     }
 
     this.pipeline = materialClass.pipeline
-    this.pipeline = pipeline
     this.target = null
   }
 
-  _makeProgram() {
-    this.pipeline.compile()
-    return this.pipeline
-  }
-
   render() {
-    if (Material.currentProgram != this.pipeline) {
-      Material.currentProgram = this.pipeline
+    if (Material.currentPipeline != this.pipeline) {
+      Material.currentPipeline = this.pipeline
       this.pipeline.activate()
     }
   }
 }
 
-Material.currentProgram = null
+Material.currentPipeline = null

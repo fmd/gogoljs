@@ -1,5 +1,6 @@
 import { mat4, vec3 } from 'gl-matrix'
-import { gogol, Scene, Cube, Transform, Program, TextureMaterial, Color, PerspectiveCamera } from '../src'
+import { gogol, Scene, Cube, Transform, Color, PerspectiveCamera } from '../src'
+
 gogol.init('gogol-example', { fullscreen: true })
 
 let s = new Scene({ camera: new PerspectiveCamera() })

@@ -3,7 +3,7 @@ import { Color } from '../core/color'
 import { gl, VERTEX_SIZE, TEX_COORD_SIZE, SHORT_SIZE, RGBA_SIZE } from '../core/engine'
 import { Texture } from '../core/texture'
 import { Material } from '../core/material'
-import { ProgramPipeline } from '../builder/program/pipeline'
+import { DefaultPipeline } from '../builder/program/pipeline/default'
 
 export class DefaultMaterial extends Material {
   constructor(opts = DefaultMaterial.defaultOpts) {
@@ -16,18 +16,18 @@ export class DefaultMaterial extends Material {
       this.texture = new Texture(opts.src)
     }
 
-    this.modelMatrix        = this.program.uniform('uModelMatrix')
-    this.viewMatrix         = this.program.uniform('uViewMatrix')
-    this.projectionMatrix   = this.program.uniform('uProjectionMatrix')
-    this.uNormalMatrix      = this.program.uniform('uNormalMatrix')
-    this.aColor             = this.program.attr('aVertexColor')
-    this.aPosition          = this.program.attr('aVertexPosition')
-    this.aNormal            = this.program.attr('aVertexNormal')
-    this.uSampler           = this.program.uniform('uSampler')
-    this.aTextureCoord      = this.program.attr('aTextureCoord')
-    this.uAmbientColor      = this.program.uniform('uAmbientColor')
-    this.uDirectionalVector = this.program.uniform('uDirectionalVector')
-    this.uDirectionalColor  = this.program.uniform('uDirectionalColor')
+    this.modelMatrix        = this.pipeline.uniform('uModelMatrix')
+    this.viewMatrix         = this.pipeline.uniform('uViewMatrix')
+    this.projectionMatrix   = this.pipeline.uniform('uProjectionMatrix')
+    this.uNormalMatrix      = this.pipeline.uniform('uNormalMatrix')
+    this.aColor             = this.pipeline.attr('aVertexColor')
+    this.aPosition          = this.pipeline.attr('aVertexPosition')
+    this.aNormal            = this.pipeline.attr('aVertexNormal')
+    this.uSampler           = this.pipeline.uniform('uSampler')
+    this.aTextureCoord      = this.pipeline.attr('aTextureCoord')
+    this.uAmbientColor      = this.pipeline.uniform('uAmbientColor')
+    this.uDirectionalVector = this.pipeline.uniform('uDirectionalVector')
+    this.uDirectionalColor  = this.pipeline.uniform('uDirectionalColor')
   }
 
   static get defaultOpts() {
@@ -75,7 +75,7 @@ export class DefaultMaterial extends Material {
     gl.bindBuffer(gl.ARRAY_BUFFER, this.normalBuffer);
     gl.vertexAttribPointer(this.aNormal, VERTEX_SIZE, gl.FLOAT, gl.FALSE, 0, this.target.normalsIndex);
 
-    // Pass variables into program
+    // Pass variables into pipeline
     gl.uniformMatrix4fv(this.modelMatrix, gl.FALSE, new Float32Array(m))
     gl.uniformMatrix4fv(this.viewMatrix, gl.FALSE, new Float32Array(v))
     gl.uniformMatrix4fv(this.projectionMatrix, gl.FALSE, new Float32Array(p))
@@ -107,4 +107,4 @@ export class DefaultMaterial extends Material {
   }
 }
 
-DefaultMaterial.program = null
+DefaultMaterial.pipeline = null

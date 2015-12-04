@@ -3,8 +3,6 @@ import { Engine, gogol, gl } from './core/engine'
 import { Axis } from './core/axis'
 import { Color } from './core/color'
 import { Palette } from './core/palette'
-import { Shader } from './core/shader'
-import { Program } from './core/program'
 import { Component } from './core/component'
 import { Material } from './core/material'
 import { Scene } from './core/scene'
@@ -13,10 +11,7 @@ import { Geometry } from './core/geometry'
 import { Camera, PerspectiveCamera, OrthographicCamera } from './core/camera'
 
 // Materials
-import { ColorMaterial } from './material/color'
-import { TextureMaterial } from './material/texture'
-import { ColorLightingMaterial } from './material/color_lighting'
-import { ColorLightingTextureMaterial } from './material/color_lighting_texture'
+import { DefaultMaterial } from './material/default'
 
 // Geometries
 import { Cube } from './geometry/cube'
@@ -40,8 +35,6 @@ export {
   Axis,
   Color,
   Palette,
-  Shader,
-  Program,
   Transform,
   Component,
   Geometry,
@@ -52,10 +45,7 @@ export {
   OrthographicCamera,
 
   // Materials
-  ColorMaterial,
-  TextureMaterial,
-  ColorLightingMaterial,
-  ColorLightingTextureMaterial,
+  DefaultMaterial,
 
   // Geometries
   Quad,

@@ -34,7 +34,7 @@ export class DefaultPipeline extends ProgramPipeline {
 
                 { // --- Connections ---
                   vertex:   { gl_Position:  'iVertexPosition' },
-                  fragment: { gl_FragColor: 'iFragColor' } }])
+                  fragment: { gl_FragColor: 'iFragColor' } }]
 
     super(...opts)
 

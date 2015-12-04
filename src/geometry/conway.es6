@@ -4,7 +4,7 @@ import { vec3 } from 'gl-matrix'
 import { Color } from '../core/color'
 import { flatten, uniq, map } from 'lodash'
 import { Geometry } from '../core/geometry'
-import { ColorMaterial } from '../material/color'
+import { DefaultMaterial } from '../material/default'
 
 export class Conway extends Geometry {
   constructor(opts = {}) {
@@ -50,7 +50,7 @@ export class Conway extends Geometry {
   }
 
   static get defaultOpts() {
-    return { material: new ColorMaterial({ color: Color.fromHex('#f39c12') }),
+    return { material: new DefaultMaterial({ color: Color.fromHex('#f39c12') }),
              conway: 'O',
              palette: [Color.fromHex('#ffffff')],
              shading: Geometry.FLAT_SHADING }

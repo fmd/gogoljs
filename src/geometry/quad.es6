@@ -1,5 +1,5 @@
 import { Color } from '../core/color'
-import { ColorMaterial } from '../material/color'
+import { ColorMaterial } from '../material/default'
 import { Geometry } from '../core/geometry'
 
 let vertices = function(width, height) {
@@ -31,6 +31,6 @@ export class Quad extends Geometry {
   }
 
   static get defaultOpts() {
-    return { width: 5.0, height: 5.0, material: new ColorMaterial() }
+    return { width: 5.0, height: 5.0, material: new DefaultMaterial() }
   }
 }

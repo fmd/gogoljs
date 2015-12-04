@@ -1,4 +1,4 @@
-import { gl } from './engine'
+import { gl } from '../../core/engine'
 
 export class ShaderProgram {
   constructor(type) {
@@ -19,7 +19,6 @@ export class ShaderProgram {
   checkErrors() {
     var success = gl.getShaderParameter(this.shader, gl.COMPILE_STATUS)
     if (!success) {
-      console.log(this.source)
       throw "Could not compile shader:" + gl.getShaderInfoLog(this.shader);
     }
   }

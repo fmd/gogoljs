@@ -1,7 +1,6 @@
 import { mat4, vec3, glMatrix } from 'gl-matrix'
 import { gogol, gl } from './engine'
 import { Component } from './component'
-import { Program } from './program'
 import { OrthographicCamera } from './camera'
 
 export class Scene extends Component {

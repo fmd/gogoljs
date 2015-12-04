@@ -3,7 +3,7 @@ import normals from 'normals'
 import { Color } from '../core/color'
 import { flatten, map } from 'lodash'
 import { Geometry } from '../core/geometry'
-import { ColorLightingTextureMaterial } from '../material/color_lighting_texture'
+import { DefaultMaterial } from '../material/default'
 
 export class Torus extends Geometry {
   constructor(opts = {}) {
@@ -36,6 +36,6 @@ export class Torus extends Geometry {
   }
 
   static get defaultOpts() {
-    return { material: new ColorLightingTextureMaterial(), color: Color.fromHex('#ffffff'), shading: Geometry.SMOOTH_SHADING }
+    return { material: new DefaultMaterial(), color: Color.fromHex('#ffffff'), shading: Geometry.SMOOTH_SHADING }
   }
 }

@@ -2,7 +2,7 @@ import sphere from 'primitive-sphere'
 import { Color } from '../core/color'
 import { flatten, map } from 'lodash'
 import { Geometry } from '../core/geometry'
-import { ColorLightingTextureMaterial } from '../material/color_lighting_texture'
+import { ColorLightingTextureMaterial } from '../material/default'
 
 export class Sphere extends Geometry {
   constructor(opts = {}) {

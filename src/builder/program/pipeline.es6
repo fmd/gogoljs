@@ -1,5 +1,5 @@
-import { gl } from './engine'
-import { VertexShader, FragmentShader } from './shader'
+import { gl } from '../../core/engine'
+import { VertexShader, FragmentShader } from '../shader/program'
 import { map, compact, uniq, flatten } from 'lodash'
 import { ShaderGlobal } from '../shader/global'
 import { ShaderLocal } from '../shader/local'
