@@ -14,8 +14,6 @@ Material system refactor:
 
 2. Add a generic "renderer" to choose between lines, triangles, etc.
 
-3. Remove all materials that aren't the "default material".
-
 4. Refactor the input/output system so it's less verbose.
 
 * Refactor renderer

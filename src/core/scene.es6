@@ -26,44 +26,41 @@ export class Scene extends Component {
       return
     }
 
-    let texCoords = []
-    let vertices = []
-    let colors = []
-    let indices = []
-    let normals = []
-
-    this._texCoordBuffer = gl.createBuffer()
-    this._vertexBuffer = gl.createBuffer()
-    this._colorBuffer = gl.createBuffer()
-    this._indexBuffer = gl.createBuffer()
-    this._normalBuffer = gl.createBuffer()
+    this._bufferSet = {}
+    this._indexBuffer = null
 
     for (let child of this.children.flatten()) {
-      if (child.vertices) {
-        child.material.texCoordBuffer = this._texCoordBuffer
-        child.material.vertexBuffer = this._vertexBuffer
-        child.material.colorBuffer = this._colorBuffer
-        child.material.indexBuffer = this._indexBuffer
-        child.material.normalBuffer = this._normalBuffer
+      if (child.attributeArrays) {
+        let attrs = child.attributeArrays
+        for (let key in attrs) {
+          if (typeof this._bufferSet[key] === 'undefined') {
+            this._bufferSet[key] = { 'buffer': gl.createBuffer(),
+                                     'elements': [] }
+          }
+        }
 
-        child.bake(vertices, indices, texCoords, normals, colors)
+        if (child.indices !== null) {
+          if (this._indexBuffer === null) {
+            this._indexBuffer = { 'buffer': gl.createBuffer(),
+                                  'elements': [] }
+          }
+        }
+
+        child.bake(this._bufferSet, this._indexBuffer)
       }
     }
 
-    gl.bindBuffer(gl.ARRAY_BUFFER, this._texCoordBuffer)
-    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(texCoords), gl.STATIC_DRAW)
+    for (let key in this._bufferSet) {
+      gl.bindBuffer(gl.ARRAY_BUFFER, this._bufferSet[key].buffer)
+      gl.bufferData(gl.ARRAY_BUFFER,
+                    new Float32Array(this._bufferSet[key].elements),
+                    gl.STATIC_DRAW)
+    }
 
-    gl.bindBuffer(gl.ARRAY_BUFFER, this._normalBuffer)
-    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(normals), gl.STATIC_DRAW)
-
-    gl.bindBuffer(gl.ARRAY_BUFFER, this._vertexBuffer)
-    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW)
-
-    gl.bindBuffer(gl.ARRAY_BUFFER, this._colorBuffer)
-    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(colors), gl.STATIC_DRAW)
-
-    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this._indexBuffer)
-    gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(indices), gl.STATIC_DRAW)
+    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this._indexBuffer.buffer)
+    gl.bufferData(gl.ELEMENT_ARRAY_BUFFER,
+                  new Uint16Array(this._indexBuffer.elements),
+                  gl.STATIC_DRAW)
 
     this.isBaked = true
   }
@@ -77,15 +74,11 @@ export class Scene extends Component {
         continue
       }
 
-      child.render(v, p)
+      child.render(v, p, this._bufferSet, this._indexBuffer)
     }
   }
 
   destroy() {
-    gl.deleteBuffer(this._indexBuffer)
-    gl.deleteBuffer(this._vertexBuffer)
-    gl.deleteBuffer(this._normalBuffer)
-    gl.deleteBuffer(this._colorBuffer)
-    gl.deleteBuffer(this._texCoordBuffer)
+
   }
 }

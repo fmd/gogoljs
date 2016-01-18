@@ -11,14 +11,6 @@ export class Geometry extends Transform {
   constructor() {
     super()
     this._material = null
-
-    this.texCoords = []
-    this.vertices = []
-    this.indices = []
-
-    this.texCoordsIndex = null
-    this.verticesIndex = null
-    this.indicesIndex = null
   }
 
   useMaterial(material) {
@@ -30,33 +22,20 @@ export class Geometry extends Transform {
     return this._material
   }
 
-  bake(vertices, indices, texCoords, normals, colors) {
-    this.verticesIndex = vertices.length * FLOAT_SIZE
-    vertices.push.apply(vertices, this.vertices)
+  bake(bufferSet, indexBuffer) {
+    for (let key in this.attributeArrays) {
+      this.attributeArrays[key].index = bufferSet[key].elements.length * FLOAT_SIZE
+      bufferSet[key].elements.push(this.attributes)
+    }
 
     if (this.indices) {
-      this.indicesIndex = indices.length
-      indices.push.apply(indices, this.indices)
-    }
-
-    if (this.texCoords) {
-      this.texCoordsIndex = texCoords.length * FLOAT_SIZE
-      texCoords.push.apply(texCoords, this.texCoords)
-    }
-
-    if (this.colors) {
-      this.colorsIndex = colors.length * FLOAT_SIZE
-      colors.push.apply(colors, this.colors)
-    }
-
-    if (this.normals) {
-      this.normalsIndex = normals.length * FLOAT_SIZE
-      normals.push.apply(normals, this.normals)
+      this.indices.index = indexBuffer.elements.length
+      indexBuffer.elements.push(this.indices)
     }
   }
 
-  render(v, p) {
-    this.material.render(this.worldMatrix, v, p)
+  render(v, p, bufferSet, indexBuffer) {
+    this.material.render(this.worldMatrix, v, p, bufferSet, indexBuffer)
   }
 
   static calculateVertices(positions, cells, shading = SMOOTH_SHADING) {

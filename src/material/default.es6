@@ -20,11 +20,7 @@ export class DefaultMaterial extends Material {
     this.viewMatrix         = this.pipeline.uniform('uViewMatrix')
     this.projectionMatrix   = this.pipeline.uniform('uProjectionMatrix')
     this.uNormalMatrix      = this.pipeline.uniform('uNormalMatrix')
-    this.aColor             = this.pipeline.attr('aVertexColor')
-    this.aPosition          = this.pipeline.attr('aVertexPosition')
-    this.aNormal            = this.pipeline.attr('aVertexNormal')
     this.uSampler           = this.pipeline.uniform('uSampler')
-    this.aTextureCoord      = this.pipeline.attr('aTextureCoord')
     this.uAmbientColor      = this.pipeline.uniform('uAmbientColor')
     this.uDirectionalVector = this.pipeline.uniform('uDirectionalVector')
     this.uDirectionalColor  = this.pipeline.uniform('uDirectionalColor')
@@ -34,7 +30,7 @@ export class DefaultMaterial extends Material {
     return { pipeline: new DefaultPipeline() }
   }
 
-  render(m, v, p) {
+  render(m, v, p, bufferSet, indexBuffer) {
     super.render()
 
     var normalMatrix = mat4.create()
@@ -42,38 +38,27 @@ export class DefaultMaterial extends Material {
     mat4.invert(normalMatrix, normalMatrix)
     mat4.transpose(normalMatrix, normalMatrix)
 
-    // Enable attributes
-    gl.enableVertexAttribArray(this.aPosition)
-    gl.enableVertexAttribArray(this.aNormal)
-    gl.enableVertexAttribArray(this.aTextureCoord)
-    gl.enableVertexAttribArray(this.aColor)
+    let attrs = this.target.attributeArrays
+    for (let key in attrs) {
+      let a = this.pipeline.attr(key)
 
-    gl.bindBuffer(gl.ARRAY_BUFFER, this.vertexBuffer)
-    gl.vertexAttribPointer(this.aPosition,
-                           VERTEX_SIZE,
-                           gl.FLOAT,
-                           gl.FALSE,
-                           0,
-                           this.target.verticesIndex)
+      gl.enableVertexAttribArray(a)
 
-    gl.bindBuffer(gl.ARRAY_BUFFER, this.colorBuffer)
-    gl.vertexAttribPointer(this.aColor,
-                           RGBA_SIZE,
-                           gl.FLOAT,
-                           gl.FALSE,
-                           0,
-                           this.target.colorsIndex)
+      gl.bindBuffer(gl.ARRAY_BUFFER, bufferSet[key].buffer)
 
-    gl.bindBuffer(gl.ARRAY_BUFFER, this.texCoordBuffer)
-    gl.vertexAttribPointer(this.aTextureCoord,
-                           TEX_COORD_SIZE,
-                           gl.FLOAT,
-                           gl.FALSE,
-                           0,
-                           this.target.texCoordsIndex)
+      gl.vertexAttribPointer(a, this.pipeline.attributes[key].dataLength, gl.FLOAT,
+                             gl.FALSE, 0, attrs[key].index)
+    }
 
-    gl.bindBuffer(gl.ARRAY_BUFFER, this.normalBuffer);
-    gl.vertexAttribPointer(this.aNormal, VERTEX_SIZE, gl.FLOAT, gl.FALSE, 0, this.target.normalsIndex);
+    if (this.target.indices) {
+      gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer.buffer)
+      gl.drawElements(gl.TRIANGLES,
+                      this.target.indices.length,
+                      gl.UNSIGNED_SHORT,
+                      this.target.indices.index * SHORT_SIZE)
+    } else  {
+      gl.drawArrays(gl.TRIANGLES, 0, this.target.vertices.elements.length / VERTEX_SIZE)
+    }
 
     // Pass variables into pipeline
     gl.uniformMatrix4fv(this.modelMatrix, gl.FALSE, new Float32Array(m))
@@ -90,15 +75,6 @@ export class DefaultMaterial extends Material {
     }
 
     // Draw elements
-    if (this.target.indices) {
-      gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.indexBuffer)
-      gl.drawElements(gl.TRIANGLES,
-                      this.target.indices.length,
-                      gl.UNSIGNED_SHORT,
-                      this.target.indicesIndex * SHORT_SIZE)
-    } else  {
-      gl.drawArrays(gl.TRIANGLES, 0, this.target.vertices.length / VERTEX_SIZE)
-    }
 
     // Disable attributes
     // gl.disableVertexAttribArray(this.aPosition)

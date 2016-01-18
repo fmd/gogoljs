@@ -10,8 +10,8 @@ export class DefaultPipeline extends ProgramPipeline {
     let sLocal = (s) => { return ShaderLocal.fromString(s) }
 
     let opts = [{ // --- Globals ---
-                  ...ProgramPipeline.matrices,
-                  ...ProgramPipeline.attributes,
+                  ...ProgramPipeline.defaultMatrices,
+                  ...ProgramPipeline.defaultAttributes,
 
                   // Lighting
                   uNormalMatrix:      sGlobal('uniform mat4 uNormalMatrix'),

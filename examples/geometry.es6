@@ -1,6 +1,6 @@
 import { mat4, vec3 } from 'gl-matrix'
 import { gogol, Color, Scene, Sphere, Torus, Geometry, Axis,
-         ColorLightingTextureMaterial, PerspectiveCamera } from '../src'
+         DefaultMaterial, PerspectiveCamera } from '../src'
 
 gogol.init('gogol-example', { clearColor: Color.fromHex('#232323') })
 
@@ -9,7 +9,7 @@ gogol.scene = scene
 
 scene.camera.translate(0.0, 0.0, 5.0)
 
-let mat = () => { return new ColorLightingTextureMaterial() }
+let mat = () => { return new DefaultMaterial() }
 
 let t = new Torus({ material: mat(), shading: Geometry.FLAT_SHADING })
 let s = new Sphere({ material: mat(), shading: Geometry.FLAT_SHADING })

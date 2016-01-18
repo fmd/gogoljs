@@ -8,6 +8,19 @@ export class ShaderGlobal {
     this.name = name
   }
 
+  get dataLength() {
+    switch(this.dataType) {
+      case 'vec2':
+        return 2
+      case 'vec3':
+        return 3
+      case 'vec4':
+        return 4
+      default:
+        return 3
+    }
+  }
+
   get parts() {
     return compact([this.qualifier, this.precision, this.dataType, this.name])
   }

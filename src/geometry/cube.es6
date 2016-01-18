@@ -124,11 +124,18 @@ export class Cube extends Geometry {
   constructor(opts = {}) {
     opts = {...Cube.defaultOpts, ...opts}
     super()
-    this.vertices = vertices(opts.width, opts.height, opts.depth)
+
+    let colors = flatten(map(new Array(24), (b) => opts.color.rgba), true)
+
+    this.attributeArrays = { 'aVertexPosition': vertices(opts.width,
+                                                         opts.height,
+                                                         opts.depth),
+                             'aVertexNormal': normals(),
+                             'aTextureCoord': texCoords(),
+                             'aVertexColor': colors }
+
     this.indices = indices()
-    this.normals = normals()
-    this.texCoords = texCoords()
-    this.colors = flatten(map(new Array(24), (b) => opts.color.rgba), true)
+
     this.useMaterial(opts.material)
   }
 

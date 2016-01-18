@@ -17,14 +17,14 @@ export class ProgramPipeline {
     this.components.push(new componentClass(this.requires))
   }
 
-  static get matrices() {
+  static get defaultMatrices() {
     return { uProjectionMatrix: ShaderGlobal.uProjectionMatrix,
              uViewMatrix:       ShaderGlobal.uViewMatrix,
              uModelMatrix:      ShaderGlobal.uModelMatrix,
              uModelViewMatrix:  ShaderGlobal.uModelViewMatrix }
   }
 
-  static get attributes() {
+  static get defaultAttributes() {
     return { aVertexPosition: ShaderGlobal.aVertexPosition,
              aVertexNormal:   ShaderGlobal.aVertexNormal,
              aTextureCoord:   ShaderGlobal.aTextureCoord }
@@ -73,6 +73,26 @@ export class ProgramPipeline {
 
   attr(str) {
     return gl.getAttribLocation(this.program, str)
+  }
+
+  get uniforms() {
+    let u = {}
+    for (let key in this.globals) {
+      if (this.globals[key].qualifier == 'uniform') {
+        u[this.globals[key].name] = this.globals[key]
+      }
+    }
+    return u
+  }
+
+  get attributes() {
+    let a = {}
+    for (let key in this.globals) {
+      if (this.globals[key].qualifier == 'attribute') {
+        a[this.globals[key].name] = this.globals[key]
+      }
+    }
+    return a
   }
 
   _checkErrors() {
