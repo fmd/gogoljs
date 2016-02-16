@@ -35,14 +35,14 @@ export class Scene extends Component {
         for (let key in attrs) {
           if (typeof this._bufferSet[key] === 'undefined') {
             this._bufferSet[key] = { 'buffer': gl.createBuffer(),
-                                     'elements': [] }
+                                     'elements': attrs[key] }
           }
         }
 
         if (child.indices !== null) {
           if (this._indexBuffer === null) {
             this._indexBuffer = { 'buffer': gl.createBuffer(),
-                                  'elements': [] }
+                                  'elements': child.indices }
           }
         }
 

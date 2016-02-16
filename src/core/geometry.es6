@@ -24,13 +24,13 @@ export class Geometry extends Transform {
 
   bake(bufferSet, indexBuffer) {
     for (let key in this.attributeArrays) {
-      this.attributeArrays[key].index = bufferSet[key].elements.length * FLOAT_SIZE
-      bufferSet[key].elements.push(this.attributes)
+      this.attributeArrays[key].index = 0
     }
 
     if (this.indices) {
-      this.indices.index = indexBuffer.elements.length
-      indexBuffer.elements.push(this.indices)
+      let elements = this.indices
+      this.indices = { elements: elements,
+                       index: 0 }
     }
   }
 

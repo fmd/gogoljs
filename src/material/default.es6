@@ -43,7 +43,6 @@ export class DefaultMaterial extends Material {
       let a = this.pipeline.attr(key)
 
       gl.enableVertexAttribArray(a)
-
       gl.bindBuffer(gl.ARRAY_BUFFER, bufferSet[key].buffer)
 
       gl.vertexAttribPointer(a, this.pipeline.attributes[key].dataLength, gl.FLOAT,
@@ -53,11 +52,11 @@ export class DefaultMaterial extends Material {
     if (this.target.indices) {
       gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer.buffer)
       gl.drawElements(gl.TRIANGLES,
-                      this.target.indices.length,
+                      this.target.indices.elements.length,
                       gl.UNSIGNED_SHORT,
                       this.target.indices.index * SHORT_SIZE)
     } else  {
-      gl.drawArrays(gl.TRIANGLES, 0, this.target.vertices.elements.length / VERTEX_SIZE)
+      gl.drawArrays(gl.TRIANGLES, 0, this.target.vertices.length / VERTEX_SIZE)
     }
 
     // Pass variables into pipeline
