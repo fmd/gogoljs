@@ -37,10 +37,10 @@ export class Conway extends Geometry {
       return colors
     })
 
-    this.vertices = flatten(this.vertices, true)
-    this.normals = flatten(this.normals, true)
-    this.colors = flatten(this.colors, true)
-    this.texCoords = flatten(this.texCoords, true)
+    this.attributeArrays = { 'aVertexPosition': flatten(this.vertices, true),
+                             'aVertexNormal': flatten(this.normals, true),
+                             'aTextureCoord': flatten(this.texCoords, true),
+                             'aVertexColor': flatten(this.colors, true) }
 
     if (opts.shading == Geometry.SMOOTH_SHADING) {
       this.indices = flatten(Geometry.unindexCells(mesh.cells), true)

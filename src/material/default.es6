@@ -49,16 +49,6 @@ export class DefaultMaterial extends Material {
                              gl.FALSE, 0, attrs[key].index)
     }
 
-    if (this.target.indices) {
-      gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer.buffer)
-      gl.drawElements(gl.TRIANGLES,
-                      this.target.indices.elements.length,
-                      gl.UNSIGNED_SHORT,
-                      this.target.indices.index * SHORT_SIZE)
-    } else  {
-      gl.drawArrays(gl.TRIANGLES, 0, this.target.vertices.length / VERTEX_SIZE)
-    }
-
     // Pass variables into pipeline
     gl.uniformMatrix4fv(this.modelMatrix, gl.FALSE, new Float32Array(m))
     gl.uniformMatrix4fv(this.viewMatrix, gl.FALSE, new Float32Array(v))
@@ -73,12 +63,16 @@ export class DefaultMaterial extends Material {
       this.texture.bind(this.uSampler)
     }
 
-    // Draw elements
+    if (this.target.indices) {
+      gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer.buffer)
+      gl.drawElements(gl.TRIANGLES,
+                      this.target.indices.elements.length,
+                      gl.UNSIGNED_SHORT,
+                      this.target.indices.index * SHORT_SIZE)
+    } else {
+      gl.drawArrays(gl.TRIANGLES, 0, this.target.vertices.length * VERTEX_SIZE)
+    }
 
-    // Disable attributes
-    // gl.disableVertexAttribArray(this.aPosition)
-    // gl.disableVertexAttribArray(this.aTextureCoord)
-    // gl.disableVertexAttribArray(this.aNormal)
   }
 }
 

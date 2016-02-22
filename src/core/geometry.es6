@@ -23,15 +23,7 @@ export class Geometry extends Transform {
   }
 
   bake(bufferSet, indexBuffer) {
-    for (let key in this.attributeArrays) {
-      this.attributeArrays[key].index = 0
-    }
 
-    if (this.indices) {
-      let elements = this.indices
-      this.indices = { elements: elements,
-                       index: 0 }
-    }
   }
 
   render(v, p, bufferSet, indexBuffer) {
